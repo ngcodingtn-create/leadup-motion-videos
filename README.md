@@ -1,6 +1,6 @@
 # Lead Up · 60 s ad (v2)
 
-**Watch:** https://ngcodingtn-create.github.io/leadup-motion-videos/
+**Watch:** https://ngcodingtn-create.github.io/leadup-motion-videos/ · **How the ads are made:** https://ngcodingtn-create.github.io/leadup-motion-videos/how/
 
 | File | Use |
 |---|---|
