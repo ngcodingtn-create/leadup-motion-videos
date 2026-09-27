@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lead Up · Caméras & Alarmes</title>
+  <meta name="description" content="Lead Up: 50-second vertical ad for Tunisian alarm and security-camera installers (Tunisian Derja).">
+  <meta property="og:title" content="Lead Up · Caméras & Alarmes">
+  <meta property="og:image" content="poster.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;900&family=Lalezar&display=swap" rel="stylesheet">
+  <style>
+    :root { --navy: #0B1426; --blue: #1A3478; --yellow: #FFB800; --red: #FF2D3A; --text: #F4F6FB; --muted: #AFC0E0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, #2B4FA8 0%, var(--blue) 35%, var(--navy) 75%);
+      color: var(--text); font-family: Montserrat, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 28px 16px 48px; }
+    h1 { font-weight: 900; font-size: clamp(26px, 6vw, 42px); margin: 8px 0 4px; letter-spacing: -1px; text-align: center; }
+    h1 span { color: var(--yellow); }
+    .tag { display: inline-block; background: var(--red); color: #fff; font-weight: 900; font-size: 13px; padding: 5px 12px; border-radius: 999px; letter-spacing: 1px; }
+    .ar { font-family: Lalezar, sans-serif; font-size: clamp(22px, 5vw, 30px); direction: rtl; margin: 6px 0 22px; color: var(--muted); }
+    .player { width: min(100%, 420px); aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; background: #000;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 2px rgba(255,184,0,.35); }
+    video { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 22px; }
+    a.btn { text-decoration: none; font-weight: 900; font-size: 15px; padding: 13px 20px; border-radius: 999px; color: var(--navy); background: var(--yellow); }
+    a.btn.ghost { background: transparent; color: var(--text); border: 2px solid rgba(255,255,255,.35); }
+    p.meta { color: var(--muted); font-size: 13px; text-align: center; max-width: 440px; line-height: 1.5; margin-top: 22px; }
+    p.meta a { color: var(--text); }
+  </style>
+</head>
+<body>
+  <span class="tag">CAMÉRAS · ALARMES</span>
+  <h1>LEAD <span>UP</span> · Ad 50s</h1>
+  <p class="ar">الـ boost متاعك هو إلّي يسرق فيك</p>
+  <div class="player">
+    <video controls playsinline preload="metadata" poster="poster.jpg">
+      <source src="LeadUp_camera_whatsapp_720p.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="row">
+    <a class="btn" href="LeadUp_camera_master_1080x1920.mp4" download>Master 1080×1920 (57 MB)</a>
+    <a class="btn ghost" href="LeadUp_camera_whatsapp_720p.mp4" download>WhatsApp 720p (12 MB)</a>
+  </div>
+  <p class="meta">50 s · vertical 9:16 · Tunisian Derja voice with Arabic captions · −14 LUFS · CTA keyword CAMERA.<br>
+    16 AI shots by Gemini Omni from Nano Banana 2 frames, motion design in Remotion.<br>
+    <a href="../">← Solar installers ad</a></p>
+</body>
+</html>
