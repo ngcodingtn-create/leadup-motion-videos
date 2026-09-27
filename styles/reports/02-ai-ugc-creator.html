@@ -1,0 +1,722 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI UGC &amp; creator formats · Lead Up research</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#0B1426;color:#E8EDF7;font:16px/1.65 Montserrat,system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+a{color:#FFB800;word-break:break-word}h1{font-size:30px;line-height:1.2}h2{margin-top:44px;color:#fff;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}
+h3{margin-top:28px;color:#FFD466}code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:.9em}pre{background:#101C36;padding:14px;border-radius:12px;overflow-x:auto;font-size:13px}
+table{border-collapse:collapse;display:block;overflow-x:auto;font-size:13.5px;margin:14px 0}th,td{border:1px solid rgba(255,255,255,.14);padding:7px 9px;vertical-align:top}th{background:#15234A}
+blockquote{border-left:3px solid #FFB800;margin:0;padding:4px 14px;color:#AFC0E0}.top{position:sticky;top:0;background:rgba(11,20,38,.94);backdrop-filter:blur(8px);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px}
+[dir=auto]{unicode-bidi:plaintext}</style></head>
+<body><div class="top"><a href="../#reports">← Style engine</a> · Research report · AI UGC &amp; creator formats</div><main><h1 id="styles-02-ai-ugc-and-creator-native-ad-formats">Styles 02 · AI UGC and creator-native ad formats</h1>
+<p dir="auto">Research date: 2026-09-27. Scope: user-generated-content (UGC) look and creator-native formats for 9:16, 30-60 s Meta /
+TikTok ads in Tunisian Derja (solar PV, alarms/cameras, then other SMEs). Research only. No media was generated.</p>
+<p dir="auto">Evidence tags: <strong>[official]</strong> = Google / Meta / TikTok / FTC docs. <strong>[vendor]</strong> = a tool maker's own claim.
+<strong>[practitioner]</strong> = agency or creator write-ups and tests. <strong>[secondary]</strong> = blog summaries of policy (check against
+the official page before relying on them). Most performance numbers in this field come from vendors and agencies. Read
+them as direction, not as proof.</p>
+<p dir="auto">Related docs: <code>research/01-omni-prompting.md</code> (Omni has no audio input; Derja VO unsupported),
+<code>research/05-omni-pro-workflows.md</code>, <code>research/07-anti-ai-look.md</code> (sound and finishing), <code>research/08-hybrid-pipeline.md</code>
+(Remotion RTL captions).</p>
+<hr />
+<h2 id="0-tldr">0. TL;DR</h2>
+<ol>
+<li dir="auto"><strong>The script and the first 1.5-3 s decide most of the result, human or AI.</strong> UGC-look ads beat polished ads on hook
+   rate and CTR in most agency data. For solar, agencies report that owner-on-camera and phone-filmed customer creative
+   gives <strong>25-40% lower CPL</strong> than stock or branded work [practitioner].</li>
+<li dir="auto"><strong>Derja lip-sync is the hard part.</strong> Veo 3.1 and Gemini Omni docs both say: <em>"English (EN) is fully supported, but
+   other languages have not been evaluated"</em> [official]. Omni takes <strong>no audio input</strong>, so it cannot lip-sync to our
+   Gemini TTS track [official]. Veo tends to pull the accent toward how the face "looks" [practitioner]. A native Derja
+   talking head made only on Vertex is <strong>not reliable today</strong>.</li>
+<li dir="auto"><strong>There are two ways to get a talking head that speaks our Derja track.</strong> (a) Make the clip on Vertex (NB2 frame →
+   Omni/Veo, "person speaking naturally"), mute it, then <strong>re-sync the lips to our TTS audio</strong> with a language-agnostic
+   lip-sync model (sync. labs <code>lipsync-2-pro</code> / <code>sync-3</code>; sync-3 lists Arabic). (b) Use an <strong>audio-driven avatar</strong>
+   (image + our audio): Kling Avatar 2.0, OmniHuman 1.5, Creatify Aurora, HeyGen Avatar IV/V, Captions Mirage. <strong>None of
+   these runs on Vertex.</strong> Open models (LatentSync, InfiniteTalk, Wan2.2-S2V) can be self-hosted on a GPU. Google's new
+   <strong>Gemini 3.8 Live Avatar</strong> (GA 2026-09-25, 97 languages) is conversational and uses its own voice. Custom avatars need
+   allowlisting. It is not a fit for scripted ads yet.</li>
+<li dir="auto"><strong>Half of the formats need no on-screen lip-sync.</strong> Hands-only demo, POV, day-in-the-life with VO, green-screen with
+   a STEG bill, review montage, split-screen and chat screens all work with our current engine. Ship these first. Add
+   talking heads once a lip-sync A/B on Derja passes a native listener.</li>
+<li dir="auto"><strong>Policy decides how to frame it, not whether to use AI.</strong> A photorealistic AI person on Meta puts the <strong>"AI info"
+   label next to "Sponsored"</strong> [official]. TikTok requires the AIGC label or a burned-in disclaimer. Undisclosed AIGC is
+   rejected [official]. <strong>Fake customer testimonials are out on every platform and under Tunisian consumer law.</strong> Use an
+   AI <strong>actor as spokesperson</strong>, a <strong>clearly labelled dramatization</strong> ("تمثيل / Mise en scène"), the <strong>owner's own
+   avatar with written consent</strong>, or <strong>real customers filmed on a phone</strong>. For solar trust, the last option is still the
+   strongest.</li>
+</ol>
+<hr />
+<h2 id="1-why-ugc-and-creator-native-formats-convert-data">1. Why UGC and creator-native formats convert (data)</h2>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Number</th>
+<th>Source type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Meta hook-rate benchmark (3 s views / impressions)</td>
+<td>~28% avg; top 10% ~45%. TikTok ~33% avg, top 10% ~55%</td>
+<td>practitioner (Benly/Digital Applied 2026)</td>
+</tr>
+<tr>
+<td>UGC vs polished</td>
+<td>+31% hook rate, +33% CTR; TikTok/Reels UGC CTR +50-80%, FB Feed +15-25%</td>
+<td>practitioner (Finsi, Benly)</td>
+</tr>
+<tr>
+<td>AI UGC vs real UGC</td>
+<td>Avatar UGC lands <strong>within 10-20%</strong> of real creators on hook rate and CTR; 85-110% of good UGC CTR; up to 28-31% lower CPA in some tests</td>
+<td>vendor/practitioner (Creatify case via inBeat, Digital Applied)</td>
+</tr>
+<tr>
+<td>Where AI UGC wins / loses</td>
+<td>Wins: hook testing, top-of-funnel, explainers, demos. Loses: bottom-funnel trust, categories that need lived experience</td>
+<td>practitioner (inBeat, Pose)</td>
+</tr>
+<tr>
+<td>Fatigue</td>
+<td>UGC peaks 10-14 days, then CTR/CVR drop 25-40% (studio: 18-25 days). Solar: 14-21 days, CTR -40-60%</td>
+<td>practitioner (Finsi, Web Tonic)</td>
+</tr>
+<tr>
+<td>Meta format hit rates (Motion, $1.29B spend, 578k ads, Sep 2025-Jan 2026)</td>
+<td>Unboxing <strong>9.8%</strong>, Offer-first banner 8.6%, Demo 8.1%, Testimonial 6.5%; Split Screen, Us-vs-Them, Before/After, POV, Founder, Behind-the-scenes all in the ~5-9% band</td>
+<td>practitioner (Motion)</td>
+</tr>
+<tr>
+<td>Hook tactics for $1M+/month advertisers</td>
+<td>Confession, Bold claim, Relatability, Contrast, Curiosity</td>
+<td>practitioner (Motion)</td>
+</tr>
+<tr>
+<td>Podcast-style ads</td>
+<td>40%+ hook rate across 12+ campaigns</td>
+<td>vendor (Influee)</td>
+</tr>
+<tr>
+<td>TikTok Spark Ads (creator-native posts boosted)</td>
+<td>Completion +30%, engagement +142%, CVR +43%, CPM -4% vs standard</td>
+<td>official-ish (TikTok data via Adsmurai/RE:UGC)</td>
+</tr>
+<tr>
+<td>Solar video vs static</td>
+<td>Video 2-3x more leads; phone-filmed homeowner testimonials beat TV-style; owner-on-camera 25-40% lower CPL</td>
+<td>practitioner (Web Tonic citing Daly, Uprise)</td>
+</tr>
+<tr>
+<td>Solar winning hooks</td>
+<td>Bill-shock reversal with a real number; subsidy deadline; "anti-cowboy" trust ("named director, real showroom, 100 local homes")</td>
+<td>practitioner (LeadSync)</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">TikTok's own guidance [official]: 9:16, ≥720p, sound on, hook in the first 6 s and value in the first 3 s, <strong>feature
+people (creators, employees, customers)</strong>, a DIY / not-too-polished style, text at 5-10 words per second, 3-5 creatives
+per ad group, and refresh when delivery declines.</p>
+<p dir="auto"><strong>What this means for Lead Up:</strong> the Tunisian audience is big and mobile-first. Facebook reaches 7.8M, TikTok 6.0M
+adults and Instagram 4.05M (DataReportal 2026). A cheap engine that makes <strong>many hook variants</strong> of the same proven
+body is the right fit, because UGC-style ads tire in about 2 weeks.</p>
+<hr />
+<h2 id="2-the-core-technical-question-talking-heads-in-derja">2. The core technical question: talking heads in Derja</h2>
+<h3 id="21-what-vertex-models-can-and-cannot-do-sept-2026">2.1 What Vertex models can and cannot do (Sept 2026)</h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Speech in video</th>
+<th>Our own audio in?</th>
+<th>Arabic / Derja status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gemini Omni Flash</strong> (<code>gemini-omni-1.1-flash[-preview]</code>)</td>
+<td>Yes, co-generated, "millisecond" lip-sync on clean English takes</td>
+<td><strong>No.</strong> <em>"Uploading audio references is unsupported in the current version"</em> [official]</td>
+<td><em>"English fully supported, other languages not evaluated"</em> [official]. No Arabic test found. Mandarin test: "slightly foreign accent" [practitioner]</td>
+<td>3-40 s, 360p-4K, 9:16 OK, SynthID. Dialogue edits are unreliable (it can add subtitles instead) [practitioner]. ~15% stutter rate on talking takes [practitioner, Maxfusion]</td>
+</tr>
+<tr>
+<td><strong>Veo 3.1 / Fast / Lite</strong></td>
+<td>Yes, quotes = dialogue</td>
+<td><strong>No</strong> audio input</td>
+<td>Same "EN only evaluated" line [official]. Accent drifts toward the face/setting [practitioner]. Single-speaker sync about 80% OK, multi-speaker under 40% [practitioner]</td>
+<td>4/6/8 s; 9:16; ref images ×3; first/last frame; extend +7 s. <strong>MENA: <code>personGeneration=allow_adult</code> only</strong> for image-to-video [official]. Maxfusion rates Veo mouths "rubbery" and better for B-roll</td>
+</tr>
+<tr>
+<td><strong>Veo 3.1 inside Google Vids</strong></td>
+<td>Avatars + Gemini 3.1 Flash TTS</td>
+<td>Script only</td>
+<td><strong>Arabic added June 2026</strong> (24 languages) [official]</td>
+<td>Proves Google can pair Veo avatars with Gemini TTS in Arabic, but it is a Workspace product, not an API. Almost surely MSA, not Derja. Worth one manual test to see the mouth quality on Arabic</td>
+</tr>
+<tr>
+<td><strong>Gemini 3.8 Live + Live Avatar</strong></td>
+<td>Real-time lip-synced talking head</td>
+<td>Speaks its own voice (speech-to-speech)</td>
+<td>97 languages, auto-detect [official]</td>
+<td>GA 2026-09-25, US/EU. Prebuilt avatars; <strong>custom avatar (1 photo + voice sample) by allowlist only</strong>. Built for agents, not scripted ads. Voice ≠ our TTS voice</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto"><strong>Conclusion:</strong> a Derja talking head made fully on Vertex is a gamble. It fails in the details natives catch: the voice
+drifts to MSA, Egyptian or Levantine, and it does not match our brand TTS voice. Keep our <strong>Gemini 3.1 TTS Derja track
+as the single source of truth</strong> and make the face follow it.</p>
+<h3 id="22-lip-sync-layers-that-take-our-audio-all-off-vertex">2.2 Lip-sync layers that take our audio (all off-Vertex)</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Type</th>
+<th>Language</th>
+<th>Price / limits</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>sync. labs <code>lipsync-2-pro</code></strong></td>
+<td>video + audio → re-synced video</td>
+<td>language-agnostic</td>
+<td>~$0.067-0.083/s</td>
+<td>Needs a face that is <em>already moving as if talking</em> (still frames fail). Prompt source video with "person is speaking naturally". Good on beards and teeth</td>
+</tr>
+<tr>
+<td><strong>sync. labs <code>sync-3</code></strong></td>
+<td>same, 4K, handles occlusion and profile</td>
+<td>95+ languages incl. Arabic [vendor]</td>
+<td>~$0.107-0.133/s</td>
+<td>Maxfusion: "best lip sync model available" [practitioner]</td>
+</tr>
+<tr>
+<td><strong>Kling Lipsync / Kling Avatar 2.0</strong></td>
+<td>redub or image + audio</td>
+<td>EN/ZH/JA/KO listed; audio upload works in any language</td>
+<td>Avatar up to 5 min</td>
+<td>GSB score beats OmniHuman 1.5 and HeyGen in Kling's own test [vendor]. Kling 3.0 drifts after about 8 s [practitioner]</td>
+</tr>
+<tr>
+<td><strong>OmniHuman 1.5</strong> (ByteDance)</td>
+<td>image + audio</td>
+<td>audio-driven</td>
+<td>~30 s cap</td>
+<td>Quality drops after 10-11 s [practitioner]</td>
+</tr>
+<tr>
+<td><strong>Creatify Aurora</strong></td>
+<td>image + audio (DiT)</td>
+<td>75+ languages</td>
+<td>long-form</td>
+<td>Breathing, blinks, gestures; keep speech moderate with pauses [vendor]</td>
+</tr>
+<tr>
+<td><strong>HeyGen Avatar IV / V</strong></td>
+<td>photo or twin + uploaded audio</td>
+<td>175+ languages</td>
+<td>API ~$0.05/s</td>
+<td>Strong for owner "digital twin" with consent</td>
+</tr>
+<tr>
+<td><strong>Captions Mirage</strong></td>
+<td>generated actor + audio/video/script</td>
+<td>29+ languages</td>
+<td>app/API</td>
+<td>UGC-first foundation model; full face and upper-body motion [vendor]</td>
+</tr>
+<tr>
+<td><strong>RIZZ</strong></td>
+<td>audio-driven</td>
+<td>-</td>
+<td>≤60 s</td>
+<td>"Most realistic audio-driven" per Maxfusion; vowel-dependent issues [practitioner]</td>
+</tr>
+<tr>
+<td><strong>Open source: LatentSync, MuseTalk, InfiniteTalk, Wan2.2-S2V (480/720p)</strong></td>
+<td>redub / image + audio</td>
+<td>audio-agnostic</td>
+<td>GPU time only</td>
+<td>Self-host (Runpod, or a Vertex custom container). Data stays with us. Quality below sync-3 / Kling</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Rules that hold across tools: <strong>audio first</strong> (expressive TTS gives expressive faces). <strong>Keep each take ≤8-10 s</strong> and
+cut, because drift and gesture loops show after that. <strong>Mid-shot, not extreme close-up.</strong> Use <strong>a face already in
+motion</strong> for redub models.</p>
+<h3 id="23-test-plan-before-we-commit-no-spend-until-the-owner-approves">2.3 Test plan before we commit (no spend until the owner approves)</h3>
+<p dir="auto">One 10 s Derja line with French code-switching, one NB2 first frame (Tunisian man, 35, car interior, phone selfie).
+Candidates:
+1. Omni i2v "speaking naturally, no dialogue audio" → mute → sync-3.
+2. Same → lipsync-2-pro.
+3. Kling Avatar 2.0 (image + our WAV).
+4. Veo 3.1 native, Derja in Arabic script inside quotes (control). Check the dialect by ear.
+5. HeyGen Avatar IV (image + WAV).</p>
+<p dir="auto">Blind-rate with 3 Tunisians on: mouth match on emphatic consonants (ق ع ح ط), teeth and tongue, blink rate, "would you
+scroll past this as an ad or as a real video". The winner becomes the talking-head node in the pipeline.</p>
+<hr />
+<h2 id="3-universal-realism-kit-applies-to-every-format">3. Universal realism kit (applies to every format)</h2>
+<h3 id="31-realism-killers-fixes">3.1 Realism killers → fixes</h3>
+<table>
+<thead>
+<tr>
+<th>Killer</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stare-lock eye contact, no glances</td>
+<td>Prompt "glances down at phone screen, then back to lens; eyes drift off to the side while thinking". In real selfies the eyes look at the screen, <strong>slightly below the lens</strong></td>
+</tr>
+<tr>
+<td>Metronome blinking or no blinks</td>
+<td>Keep takes &lt;10 s. Cut on blinks. Choose models with blink modelling (Aurora, sync-3)</td>
+</tr>
+<tr>
+<td>Waxy teeth, one merged tooth-bar, tongue missing</td>
+<td>Mid-shot framing, lipsync-2-pro/sync-3 (teeth detail), avoid wide-open laughing close-ups</td>
+</tr>
+<tr>
+<td>Hands: extra fingers, product warping</td>
+<td>Hands-only shots from NB2 frames with the <strong>real product photo as reference</strong>. Short takes. Hide hand-object contact on cuts</td>
+</tr>
+<tr>
+<td>Over-clean studio audio (AI tell #1)</td>
+<td>Phone-mic chain on the TTS: HPF ~120 Hz, LPF ~9-11 kHz, light room reverb (car/kitchen IR), -30 dB room tone bed, a few handling bumps. Street: wind and traffic. See doc 07 §3</td>
+</tr>
+<tr>
+<td>TTS "announcer" tone</td>
+<td>Script in spoken Derja with fillers ("يعني", "شوف", "franchement", "إيه وبعد"), false starts, breaths. Style prompt: "casual, tired after work, talking to a friend". Speed ~1.05x with real pauses</td>
+</tr>
+<tr>
+<td>Too-perfect light, shallow cinematic bokeh</td>
+<td>Prompt "front-camera phone video, flat mixed lighting, window blown out, slight HDR halo, no color grade, deep focus". Add grain and a mild over-sharpen in post</td>
+</tr>
+<tr>
+<td>Locked-off camera</td>
+<td>"Handheld at arm's length, micro-shake, small reframes". Add a 1-2 px shake in Remotion if the model is too steady</td>
+</tr>
+<tr>
+<td>Continuity drift between clips</td>
+<td>NB2 character sheet (3 refs), same outfit and set description word for word; Omni <code>previous_interaction_id</code> chains</td>
+</tr>
+<tr>
+<td>Model-drawn text (fake Arabic)</td>
+<td>Never let the model draw text. All captions and labels come from Remotion (doc 08)</td>
+</tr>
+<tr>
+<td>One long unbroken AI take</td>
+<td>Jump-cuts every 1.5-3 s, which is also how natives edit. Punch-ins (110-120% scale) hide seams</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-caption-style-natives-use">3.2 Caption style natives use</h3>
+<ul>
+<li dir="auto"><strong>TikTok/CapCut default look:</strong> bold rounded sans, white fill with black stroke or a white/black rounded box, 1-4
+  words per chunk, active word highlighted (yellow/green), lower-middle placement <strong>above the bottom UI safe zone</strong>
+  (keep clear ~bottom 20% and right ~15% for buttons).</li>
+<li dir="auto"><strong>Hook text</strong> as a separate box at the top third, 3-7 words, on screen from frame 1 (for sound-off viewers).</li>
+<li dir="auto"><strong>Script choice for Tunisia:</strong> young Tunisians often write Derja in <strong>Latin "Arabizi"</strong> (3=ع, 7=ح, 9=ق: "9adech",
+  "3aychek", "barcha"). Arabic-script Derja reads more "official". <strong>A/B both</strong>; for 35+ homeowners keep Arabic script
+  plus French terms in Latin ("facture STEG", "garantie 25 ans"). Use Remotion RTL rules from doc 08 (per-word spans,
+  FSI/PDI isolates for "300 DT").</li>
+<li dir="auto">Native flourishes that help: comment-reply bubble, "Replying to @..." sticker look, emoji sparingly (☀️💡), a hand-drawn
+  arrow or circle on proof.</li>
+</ul>
+<h3 id="33-tunisian-authenticity-cues-settings-people-phone-look">3.3 Tunisian authenticity cues (settings, people, phone look)</h3>
+<ul>
+<li dir="auto"><strong>Settings:</strong> car interior (older Clio, Polo, Symbol or Picanto, sun visor down, phone in a dash mount); rooftop
+  (<strong>سطح</strong> with white water tank, satellite dishes, solar water heater, neighbours' roofs, washing line); shop counter
+  (<strong>حانوت</strong>, drinks fridge, scale, receipt book); home kitchen with tiled wall (<strong>زليج</strong>) and a gas bottle; café
+  terrace (plastic or metal chairs, small coffee cups, "direct", tea glasses); villa gate and garden wall (alarm/camera);
+  the paper <strong>STEG bill</strong> on a table. Avoid tourist clichés (blue doors of Sidi Bou Said) unless relevant.</li>
+<li dir="auto"><strong>Summer heat and the "clim"</strong> (split AC unit on the wall) is <em>the</em> cause of bill shock in July-August. Show it.</li>
+<li dir="auto"><strong>People:</strong> real mixes. Hoodie, bomber jacket or polo; installer in a hi-vis vest, cap and gloves; women with and
+  without hijab; older man in a <em>kachabia</em> in winter scenes. Natural skin with shine and pores, a little sweat in
+  summer, untidy hair.</li>
+<li dir="auto"><strong>Phone look:</strong> mid-range Android front camera (Galaxy A / Oppo / Infinix style). Slight beauty smoothing, clipped
+  windows, 30 fps, auto-exposure pumping when moving indoor→outdoor, vertical 9:16, sometimes a finger at the lens edge.</li>
+<li dir="auto"><strong>Language:</strong> Derja base, with French for technical and money words (<em>facture, installation, les panneaux, garantie,
+  crédit, rendez-vous, franchement, normal</em>). Money in <strong>دينار / DT / "mille"</strong> (spoken "280 alf" = 280 DT in some
+  regions). Mention <strong>PROSOL Elec / STEG / ANME</strong> and bill-repayment credit only if the installer is actually eligible
+  (subsidy ~500 DT, or ~1,500 DT for the economic variant, credit repaid on the STEG bill) [secondary; verify with
+  ANME].</li>
+</ul>
+<p dir="auto">All Derja lines below are <strong>drafts</strong> and must pass the InfoLab Derja lint (<code>reference/infolab/</code>) and owner approval.</p>
+<hr />
+<h2 id="4-the-formats">4. The formats</h2>
+<p dir="auto">Difficulty is for our stack: ★ = current engine as is, ★★ = needs the lip-sync node, ★★★ = multi-speaker lip-sync or
+hard continuity.</p>
+<h3 id="41-talking-head-testimonial-selfie">4.1 Talking-head testimonial selfie ★★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> one person, phone at arm's length, talking about the result.</li>
+<li dir="auto"><strong>Why it converts:</strong> testimonial is a steady Meta winner (6.5% hit rate, spend ratio 1.0, Motion). In solar,
+  phone-filmed homeowner testimonials beat TV-style ads, and bill-number reversals are the top hook [practitioner].</li>
+<li dir="auto"><strong>Script (30-40 s):</strong> 0-2 s bold number hook ("facture 380 DT… ولات 40") → 2-8 s pain (clim, summer) → 8-20 s what
+  changed and how easy (one visit, 2 days, credit on the bill) → 20-28 s a small doubt removed ("كنت خايف من الـ
+  arnaque…") → 28-35 s soft CTA ("اكتب 'solaire' في الكومنتار ولا اضغط على الزر").</li>
+<li dir="auto"><strong>AI build:</strong> NB2 selfie frame → Omni 720p 4 s "speaking naturally, handheld" ×6-8 takes → mute → lip-sync to TTS
+  (§2). Cut every 2-3 s. B-roll inserts (roof, inverter screen, bill) are made by Omni without faces.</li>
+<li dir="auto"><strong>Killers:</strong> a stare that never breaks, TTS announcer tone, a spotless car. <strong>Fixes:</strong> eyes to screen, fillers,
+  seatbelt on, parking-lot noise.</li>
+<li dir="auto"><strong>Tunisia:</strong> a car in a parking lot at dusk, or the rooftop next to the panels.</li>
+<li dir="auto"><strong>Compliance:</strong> an AI face presented as a real customer = <strong>fake testimonial. Not allowed.</strong> Variants: (a) real
+  customer filmed on a phone (best); (b) AI actor, framed as a <strong>spokesperson</strong> ("أنا نحكيلك كيفاش يخدم…", with no
+  "I bought") plus AI label; (c) "Dramatization based on a real client (Sfax, 2026)" on screen, and only with that real
+  client's written consent and real numbers.</li>
+</ul>
+<h3 id="42-pov-storytime">4.2 POV / storytime ★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> "POV: you just opened your July STEG bill". Drops the viewer into a scene, first person. It is the most
+  shared TikTok format because people share "this is so me" [practitioner]. Motion lists POV among winning formats.</li>
+<li dir="auto"><strong>Script:</strong> hook in &lt;1.5 s (hooks under 2 s had 23% higher completion [practitioner]) → in-media-res scene → twist /
+  solution → proof → CTA. Storytime = VO narrating over the scene ("خويا عامل الصيف الكل بالكليم…").</li>
+<li dir="auto"><strong>AI build:</strong> <strong>no lip-sync needed.</strong> First-person shots (hands opening the bill, AC remote, rooftop from the eye
+  line) from NB2 → Omni. Derja VO on top. This is our current engine exactly.</li>
+<li dir="auto"><strong>Killers:</strong> cinematic grading, floaty camera. <strong>Fix:</strong> a phone-POV prompt with hand in frame, jerky pans.</li>
+<li dir="auto"><strong>Compliance:</strong> fiction is fine, and clearly a scenario. The label comes from AI info. Keep claims real.</li>
+<li dir="auto"><strong>Verdict:</strong> <strong>priority 1.</strong></li>
+</ul>
+<h3 id="43-street-interview-vox-pop-micro-trottoir">4.3 Street interview / vox pop (micro-trottoir) ★★★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> interviewer with a mic cube asks passers-by "قدّاش تخلّص في الـ facture STEG؟". Real reactions sell
+  [practitioner]. Veo 3 AI street interviews went viral in 2025 because many viewers could not tell they were AI.</li>
+<li dir="auto"><strong>Script:</strong> fast rhythm, 4-6 answers of 2-4 s each, one "surprised" answer, then the reveal ("وإنت، عملت الـ
+  simulation؟"). 30-45 s.</li>
+<li dir="auto"><strong>AI build:</strong> the hardest format. It needs many faces, two speakers per shot and lip-sync for each. Veo multi-speaker
+  sync is below 40% even in English. Path: a single-speaker close shot per answer (the interviewer only as a mic hand
+  and a VO) → lip-sync each answer. Street ambience is critical.</li>
+<li dir="auto"><strong>Compliance risk: very high.</strong> A fake vox pop <em>is</em> a fake testimonial or public opinion. Only as an <strong>obvious
+  sketch</strong> (named characters, humour, "تمثيل" label) or with <strong>real passers-by</strong> filmed by the installer. For
+  opinion-style claims ("80% of Tunisians…") use real data only.</li>
+<li dir="auto"><strong>Verdict:</strong> skip in AI. Offer as a real shoot service.</li>
+</ul>
+<h3 id="44-podcast-clip-two-person-conversation-if-one-speaker">4.4 Podcast clip / two-person conversation ★★★ (★★ if one speaker)</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> two people with visible mics (SM7B-style), 9:16 crop, one asks and the "expert" answers. It reads as a
+  podcast moment, not an ad. 40%+ hook rates [vendor]. Script: organic hook → problem → product after trust. 30-60 s.</li>
+<li dir="auto"><strong>AI build:</strong> a static two-shot of a café or studio set from NB2 (with a Tunisian "podcast" vibe: brick wall, neon,
+  plants). Cut between singles (one face per shot), so each shot needs only one lip-sync. Listener reactions (nods,
+  laughs) need no sync. Real podcast clips use <strong>1-2 cameras and jump-cuts</strong>, which suits us.</li>
+<li dir="auto"><strong>Script sample:</strong> Host: "ياخي الـ panneaux يخدمو في الشتاء؟" / Installer: "إيه يخدمو، أقل شويّة، أما الـ compensation
+  متاع STEG تعدّل…"</li>
+<li dir="auto"><strong>Killers:</strong> mics not in front of the mouth; audio too dry. <strong>Fix:</strong> "studio podcast" sound with close mic, slight
+  compression and a tiny bleed of the other voice.</li>
+<li dir="auto"><strong>Compliance:</strong> make the "expert" the <strong>real installer (owner avatar with consent)</strong> or an AI spokesperson labelled
+  as such. Never a fake "engineer from STEG" (impersonating an authority is banned on TikTok and Meta).</li>
+</ul>
+<h3 id="45-green-screen-reaction-with-face">4.5 Green-screen reaction ★ (★★ with face)</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> the creator sits in a corner over a background screenshot (STEG bill, news headline on electricity price
+  rises, Google Maps of the installer's jobs, a WhatsApp quote). You get proof and explanation at once [practitioner].</li>
+<li dir="auto"><strong>AI build:</strong> the background is a <strong>real</strong> document or screenshot, redrawn cleanly in Remotion (never model-drawn).
+  The foreground is a cut-out face. Option A: lip-synced avatar. Option B: <strong>faceless</strong>: a hand pointer and VO. Remotion
+  does the chroma look, zooms and highlight boxes.</li>
+<li dir="auto"><strong>Script:</strong> "شوفو هذي… (zoom on tariff tranche) هاذي علاش الـ facture طلعت" → explain → the fix → CTA.</li>
+<li dir="auto"><strong>Compliance:</strong> use real articles and headlines with attribution. Do not fake a news outlet's page or logo (that is
+  impersonation). Blur private bill data.</li>
+<li dir="auto"><strong>Verdict:</strong> priority 1 in faceless form.</li>
+</ul>
+<h3 id="46-unboxing-hands-only-demo">4.6 Unboxing / hands-only demo ★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> hands open the box (inverter, panels, alarm kit, camera), close-ups, a click-to-install moment, the app on a
+  phone. Unboxing has the <strong>highest hit rate in Motion's Meta data (9.8%)</strong> and Demo is at 8.1%.</li>
+<li dir="auto"><strong>AI build:</strong> NB2 frames with the <strong>real product photos as references</strong> (keep logos correct). Omni 4 s macro shots.
+  ASMR sound (tape rip, foam, click). Derja VO or no VO. Hands are the main risk: keep takes short, cut before the
+  fingers interlace.</li>
+<li dir="auto"><strong>Script:</strong> 0-1 s sound hook (tape rip) → "شنوّة فيه الكيت متاع الكاميرا؟" → 3 features × 5 s → price / offer
+  card → CTA.</li>
+<li dir="auto"><strong>Compliance:</strong> the product shown must match what is sold (Meta and TikTok misrepresentation rules). Label AI.</li>
+<li dir="auto"><strong>Verdict:</strong> <strong>priority 1</strong> for alarms/cameras.</li>
+</ul>
+<h3 id="47-day-in-the-life-of-a-tradesman-with-speaking">4.7 "Day in the life" of a tradesman ★ (★★ with speaking)</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> from the 6 AM coffee to the rooftop install to the happy client, #dayinthelife / #bluecollar. It builds
+  trust through behind-the-scenes (Motion lists Behind-the-scene as a steady winner). It fits the solar "anti-cowboy"
+  trust play (a real team, a real van, real roofs).</li>
+<li dir="auto"><strong>AI build:</strong> 8-12 shots of 2-3 s, mostly no-face or back-view (van, ladder, drill, panels, inverter LED, sunset
+  roof), with a VO in the first person. Timestamps ("06:30", "11:00") are drawn in Remotion. One lip-synced line at the
+  end is optional.</li>
+<li dir="auto"><strong>Tunisia:</strong> coffee at the corner café, a loaded Isuzu/Peugeot pickup, the rooftop with a white water tank, lunch of
+  <em>kaskrout</em>, the Maghreb call to prayer faint in the background (be respectful).</li>
+<li dir="auto"><strong>Compliance:</strong> best done with <strong>real footage from the installer</strong> mixed with AI inserts. If it is all AI, label it
+  and do not show a named real team member without consent.</li>
+</ul>
+<h3 id="48-customer-review-montage">4.8 Customer review montage ★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> fast cuts of review cards (Google Maps stars, Facebook comments, WhatsApp thank-you voice notes) with
+  install photos. Social proof without faces.</li>
+<li dir="auto"><strong>AI build:</strong> Remotion cards over Omni B-roll. The reviews <strong>must be real</strong> (screenshots with the customer's
+  permission; blur names or use first names only).</li>
+<li dir="auto"><strong>Compliance:</strong> <strong>never generate reviews.</strong> The FTC rule (16 CFR 465, in force since 2024-10-21) names AI-generated
+  reviews explicitly. Tunisian law 92-117 art. 13 and 98-40 art. 35-36 ban misleading advertising.</li>
+</ul>
+<h3 id="49-founder-owner-to-camera">4.9 Founder / owner-to-camera ★★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> the installer-owner speaks directly: origin story, "why we don't do cheap panels", a guarantee. Owner-on-
+  camera = 25-40% lower CPL in solar [practitioner]. There are 11 founder sub-formats (Enemy, Origin, Underdog,
+  Docu-style Q&amp;A, Raw confession, Founder's call with a client, Silent proof…) [practitioner].</li>
+<li dir="auto"><strong>AI build (best compliant AI use):</strong> a <strong>consented owner avatar</strong>. Use 20-60 s of real phone video of the owner
+  plus a written release, then HeyGen twin / Kling Avatar / lip-sync on an Omni take generated from the owner's photo.
+  The voice is our Gemini TTS or a consented clone. The owner <strong>approves every script</strong>. On Vertex, Live Avatar custom
+  avatars need allowlisting. An <strong>even better hybrid:</strong> the owner films 5 real selfie clips once and we reuse them with
+  new VO via lip-sync (a redub of real footage looks more real than any generated face).</li>
+<li dir="auto"><strong>Script:</strong> "أنا [name]، عندي 12 سنة نركّب في [city]. اليوم باش نقلّك علاش ما نركّبش panneaux رخاص…" → one enemy
+  → one proof → offer.</li>
+<li dir="auto"><strong>Compliance:</strong> consent file stored. The AI label still applies (a photorealistic AI person). Never make the owner
+  claim results he cannot prove.</li>
+</ul>
+<h3 id="410-duet-stitch-reply-to-comment-with-face">4.10 Duet / stitch / reply-to-comment ★ (★★ with face)</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> a native TikTok grammar. "Replying to @user: 9adech ta3mel l'installation?" with a comment bubble, then the
+  answer. It uses real objections as hooks and feels like a conversation. Spark Ads keep duet/stitch features and lift
+  completion [official-ish].</li>
+<li dir="auto"><strong>AI build:</strong> a Remotion comment-bubble sticker (TikTok style) over a talking head or a faceless demo. Stitch = the
+  first 2-3 s of a (real, licensed or our own) clip, then our answer.</li>
+<li dir="auto"><strong>Compliance:</strong> the comment must be a <strong>real comment</strong> (from the page or from DMs). Anonymise the handle. Do not
+  fabricate a user.</li>
+<li dir="auto"><strong>Verdict:</strong> a great hook-variant generator. The same body can take 5 different real objections.</li>
+</ul>
+<h3 id="411-us-vs-them-split-screen">4.11 "Us vs them" / split-screen ★</h3>
+<ul>
+<li dir="auto"><strong>What:</strong> left = cheap installer (dusty panels, no guarantee, bill still high), right = us. Or "STEG only vs STEG +
+  solar". Both sit in Motion's top hit-rate band.</li>
+<li dir="auto"><strong>AI build:</strong> two Omni takes with matched framing, composited in Remotion with labels. No lip-sync needed.</li>
+<li dir="auto"><strong>Compliance:</strong> comparisons must be <strong>factual and verifiable</strong>. No naming or showing an identifiable competitor
+  unless the claim is provable. TikTok bans misleading before/after that "may cause viewers to have a false or
+  distorted impression" [official]. Use a generic "installateur pas cher".</li>
+</ul>
+<h3 id="412-other-ugc-native-formats-that-perform-in-2026">4.12 Other UGC-native formats that perform in 2026</h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Why</th>
+<th>Build</th>
+<th>Stars</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Car testimonial</strong></td>
+<td>Car setting reads non-commercial and credible [practitioner, Foreplay]</td>
+<td>selfie in car + lip-sync</td>
+<td>★★</td>
+</tr>
+<tr>
+<td><strong>Bill reveal / "what I paid vs what I pay"</strong></td>
+<td>before/after on a real bill, the number is the hook</td>
+<td>Remotion bill + VO + hand shots</td>
+<td>★</td>
+</tr>
+<tr>
+<td><strong>Chat-screen story</strong> (WhatsApp / Messenger quote thread)</td>
+<td>Tunisians buy via Messenger (8.1M users); "Prix?" flood already in our v2</td>
+<td>pure Remotion + VO</td>
+<td>★</td>
+</tr>
+<tr>
+<td><strong>3 reasons why / listicle</strong></td>
+<td>Simple, clear, under 30 s</td>
+<td>VO + B-roll + numbered cards</td>
+<td>★</td>
+</tr>
+<tr>
+<td><strong>Silent proof / ASMR install</strong></td>
+<td>Visual proof removes doubt; sound-first</td>
+<td>Omni macro + foley, no VO</td>
+<td>★</td>
+</tr>
+<tr>
+<td><strong>Solo skit</strong> (one actor plays customer and "cowboy installer")</td>
+<td>High watch time, humour travels well in Derja</td>
+<td>2 looks of the same AI actor, single-speaker shots + lip-sync</td>
+<td>★★</td>
+</tr>
+<tr>
+<td><strong>Expert explains</strong> (whiteboard/phone calc: kWc, payback)</td>
+<td>Education for high-ticket buys</td>
+<td>faceless hand + Remotion calc</td>
+<td>★</td>
+</tr>
+<tr>
+<td><strong>Offer-first banner video</strong></td>
+<td>Top spend share on Meta (29%)</td>
+<td>Remotion headline + short B-roll</td>
+<td>★</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-ethics-and-platform-policy">5. Ethics and platform policy</h2>
+<h3 id="51-what-the-rules-say">5.1 What the rules say</h3>
+<ul>
+<li dir="auto"><strong>Meta</strong> [official]: the "AI info" label covers ad images and videos made or significantly edited with Meta's or
+  third-party gen-AI tools (detected via industry signals such as C2PA). If the ad has a <strong>photorealistic AI person, the
+  label sits next to "Sponsored"</strong>. Otherwise it sits in the three-dot menu. Political/social ads need self-disclosure.
+  Secondary sources say detection of third-party tools expanded from 2026-06-01, and Google outputs carry SynthID and
+  C2PA, so <strong>assume every Veo/Omni ad gets labelled</strong>.</li>
+<li dir="auto"><strong>TikTok</strong> [official ad policy]: <em>"Significantly edited media and AIGC content is allowed if… Apply the AIGC label,
+  or… a clear disclaimer, caption, watermark, or sticker."</em> Undisclosed AIGC is "rejected or restricted". Public-figure
+  likeness without permission is banned, and so are misleading before/after results. Secondary sources [unverified]
+  add: consent paperwork for voice clones and likenesses in Ads Manager, the toggle resets when a campaign is
+  duplicated, auto C2PA labels cannot be removed, virtual influencers may state facts but not personal endorsements,
+  and TikTok Shop bans AI fake testimonials with a risk of permanent bans.</li>
+<li dir="auto"><strong>FTC 16 CFR 465</strong> (US, the global reference standard): bans fake or AI-generated reviews and testimonials, including
+  from people who don't exist or have no experience with the product. Penalties up to ~$53k per violation. The FTC Q&amp;A
+  says <em>"using actors to portray testimonialists could be deceptive"</em> unless the dramatization is obviously fictional.
+  There is no blanket ban on AI avatars [official].</li>
+<li dir="auto"><strong>Tunisia:</strong> Law 92-117 (consumer protection, art. 13) and Law 98-40 (sales techniques and advertising, art. 35-36)
+  make misleading advertising an offence once it is broadcast in Tunisia [secondary]. Personal-data law (Loi organique
+  2004-63) should cover using a real person's face or voice. <strong>Not verified in this pass. Get a local legal check
+  before the first owner-avatar campaign.</strong></li>
+</ul>
+<h3 id="52-compliant-variants-use-these-names-in-scripts-and-briefs">5.2 Compliant variants (use these names in scripts and briefs)</h3>
+<table>
+<thead>
+<tr>
+<th>Instead of</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI "customer" saying "I installed it and my bill dropped"</td>
+<td><strong>AI spokesperson</strong> explaining how it works ("الـ panneaux يخدمو هكّا…"), no first-person purchase claim, AI label on</td>
+</tr>
+<tr>
+<td>Fake vox pop</td>
+<td><strong>Sketch</strong> with an on-screen label "تمثيل · Mise en scène", exaggerated, clearly fiction</td>
+</tr>
+<tr>
+<td>Invented reviews</td>
+<td><strong>Real reviews</strong> (screenshot, consent), first name + city</td>
+</tr>
+<tr>
+<td>AI "engineer from STEG"</td>
+<td>The <strong>real installer's consented avatar</strong>, named, with his real credentials</td>
+</tr>
+<tr>
+<td>Real client's story told by an AI face</td>
+<td>"<strong>Reconstitution</strong> based on [first name]'s real bill (consent on file)" with the real numbers, and the real bill photo</td>
+</tr>
+<tr>
+<td>Real person cloned without paperwork</td>
+<td>Signed release: name, use, duration, channels, revocation; stored with the project</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">House rules:
+1. Always toggle the platform AI disclosure (Meta and TikTok) when a synthetic person appears. Also add a small burned-in
+   "AI" or "تمثيل" corner tag for dramatizations.
+2. Numbers (savings, prices, subsidy) must come from the installer's real jobs and be documented.
+3. Owner approves every script before any paid generation (existing rule).
+4. Never depict minors, public figures or identifiable private people.
+5. Keep a per-ad compliance note (format, disclosure, consent file, claim sources).</p>
+<hr />
+<h2 id="6-recommended-ai-ugc-production-recipe-our-vertex-stack">6. Recommended AI UGC production recipe (our Vertex stack)</h2>
+<pre><code>Brief + real proof (bill numbers, install photos, reviews, owner clips)
+  → Derja script (InfoLab lint, owner approval)            [gate]
+  → Gemini 3.1 TTS: casual Derja VO, fillers + breaths      (source of truth)
+  → Timing spine (word timings → shot list, cuts every 1.5-3 s)
+  → NB2 first frames: character sheet (3 refs), Tunisian set, phone-selfie look, real product refs
+  → Omni 720p i2v, 4 s takes (always 720p), prompts: &quot;front-camera phone video, handheld, flat light,
+       [speaking naturally | no dialogue]&quot;; B-roll/hands/POV with no faces talking
+  → TALKING SHOTS ONLY: mute → lip-sync node (winner of §2.3 test: sync-3 / lipsync-2-pro / Kling Avatar)
+       fed with the exact TTS slice; ≤8 s per take
+  → Remotion: native captions (Arabic script or Arabizi A/B), hook box, comment bubbles, bill/review cards,
+       split screens, AI/تمثيل tag, CTA end card
+  → Sound: phone-mic EQ on VO, room tone per set, foley, light music bed (doc 07 §3)
+  → Finish: grain, slight over-sharpen, 30 fps, -14 LUFS
+  → ffmpeg export 1080x1920 → platform upload with AI disclosure toggled
+</code></pre>
+<p dir="auto"><strong>Rollout order:</strong>
+- <strong>Wave 1 (current engine, no lip-sync):</strong> POV/storytime, hands-only unboxing/demo, day-in-the-life with VO, faceless
+  green-screen bill, review montage (real reviews), split-screen, chat-screen, bill reveal.
+- <strong>Wave 2 (after the §2.3 lip-sync test):</strong> owner-to-camera avatar (with consent), AI spokesperson selfie, car
+  "spokesperson", reply-to-comment with face.
+- <strong>Wave 3 (hard, low priority):</strong> podcast two-shot, solo skit. Street interview stays a real-shoot service only.</p>
+<p dir="auto"><strong>Variant economics:</strong> one body (20-30 s) × 5 hooks (bill number, POV, real comment, confession, contrast) × 2 caption
+scripts = 10 ads per concept. Refresh every 10-14 days.</p>
+<hr />
+<h2 id="7-open-questions">7. Open questions</h2>
+<ol>
+<li dir="auto">Does Veo 3.1 speak recognisable <strong>Tunisian</strong> Derja from an Arabic-script quote, and does the accent survive on a
+   Tunisian-looking face? (One LinkedIn practitioner claims Veo 3 does "local dialects"; not verified.)</li>
+<li dir="auto">Is a lip-sync API allowed under our data rules (upload of VO and owner face to a US/Chinese vendor), or do we
+   self-host LatentSync/InfiniteTalk (the Runpod plugin is present but needs authentication)?</li>
+<li dir="auto">Can we get Live Avatar custom-avatar allowlisting for the owner, and can it read a fixed script with an external
+   voice?</li>
+<li dir="auto">Arabizi vs Arabic-script captions: which gets better hook rate on Tunisian TikTok vs Facebook?</li>
+<li dir="auto">Local legal check of 92-117 / 98-40 / 2004-63 for AI dramatizations and owner avatars.</li>
+</ol>
+<hr />
+<h2 id="sources">Sources</h2>
+<p dir="auto">Official
+- Gemini API, Omni Flash: <a href="https://ai.google.dev/gemini-api/docs/omni" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/omni</a>
+- Gemini API, Veo 3.1: <a href="https://ai.google.dev/gemini-api/docs/veo" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/veo</a>
+- Vertex Veo 3.1 model page: <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/veo/3-1-generate" target="_blank" rel="noopener">https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/veo/3-1-generate</a>
+- Gemini 3.8 Live + Live Avatar GA: <a href="https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-8-live-with-live-avatar-is-now-generally-available" target="_blank" rel="noopener">https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-8-live-with-live-avatar-is-now-generally-available</a>
+- Live avatars docs: <a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api/configure-live-avatars" target="_blank" rel="noopener">https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api/configure-live-avatars</a>
+- Google Vids avatars, 24 languages incl. Arabic (June 2026): <a href="https://workspaceupdates.googleblog.com/2026/06/enhanced-ai-avatars-vids.html" target="_blank" rel="noopener">https://workspaceupdates.googleblog.com/2026/06/enhanced-ai-avatars-vids.html</a>
+- Google Vids languages (Feb 2026): <a href="https://workspaceupdates.googleblog.com/2026/02/vids-avatars-voiceovers-new-languages.html" target="_blank" rel="noopener">https://workspaceupdates.googleblog.com/2026/02/vids-avatars-voiceovers-new-languages.html</a>
+- Google Vids avatar directing (Apr 2026): <a href="https://workspaceupdates.googleblog.com/2026/04/direct-avatar-to-speak-and-act-anywhere-with-a-consistent-face-and-voice.html" target="_blank" rel="noopener">https://workspaceupdates.googleblog.com/2026/04/direct-avatar-to-speak-and-act-anywhere-with-a-consistent-face-and-voice.html</a>
+- Veo prompt guide: <a href="https://deepmind.google/models/veo/prompt-guide/" target="_blank" rel="noopener">https://deepmind.google/models/veo/prompt-guide/</a>
+- Meta, GenAI transparency in ads: <a href="https://about.fb.com/news/2025/02/gen-ai-transparency-metas-ads-products/" target="_blank" rel="noopener">https://about.fb.com/news/2025/02/gen-ai-transparency-metas-ads-products/</a>
+- Meta help, AI labels in ads: <a href="https://www.meta.com/help/artificial-intelligence/355108217670024/" target="_blank" rel="noopener">https://www.meta.com/help/artificial-intelligence/355108217670024/</a>
+- Meta business help, third-party AI info: <a href="https://www.facebook.com/business/help/1009525374368348" target="_blank" rel="noopener">https://www.facebook.com/business/help/1009525374368348</a>
+- Meta AI disclosures: <a href="https://transparency.meta.com/policies/other-policies/meta-AI-disclosures" target="_blank" rel="noopener">https://transparency.meta.com/policies/other-policies/meta-AI-disclosures</a>
+- TikTok ad policy, misleading and false content: <a href="https://ads.tiktok.com/help/article/tiktok-ads-policy-misleading-and-false-content" target="_blank" rel="noopener">https://ads.tiktok.com/help/article/tiktok-ads-policy-misleading-and-false-content</a>
+- TikTok creative best practices: <a href="https://ads.tiktok.com/help/article/creative-best-practices" target="_blank" rel="noopener">https://ads.tiktok.com/help/article/creative-best-practices</a>
+- TikTok disclaimers in Ads Manager: <a href="https://ads.tiktok.com/help/article/add-disclaimers-to-ads" target="_blank" rel="noopener">https://ads.tiktok.com/help/article/add-disclaimers-to-ads</a>
+- TikTok Spark Ads creative playbook: <a href="https://ads.tiktok.com/business/creativecenter/quicktok/online/Spark-Ads-Creative-Playbook/pc/en" target="_blank" rel="noopener">https://ads.tiktok.com/business/creativecenter/quicktok/online/Spark-Ads-Creative-Playbook/pc/en</a>
+- FTC final rule on fake reviews: <a href="https://www.ftc.gov/news-events/news/press-releases/2024/08/federal-trade-commission-announces-final-rule-banning-fake-reviews-testimonials" target="_blank" rel="noopener">https://www.ftc.gov/news-events/news/press-releases/2024/08/federal-trade-commission-announces-final-rule-banning-fake-reviews-testimonials</a>
+- FTC rule Q&amp;A: <a href="https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers" target="_blank" rel="noopener">https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers</a>
+- eCFR 16 CFR 465: <a href="https://www.ecfr.gov/current/title-16/chapter-I/subchapter-D/part-465" target="_blank" rel="noopener">https://www.ecfr.gov/current/title-16/chapter-I/subchapter-D/part-465</a>
+- Tunisia Law 92-117 (Juridoc): <a href="https://www.juridoc.tn/document/loi-n--1992-117-du-7-decembre-1992-relative-a-la-protection-du-consommateur/26006?_locale=en" target="_blank" rel="noopener">https://www.juridoc.tn/document/loi-n--1992-117-du-7-decembre-1992-relative-a-la-protection-du-consommateur/26006?_locale=en</a></p>
+<p dir="auto">Tools / vendors
+- sync. labs lipsync models: <a href="https://sync.so/docs/models/lipsync" target="_blank" rel="noopener">https://sync.so/docs/models/lipsync</a> ; pricing <a href="https://sync.so/pricing" target="_blank" rel="noopener">https://sync.so/pricing</a>
+- Sync LipSync 3: <a href="https://wavespeed.ai/blog/posts/introducing-sync-lipsync-3-on-wavespeedai/" target="_blank" rel="noopener">https://wavespeed.ai/blog/posts/introducing-sync-lipsync-3-on-wavespeedai/</a>
+- Creatify Aurora: <a href="https://creatify.ai/introducing-aurora" target="_blank" rel="noopener">https://creatify.ai/introducing-aurora</a> ; best practices <a href="https://creatify.ai/blog/aurora-best-practices" target="_blank" rel="noopener">https://creatify.ai/blog/aurora-best-practices</a>
+- Captions Mirage: <a href="https://captions.ai/blog/mirage-worlds-first-foundation-model-for-ugc-video" target="_blank" rel="noopener">https://captions.ai/blog/mirage-worlds-first-foundation-model-for-ugc-video</a>
+- HeyGen Avatar IV: <a href="https://www.heygen.com/avatars/avatar-iv" target="_blank" rel="noopener">https://www.heygen.com/avatars/avatar-iv</a> ; review <a href="https://diyai.io/ai-tools/video-generation/reviews/heygen-review/" target="_blank" rel="noopener">https://diyai.io/ai-tools/video-generation/reviews/heygen-review/</a>
+- Arcads languages: <a href="https://intercom.help/arcads/en/articles/13250377-what-languages-are-supported-by-arcads" target="_blank" rel="noopener">https://intercom.help/arcads/en/articles/13250377-what-languages-are-supported-by-arcads</a>
+- Kling Avatar 2.0: <a href="https://www.therundown.ai/tools/kling-avatar-2-0" target="_blank" rel="noopener">https://www.therundown.ai/tools/kling-avatar-2-0</a>
+- OmniHuman 1.5: <a href="https://wavespeed.ai/models/bytedance/avatar-omni-human-1.5" target="_blank" rel="noopener">https://wavespeed.ai/models/bytedance/avatar-omni-human-1.5</a>
+- Wan2.2-S2V: <a href="https://huggingface.co/Wan-AI/Wan2.2-S2V-14B" target="_blank" rel="noopener">https://huggingface.co/Wan-AI/Wan2.2-S2V-14B</a>
+- Higgsfield lipsync guide: <a href="https://higgsfield.ai/blog/make-ai-lipsync-videos" target="_blank" rel="noopener">https://higgsfield.ai/blog/make-ai-lipsync-videos</a>
+- Invideo lipsync model comparison (Aug 2026): <a href="https://invideo.io/blog/ai-lipsync-models/" target="_blank" rel="noopener">https://invideo.io/blog/ai-lipsync-models/</a></p>
+<p dir="auto">Practitioner / analytics
+- Maxfusion, lip-sync test of models for AI UGC (2026): <a href="https://maxfusion.ai/blog/ai-video-models-lip-sync-2026" target="_blank" rel="noopener">https://maxfusion.ai/blog/ai-video-models-lip-sync-2026</a>
+- Prompt Architects, dialogue and lip-sync by model: <a href="https://prompt-architects.com/blog/310-dialogue-and-lip-sync-in-ai-video" target="_blank" rel="noopener">https://prompt-architects.com/blog/310-dialogue-and-lip-sync-in-ai-video</a>
+- Veo non-English accent issue (Romanian) and redub workaround: <a href="https://github.com/ulmeanuadrian/kie-mcp/issues/1" target="_blank" rel="noopener">https://github.com/ulmeanuadrian/kie-mcp/issues/1</a>
+- Veo 3 prompting guide (selfie, dialogue colon trick): <a href="https://github.com/snubroot/Veo-3-Prompting-Guide" target="_blank" rel="noopener">https://github.com/snubroot/Veo-3-Prompting-Guide</a>
+- Atlas Cloud, Gemini Omni hands-on: <a href="https://www.atlascloud.ai/blog/tips/google-gemini-omni-testing-results" target="_blank" rel="noopener">https://www.atlascloud.ai/blog/tips/google-gemini-omni-testing-results</a>
+- VentureBeat, Gemini Omni launch: <a href="https://venturebeat.com/technology/google-unveils-gemini-omni-any-to-any-ai-model-what-enterprises-should-know" target="_blank" rel="noopener">https://venturebeat.com/technology/google-unveils-gemini-omni-any-to-any-ai-model-what-enterprises-should-know</a>
+- Motion Creative Benchmarks 2026, formats: <a href="https://motionapp.com/library/research/creative-benchmarks-2026/top-visual-formats" target="_blank" rel="noopener">https://motionapp.com/library/research/creative-benchmarks-2026/top-visual-formats</a>
+- Motion benchmarks overview: <a href="https://motionapp.com/library/research/creative-benchmarks-2026/" target="_blank" rel="noopener">https://motionapp.com/library/research/creative-benchmarks-2026/</a>
+- Foxwell on Motion benchmarks: <a href="https://www.foxwelldigital.com/blog/motion-creative-benchmarks-2026-8-key-takeaways" target="_blank" rel="noopener">https://www.foxwelldigital.com/blog/motion-creative-benchmarks-2026-8-key-takeaways</a>
+- inBeat, AI UGC vs real UGC: <a href="https://inbeat.agency/blog/ai-ugc-ads-vs-real-ugc" target="_blank" rel="noopener">https://inbeat.agency/blog/ai-ugc-ads-vs-real-ugc</a>
+- Finsi, UGC benchmarks 2026: <a href="https://www.finsi.ai/blog/ugc-ads-performance-benchmarks/" target="_blank" rel="noopener">https://www.finsi.ai/blog/ugc-ads-performance-benchmarks/</a>
+- Benly, creative benchmarks 2026: <a href="https://benly.ai/learn/ad-creative/ad-creative-benchmarks-2026" target="_blank" rel="noopener">https://benly.ai/learn/ad-creative/ad-creative-benchmarks-2026</a>
+- Digital Applied, AI creative benchmarks: <a href="https://www.digitalapplied.com/blog/ai-ad-creative-benchmark-2026-ctr-roas-data" target="_blank" rel="noopener">https://www.digitalapplied.com/blog/ai-ad-creative-benchmark-2026-ctr-roas-data</a>
+- Pose, AI UGC vs creators: <a href="https://pose.ai/blog/ai-ugc-vs-real-creator-performance" target="_blank" rel="noopener">https://pose.ai/blog/ai-ugc-vs-real-creator-performance</a>
+- Z2A Digital, making AI UGC human: <a href="https://www.z2adigital.com/blog-content/make-ai-ugc-human" target="_blank" rel="noopener">https://www.z2adigital.com/blog-content/make-ai-ugc-human</a>
+- Foreplay, 10 ad formats: <a href="https://www.foreplay.co/post/savanah-sanchez-ad-formats" target="_blank" rel="noopener">https://www.foreplay.co/post/savanah-sanchez-ad-formats</a>
+- The Performers, founder ad playbook: <a href="https://www.blog.theperformers.io/p/the-founder-ad-examples-formats-that-convert" target="_blank" rel="noopener">https://www.blog.theperformers.io/p/the-founder-ad-examples-formats-that-convert</a>
+- Influee, podcast-style ads: <a href="https://influee.co/landing/podcast-style-ads" target="_blank" rel="noopener">https://influee.co/landing/podcast-style-ads</a>
+- NoGood, man-on-the-street interviews: <a href="https://nogood.io/blog/man-on-the-street-interviews/" target="_blank" rel="noopener">https://nogood.io/blog/man-on-the-street-interviews/</a>
+- Veo 3 local-business ads: <a href="https://www.joeyoungblood.com/artificial-intelligence/local-businesses-are-creating-viral-videos-ads-with-googles-veo-3/" target="_blank" rel="noopener">https://www.joeyoungblood.com/artificial-intelligence/local-businesses-are-creating-viral-videos-ads-with-googles-veo-3/</a>
+- TikTok hooks / POV: <a href="https://zeely.ai/blog/hooks-for-tiktok-video-ads/" target="_blank" rel="noopener">https://zeely.ai/blog/hooks-for-tiktok-video-ads/</a> ; <a href="https://influee.co/blog/tiktok-ad-examples" target="_blank" rel="noopener">https://influee.co/blog/tiktok-ad-examples</a>
+- Spark Ads data: <a href="https://www.adsmurai.com/en/articles/tiktok-spark-ads" target="_blank" rel="noopener">https://www.adsmurai.com/en/articles/tiktok-spark-ads</a> ; <a href="https://reugc.com/blog/tiktok-spark-ads" target="_blank" rel="noopener">https://reugc.com/blog/tiktok-spark-ads</a>
+- Solar ads: <a href="https://leadsync.me/blog/solar-facebook-ads/" target="_blank" rel="noopener">https://leadsync.me/blog/solar-facebook-ads/</a> ; <a href="https://www.webtonic.io/blog/solar-energy-ad-creative-statistics" target="_blank" rel="noopener">https://www.webtonic.io/blog/solar-energy-ad-creative-statistics</a></p>
+<p dir="auto">Secondary policy summaries (verify against official pages)
+- <a href="https://www.cinerads.com/blog/ai-ugc-facebook-ad-policy" target="_blank" rel="noopener">https://www.cinerads.com/blog/ai-ugc-facebook-ad-policy</a>
+- <a href="https://www.cinerads.com/blog/tiktok-ai-content-policy" target="_blank" rel="noopener">https://www.cinerads.com/blog/tiktok-ai-content-policy</a>
+- <a href="https://ugcvids.ai/blog/tiktok-ai-content-disclosure-rules-2026" target="_blank" rel="noopener">https://ugcvids.ai/blog/tiktok-ai-content-disclosure-rules-2026</a>
+- <a href="https://coinis.com/blog/meta-ai-content-labeling-facebook-instagram-ads-2026" target="_blank" rel="noopener">https://coinis.com/blog/meta-ai-content-labeling-facebook-instagram-ads-2026</a></p>
+<p dir="auto">Tunisia context
+- DataReportal Digital 2026 Tunisia: <a href="https://datareportal.com/reports/digital-2026-tunisia" target="_blank" rel="noopener">https://datareportal.com/reports/digital-2026-tunisia</a>
+- NapoleonCat Tunisia (Jul 2026): <a href="https://stats.napoleoncat.com/social-media-users-in-tunisia/" target="_blank" rel="noopener">https://stats.napoleoncat.com/social-media-users-in-tunisia/</a>
+- PROSOL Elec subsidies: <a href="https://www.stes.tn/subventions-photovoltaique-tunisie-prosol-anme/" target="_blank" rel="noopener">https://www.stes.tn/subventions-photovoltaique-tunisie-prosol-anme/</a> ; <a href="https://tunisie-electricite.com/steg/solaire" target="_blank" rel="noopener">https://tunisie-electricite.com/steg/solaire</a>
+- Tunisian influencer marketing (Derja/French): <a href="https://dergipark.org.tr/en/pub/tujomr/article/1731207" target="_blank" rel="noopener">https://dergipark.org.tr/en/pub/tujomr/article/1731207</a></p></main></body></html>

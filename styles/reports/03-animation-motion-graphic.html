@@ -1,0 +1,1165 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animation, motion &amp; graphic styles · Lead Up research</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#0B1426;color:#E8EDF7;font:16px/1.65 Montserrat,system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+a{color:#FFB800;word-break:break-word}h1{font-size:30px;line-height:1.2}h2{margin-top:44px;color:#fff;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}
+h3{margin-top:28px;color:#FFD466}code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:.9em}pre{background:#101C36;padding:14px;border-radius:12px;overflow-x:auto;font-size:13px}
+table{border-collapse:collapse;display:block;overflow-x:auto;font-size:13.5px;margin:14px 0}th,td{border:1px solid rgba(255,255,255,.14);padding:7px 9px;vertical-align:top}th{background:#15234A}
+blockquote{border-left:3px solid #FFB800;margin:0;padding:4px 14px;color:#AFC0E0}.top{position:sticky;top:0;background:rgba(11,20,38,.94);backdrop-filter:blur(8px);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px}
+[dir=auto]{unicode-bidi:plaintext}</style></head>
+<body><div class="top"><a href="../#reports">← Style engine</a> · Research report · Animation, motion &amp; graphic styles</div><main><h1 id="styles-03-animation-illustration-motion-design-and-graphic-ad-styles">Styles 03 · Animation, illustration, motion-design and graphic ad styles</h1>
+<p dir="auto">Research for Lead Up (September 2026). Scope: every animated, illustrated, motion-design or graphic look we could use
+for 9:16, 30-60 s Derja ads on Facebook, Instagram and TikTok, and how to make each one at 10/10 quality with <strong>our</strong>
+stack: Gemini TTS voice → timing spine → <strong>Nano Banana 2</strong> (<code>gemini-3.1-flash-image</code>, Vertex) → <strong>Gemini Omni /
+Veo 3.1</strong> (image-to-video) → <strong>Remotion</strong> (text, UI, graphics, captions) → ffmpeg.</p>
+<p dir="auto">Research only. Nothing was generated and nothing was paid for. Tags: <strong>[official]</strong> vendor docs, <strong>[study]</strong>
+peer-reviewed or panel research, <strong>[practitioner]</strong> studios, tutorials, trade press, <strong>[weak]</strong> marketing
+"statistics" pages with no traceable method, <strong>[ours]</strong> our own lessons (<code>ai-docs/03-lessons-learned.md</code>) or
+estimates, <strong>[bg]</strong> background knowledge not re-checked online in this session.</p>
+<hr />
+<h2 id="0-tldr">0. TL;DR</h2>
+<ol>
+<li dir="auto"><strong>The flatter and more graphic the style, the more of it must be Remotion code, not Omni/Veo.</strong> AI video is
+   strong at lit, dimensional, material looks (clay, 3D characters, low-poly, product CGI, painterly camera moves,
+   fluids). It is weak at flat vector, isometric, pixel art, line art and anything with text: it adds shading,
+   perspective, line "boil" and morphing. For those, NB2 makes <strong>layered assets</strong> and Remotion animates them as
+   cut-out puppets. Omni is kept for 1-3 "hero" moments per ad. [practitioner + ours]</li>
+<li dir="auto"><strong>Stepped timing is the cheapest "handmade" signal.</strong> Holding each image for 2 frames ("on twos" = 15 fps look on
+   our 30 fps timeline) or 3 frames (10 fps) turns smooth AI motion into stop-motion, paper, anime or hand-drawn
+   motion. Prompt words like "12 fps stop-motion" help, but the real fix is to step the clip in Remotion with
+   <code>&lt;Freeze&gt;</code>. [practitioner + ours]</li>
+<li dir="auto"><strong>Our installed Remotion (4.0.498) already has most style "finishes" in <code>@remotion/effects</code>:</strong> halftone,
+   scanlines, tv-signal-off, chromatic-aberration, pixelate, paper, burlap, speckle, roughen-edges, duotone, noise,
+   LUT, corner-pin, glow, outline, wave, liquid-contours and more (checked in the npm tarball for 4.0.498, 74 modules
+   in 4.0.529). One install gives the comic, VHS, glitch, paper and pixel finishes. <code>@remotion/gsap</code> only exists
+   from 4.0.517, so it needs an upgrade. [official, checked]</li>
+<li dir="auto"><strong>Style drift is fixed by a "style bible", not by longer prompts.</strong> NB2 has <strong>no style-reference slot</strong> (only
+   Nano Banana Pro takes 3 style refs; Veo 3.1 takes no style refs, only asset refs). So: one master style frame
+   (make it with Pro if needed), a palette card rendered from code, a character sheet, then every NB2 call reuses
+   the same verbatim style block plus 2-3 approved frames labelled "style reference only", then <strong>edit instead of
+   re-rolling</strong>, and grade everything through one LUT and one grain layer in Remotion. [official + practitioner]</li>
+<li dir="auto"><strong>For Tunisian identity, use Tunisian sources, not generic "Arabian" ones.</strong> Tunisian tiles (painted Qallaline
+   and Nabeul tiles) are not Moroccan cut <em>zellige</em>. Kairouan carpets (Zerbia medallions, Mergoum diamonds,
+   undyed Alloucha wool), Nabeul and Guellala pottery, studded Tunisian doors, Sidi Bou Said's lime-white and blue,
+   Kufic lettering and Amazigh signs give an ad a real place. Keep them as a <strong>system</strong> (a border, a transition wipe,
+   a palette, a pattern that assembles) and never as a costume. Never use sacred text as decoration. [practitioner +
+   study + bg]</li>
+<li dir="auto"><strong>Evidence on styles is thin; evidence on clarity is strong.</strong> No good study says "style X converts better". The
+   solid findings are about hooks in the first 3 s, captions for sound-off viewers, simple text animation (letter-by-letter
+   animation underperforms), brand early, and step-by-step drawing combined with a story (whiteboard research). Choose
+   a style for <strong>fit and distinctiveness</strong>, then A/B test hooks, not styles. [study + practitioner]</li>
+</ol>
+<hr />
+<h2 id="1-how-every-style-is-built-with-our-stack-the-general-method">1. How every style is built with our stack (the general method)</h2>
+<h3 id="11-who-does-what">1.1 Who does what</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Job in every style</th>
+<th>Never ask it to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nano Banana 2</strong></td>
+<td>Style bible, key frames, character sheets, <strong>layered cut-out assets on a flat chroma background</strong>, backgrounds and plates, textures (paper, grain, fabric), sprite sheets, 2K first frames for Omni</td>
+<td>Render words, numbers, prices, maps or logos (it garbles Arabic, copies reference text and moves captions) [ours]</td>
+</tr>
+<tr>
+<td><strong>Gemini Omni 1.1 Flash</strong> (720p, <code>global</code>)</td>
+<td>1-3 s hero moments: character acting, material/physics, camera moves through a lit scene, <strong>video-to-video restyle</strong> of a real clip (≤10 s input)</td>
+<td>Hold a flat, isometric or pixel style across big moves; render text; long takes (it inserts cuts around 1-1.5 s) [official + ours]</td>
+</tr>
+<tr>
+<td><strong>Veo 3.1</strong></td>
+<td>Fallback for the same jobs; up to 3 <strong>asset</strong> references (person, character, product)</td>
+<td>Style references (not supported on 3.1, only on Veo 2 exp) [official]</td>
+</tr>
+<tr>
+<td><strong>Remotion</strong></td>
+<td>All text and captions, kinetic type, UI and phone screens, charts, diagrams, vector and puppet animation, paths, isometric builds, 3D via <code>@remotion/three</code>, Lottie/Rive, stepping, effects, grade, grain</td>
+<td>Nothing is off limits; it is only slower to author</td>
+</tr>
+<tr>
+<td><strong>ffmpeg</strong></td>
+<td>Normalise, datamosh passes, final encode, loudness</td>
+<td>Style decisions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-the-style-bible-do-this-once-per-style-reuse-forever">1.2 The style bible (do this once per style, reuse forever)</h3>
+<ol>
+<li dir="auto"><strong>Master style frame</strong>: one 2K 9:16 frame that shows the style at its best (subject, palette, line, texture, light).
+   NB2 has no style-ref slot. For the first frame of a new style, <strong>Nano Banana Pro</strong> (<code>gemini-3-pro-image</code>, 3 style
+   reference slots, $0.134 per 2K) is worth the extra 3 cents. [official]</li>
+<li dir="auto"><strong>Palette card from code</strong>: render the 5-7 brand colours as a swatch PNG in Remotion (exact values). Pass it as a
+   reference and describe colours <strong>by name</strong> in prompts ("chalk-white (pure white, never green or yellow)", "deep
+   Sidi Bou Said blue"). Never put hex codes in Omni prompts: it writes them on screen. [ours]</li>
+<li dir="auto"><strong>Character sheet</strong> (front, 3/4, side, 3 expressions) on a flat background. NB2 keeps up to 4 characters and 10
+   objects per call (API doc numbers). [official]</li>
+<li dir="auto"><strong>Style block</strong>: a fixed paragraph pasted verbatim into every image prompt (templates per style below). Same words,
+   same order. Put it last so the shot description comes first.</li>
+<li dir="auto"><strong>Reference roles</strong>: label every reference in the prompt ("Image 1 = STYLE REFERENCE ONLY: copy the rendering, line
+   and palette, not the content. Image 2 = CHARACTER: keep face, hair, clothes. Never copy any word from a
+   reference."). [practitioner + ours]</li>
+<li dir="auto"><strong>Edit, don't re-roll</strong>: when a frame is 80 % right, send it back with one change. Re-rolling re-rolls the style.</li>
+<li dir="auto"><strong>Unify in post</strong>: one LUT (<code>@remotion/effects</code> lut), one grain or paper texture, one frame-step rate and the same
+   outline/shadow treatment on every shot. This hides small drifts between generations.</li>
+</ol>
+<h3 id="13-universal-style-block-skeleton-nb2">1.3 Universal style-block skeleton (NB2)</h3>
+<pre><code>[SHOT] &lt;what happens, who, where, framing: e.g. medium close-up, subject in lower third, room above for text&gt;
+[STYLE] &lt;medium&gt; . &lt;line: weight, colour, quality&gt; . &lt;shading: flat / 2-tone cel / soft clay&gt; . &lt;palette by name,
+max N colours&gt; . &lt;texture: paper grain / risograph dots / clay fingerprints&gt; . &lt;light: one key light from upper left,
+soft&gt; . &lt;camera: lens or projection&gt; .
+[RULES] Vertical 9:16. No text, no letters, no numbers, no logos, no watermark. Never copy any word from a reference.
+Clean flat &lt;colour&gt; background behind cut-out elements when asked. Match Image 1 rendering exactly.
+</code></pre>
+<h3 id="14-universal-omni-rules-for-stylised-shots-on-top-of-our-omni-rules">1.4 Universal Omni rules for stylised shots (on top of our Omni rules)</h3>
+<ul>
+<li dir="auto">First frame = the approved NB2 frame; motion-only prompt; no hex, no captions, no dialogue. [ours]</li>
+<li dir="auto">Name what must <strong>not</strong> change as positive statements: "the flat 2D look stays flat: same outlines, same flat
+  colours, no new shading, locked-off camera, no new objects". Omni does not take negative prompts. [official]</li>
+<li dir="auto">Small moves only. Big camera moves re-render the whole style and drift.</li>
+<li dir="auto">Keep 1-3 s from 3 takes. Step it (on twos) and grade it in Remotion like every other shot.</li>
+<li dir="auto">Omni can <strong>restyle a video</strong> ("make this video anime / watercolour / claymation"), and it keeps timing and layout.
+  This is the best route for rotoscope and painterly looks from real footage (input ≤10 s; some regions restrict
+  editing clips with recognisable people). [official]</li>
+</ul>
+<h3 id="15-remotion-building-blocks-used-below">1.5 Remotion building blocks used below</h3>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Tool (all at 4.0.498 unless noted)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stepped motion (on twos/threes)</td>
+<td><code>&lt;Freeze frame={Math.floor(f/2)*2}&gt;</code> around a clip or layer</td>
+</tr>
+<tr>
+<td>Hand-placed jitter</td>
+<td><code>random('seed-'+Math.floor(f/2))</code> from <code>remotion</code> for ±2 px, ±0.6° per hold</td>
+</tr>
+<tr>
+<td>Line drawing</td>
+<td><code>@remotion/paths</code> <code>evolvePath()</code>, <code>getLength()</code>, <code>getPointAtLength()</code> (pen or hand follows the tip)</td>
+</tr>
+<tr>
+<td>Shape morph</td>
+<td><code>@remotion/paths</code> <code>interpolatePath()</code>; <code>flubber</code> for very different shapes</td>
+</tr>
+<tr>
+<td>Shapes</td>
+<td><code>@remotion/shapes</code> (rect, circle, star, triangle, pie)</td>
+</tr>
+<tr>
+<td>Organic wobble</td>
+<td><code>@remotion/noise</code> (<code>noise2D/3D</code>)</td>
+</tr>
+<tr>
+<td>Finishes</td>
+<td><code>@remotion/effects</code>: halftone, scanlines, tv-signal-off, chromatic-aberration, pixelate, pixel-dissolve, paper, burlap, speckle, roughen-edges, duotone, noise, white-noise, lut, glow, outline, drop-shadow, corner-pin, wave, waves, liquid-contours, noise-displacement, light-trail, shine, zoom-blur, venetian-blinds, dot-grid, gridlines, emboss, thermal-vision</td>
+</tr>
+<tr>
+<td>After Effects work</td>
+<td><code>@remotion/lottie</code> (Bodymovin JSON); <code>@remotion/rive</code> (.riv)</td>
+</tr>
+<tr>
+<td>3D</td>
+<td><code>@remotion/three</code> (<code>&lt;ThreeCanvas&gt;</code>, drive by <code>useCurrentFrame()</code>, not R3F <code>useFrame</code>; render with <code>--gl=angle</code>)</td>
+</tr>
+<tr>
+<td>Skia / shaders</td>
+<td><code>@remotion/skia</code></td>
+</tr>
+<tr>
+<td>GSAP timelines</td>
+<td><code>@remotion/gsap</code> needs Remotion ≥4.0.517 (upgrade the whole set together)</td>
+</tr>
+<tr>
+<td>Animated emoji</td>
+<td><code>@remotion/animated-emoji</code></td>
+</tr>
+<tr>
+<td>Word timings</td>
+<td><code>@remotion/captions</code> + our spine</td>
+</tr>
+<tr>
+<td>Motion blur</td>
+<td><code>@remotion/motion-blur</code> (already installed)</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Rule from the Remotion charts guide: drive <strong>all</strong> animation from <code>useCurrentFrame()</code>. Third-party animation
+libraries running on their own clock flicker in renders. [official]</p>
+<hr />
+<h2 id="2-what-the-evidence-says-read-before-picking-a-style">2. What the evidence says (read before picking a style)</h2>
+<ul>
+<li dir="auto"><strong>Hook and sound-off.</strong> Meta's guidance: design for sound on and off, captions on everything, hook in the first
+  3 s. One report says ads with strong hooks in 3 s see "up to 89 % higher completion" (secondary source quoting a
+  Meta report; treat the number as indicative). [practitioner]</li>
+<li dir="auto"><strong>Text animation.</strong> A 2026 practitioner analysis of TikTok top ads: simple fade, pop or slide-in text performs;
+  <strong>letter-by-letter, 3D and elaborate kinetic type underperform</strong> because they slow reading. 5-8 words per card,
+  ~4 words/s reading speed, text 0.1-0.3 s before the voice, entrance 150-250 ms. [practitioner]</li>
+<li dir="auto"><strong>ABCD (Google/Kantar, 17,000+ campaigns).</strong> Ads that follow Attention, Branding, Connection, Direction showed
+  <strong>+30 % short-term sales likelihood</strong> and +17 % long-term brand contribution. The ABCD checklist includes brand in
+  the first 5 s, voiceover, supers, tight framing, fast pacing. [study, vendor-run]</li>
+<li dir="auto"><strong>Animation vs live action.</strong> Nielsen (TV, 2010): live action scored <strong>22 % higher brand recall</strong> than animation
+  only, but the gap was only 11 % for ages 13-35, and <strong>animation won by 28 %</strong> for food ingredients. Newer "animation
+  wins" numbers online have no traceable method. Takeaway: animation is fine for a young social audience and for
+  explaining something invisible (energy, savings, a process); real people and real work build trust. [study, old]</li>
+<li dir="auto"><strong>Whiteboard and progressive drawing.</strong> Controlled studies: progressive drawing improves retention, and it works
+  best <strong>combined with a story</strong>; the effect flips if you mismatch them (PMC 2023). The often-quoted "+15 %
+  retention" study by R. Wiseman was sponsored by VideoScribe. [study; sponsor noted]</li>
+<li dir="auto"><strong>Lo-fi beats polished on TikTok.</strong> TikTok Creative Center analyses keep finding native, phone-made creative
+  ahead of studio polish (~75 % of top conversion ads are phone-native, per a secondary analysis). For us this means:
+  polished animation should feel like it belongs in the feed (captions, speed, a face or voice), not like TV. [practitioner]</li>
+<li dir="auto"><strong>2026 taste.</strong> Every trend report (Envato, Videobolt, Genesis, GarageFarm, It's Nice That, School of Motion) says
+  the same: feeds are saturated with smooth AI visuals, so <strong>visible human craft</strong> (texture, imperfect lines, paper,
+  clay, collage, photocopy grain, hand lettering) stands out; taste is the differentiator. [practitioner]</li>
+<li dir="auto"><strong>Meme stats are weak.</strong> Claims like "meme ads get 19 % CTR" come from statistics pages with no method. Ignore. [weak]</li>
+</ul>
+<hr />
+<h2 id="3-the-styles">3. The styles</h2>
+<p dir="auto">Each entry: <strong>Look</strong> · <strong>Best for / evidence</strong> · <strong>Build route</strong> (NB2 → Omni/Veo → Remotion) · <strong>NB2 style block</strong> ·
+<strong>AI failure modes and fixes</strong> · <strong>Time</strong> (first build of the template / each later ad, for a 45 s ad, once VO and
+spine exist) [ours].</p>
+<p dir="auto">Cost reference [official + ours]: NB2 2K ≈ $0.10 per image; Omni 720p ≈ $1 per 10 s (≈ $0.40 per 4 s take).</p>
+<hr />
+<h3 id="31-kinetic-typography">3.1 Kinetic typography</h3>
+<p dir="auto"><strong>Look.</strong> Words are the picture. Big type in 1-3 colours, bold grotesk or display faces, fast cuts on syllables and
+beats, masks, scale punches, word swaps, underline sweeps. Timing: 4-12 frames per entrance, holds of 0.8-1.5 s.</p>
+<p dir="auto"><strong>Best for.</strong> Offers, prices, objections ("ما عندكش فلوس؟"), lists of benefits, hooks, sound-off viewing, cheap
+A/B tests of hooks (the hook text drives 30-50 % swings vs 5-15 % for design tweaks, per RocketShip). Weak for
+emotion unless paired with a face or a sound.</p>
+<p dir="auto"><strong>Build route.</strong> 100 % Remotion. NB2 only for background textures (paper, concrete, fabric) or one photo cut-out.
+No Omni.
+- Drive every word from the spine's word times; entrance 0.1-0.3 s before the word is spoken.
+- <strong>Arabic rules:</strong> animate <strong>by word or by line, never by letter</strong> (letters join; splitting breaks the shaping and
+  looks broken to any Arabic reader). For stretch effects use <strong>kashida</strong> (tatweel) growth between letters, not
+  letter-spacing. Measure RTL positions (our rule). Latin trade words stay Latin.
+- Moves that read well: pop (scale 0.85→1 with <code>spring</code>, damping ~12), mask wipe from the reading side (right for
+  Arabic), highlight bar behind a keyword, number counters for prices (digits on screen), 2-word stacking.
+- Fonts (Google Fonts, OFL): Arabic display: Lalezar, Rakkas, Marhey, Reem Kufi, <strong>Kufam</strong> (Morcos Key), Blaka,
+  Aref Ruqaa; Arabic text: Cairo, Tajawal, Readex Pro, Alexandria, El Messiri, Noto Kufi Arabic. Keep 2 faces max.
+- Keep the owner's thick black-outline captions separate from display type.</p>
+<p dir="auto"><strong>NB2 block (texture plate).</strong> <code>Macro photo of uncoated recycled paper, warm off-white, subtle fibres, even soft
+light, no shadows, no text. Vertical 9:16.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Too much motion kills reading; letter-by-letter Arabic; text in the bottom 280 px (Meta UI) or top
+150 px. Fix: one move per word group, safe zones, 5-8 words per card, 1.5 s minimum per line.</p>
+<p dir="auto"><strong>Time.</strong> Template 6-8 h; per ad 1.5-3 h. Cost ≈ $0.</p>
+<hr />
+<h3 id="32-flat-2d-vector-explainer">3.2 Flat 2D vector explainer</h3>
+<p dir="auto"><strong>Look.</strong> Flat fills, no or 2-tone shading, clean geometric shapes, consistent line (or no line), limited palette
+(4-6 colours), simple characters, pops and slides with overshoot, match cuts between shapes. 2026 version: flat plus
+<strong>grain/risograph texture</strong> and imperfect shapes. "Corporate Memphis" (bendy limbs, purple skin) is now read as
+soulless: avoid it.</p>
+<p dir="auto"><strong>Best for.</strong> Explaining a process (how net metering works, how a loan works, steps of an installation), SME
+services, B2B. Studios to study: Ordinary Folk (clear, minimal explainers for Google, Webflow, TED), Buck
+(style-agnostic; cel pass first to lock performance, then shape-layer clean-up), Giant Ant (narrative 2D),
+Oddfellows (design-led, strong typography).</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2: style frame, then <strong>each element as a separate asset</strong> (character body parts, props, backgrounds) on a
+   flat chroma background (pure magenta or pure green that the palette never uses). Key it out, or vectorise with
+   <code>vtracer</code> (colour) for crisp scaling.
+2. Remotion: cut-out puppet animation (pivot points on shoulder, elbow, head), <code>spring</code> pops, <code>@remotion/shapes</code>,
+   <code>interpolatePath</code> morphs, wipes; icons from LottieFiles via <code>@remotion/lottie</code> (check each file's licence).
+3. Omni only for a hero character moment, then restyle-check: step on twos and push through the same LUT.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Flat 2D vector illustration, clean geometric shapes, no outlines, flat fills with one darker shade for
+shadows, palette of 5 colours only: chalk-white, deep blue, sun yellow, olive green, charcoal. Subtle risograph grain.
+Friendly proportions (head 1/5 of body, normal skin tones). Orthographic front view, no perspective, no gradients,
+no 3D shading. Plain magenta background behind the subject.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> NB2 adds gradients and soft 3D shading ("flat" drifts to "soft 3D"). Omni adds perspective,
+shading and wobbling edges. Fix: say "no gradients, no 3D shading" as a positive rule ("flat fills only"), keep a
+master frame as reference, animate in code, not in Omni.</p>
+<p dir="auto"><strong>Time.</strong> Template 10-14 h (rigging kit); per ad 4-6 h. NB2 20-40 assets ≈ $2-4.</p>
+<hr />
+<h3 id="33-isometric-illustration-25d">3.3 Isometric illustration (2.5D)</h3>
+<p dir="auto"><strong>Look.</strong> Orthographic view at ~30° (true isometric) or 2:1 "game" dimetric; no vanishing point; miniature-world
+dioramas; clean faces with 3 tones (top light, left mid, right dark); build-up animations (tiles rise, objects pop
+in, flows travel along paths).</p>
+<p dir="auto"><strong>Best for.</strong> Systems and flows: <strong>a house cut-away with panels → inverter → battery → grid, energy flowing as dashed
+lines</strong>, a factory, a shop. Classic in SaaS/fintech (Dropbox, Slack onboarding). Very strong fit for installers.</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2 is good at isometric if you name the projection. Generate the base scene and each object separately (same
+   angle) on flat background.
+2. Remotion does all motion: objects drop in with <code>spring</code> (translateY −80 → 0 + scale), tiles cascade by distance
+   from centre, energy lines with <code>evolvePath</code> + moving <code>strokeDashoffset</code>, counters, labels in code. Camera = 2D
+   pan/zoom only (keeps the projection honest).
+3. Alternative: build the scene in <code>@remotion/three</code> with an <code>OrthographicCamera</code> rotated (45°, 35.264°) and simple
+   boxes: exact, infinitely editable, no drift.
+4. Omni: avoid. Camera moves add perspective. If used, "locked-off orthographic camera, no camera movement" for small
+   loops (water, a fan) and crop.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Isometric 3D illustration, true isometric orthographic projection at 30 degrees, no perspective, no
+vanishing point. Clean matte surfaces, 3 tones per face (lit top, mid left, dark right), soft ambient occlusion, no
+outlines. Palette: chalk-white walls, terracotta roof, deep blue solar panels, olive trees, sand ground. Miniature
+diorama on a plain light-grey background, generous empty space above for text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Mixed angles between assets; objects in slight perspective; NB2 drawing panel grids wrong (count
+of cells). Fix: generate from one scene and edit, re-use the same reference, draw panels and cables in code, check
+angles by overlaying a 30° grid (<code>@remotion/effects</code> gridlines).</p>
+<p dir="auto"><strong>Time.</strong> Template 10-12 h; per ad 3-5 h. ≈ $2-3.</p>
+<hr />
+<h3 id="34-3d-clay-claymation-current-house-look">3.4 3D clay / claymation (current house look)</h3>
+<p dir="auto"><strong>Look.</strong> Plasticine materials, rounded forms, fingerprints and tool marks, soft subsurface, single warm key light,
+miniature sets with felt/paper props, slight shallow depth of field, stepped motion (12 fps feel), small
+"boiling" between holds. Studios: Aardman, LAIKA (Wildwood: 230+ puppets), "stop-motion-inspired CGI" is a 2026
+trend.</p>
+<p dir="auto"><strong>Best for.</strong> Warm brand films, mascots, humour, family products. Distinctive in the feed; reads as craft.</p>
+<p dir="auto"><strong>Build route.</strong> NB2 key frames and character sheet → <strong>Omni is strong here</strong> (material, light and soft physics) →
+Remotion steps every clip <strong>on twos</strong> (<code>&lt;Freeze&gt;</code>), adds tiny jitter per hold, text in code with clay-coloured
+plates, one LUT and grain.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Handmade claymation miniature, plasticine characters with visible thumbprints, soft creases and
+slightly uneven hand-shaped features, matte clay (no gloss, no plastic sheen). Miniature set with felt, card and
+painted wood props. One warm key light from upper left, soft shadows, gentle shallow depth of field, 50 mm lens at
+eye level of the puppets. Palette: &lt;named colours&gt;. No text.</code>
+Omni motion line: <code>stop-motion puppet movement, small deliberate steps, the clay stays the same shape, locked-off
+camera</code> (then step it in code).</p>
+<p dir="auto"><strong>Failure modes.</strong> Too smooth (reads CG), glossy plastic, faces melting, over-lit sets with glow and bokeh (our v1
+tells). Fix: fingerprints, "matte clay", one key light; step on twos; cut before 2 s; re-mint frames from NB2 instead
+of chaining last frames.</p>
+<p dir="auto"><strong>Time.</strong> Template done; per ad 6-10 h. NB2 30 frames ≈ $3; Omni 30 shots × 3 takes ≈ $36.</p>
+<hr />
+<h3 id="35-stop-motion-paper-craft-cut-out">3.5 Stop-motion / paper-craft / cut-out</h3>
+<p dir="auto"><strong>Look.</strong> Layered cut paper with visible fibres, deckled or scissor edges, small drop shadows between layers,
+pop-up-book depth, objects moved by hand (tiny jitter), 8-12 fps. Variants: diorama (paper theatre), flat cut-out
+(Terry Gilliam / South Park lineage), craft materials (felt, cardboard, string).</p>
+<p dir="auto"><strong>Best for.</strong> Local, humble, trustworthy SMEs; seasonal campaigns (Ramadan, Aïd, rentrée); stories told step by step.
+Cheap to make feel "crafted".</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2: one master diorama frame, then <strong>each paper layer as a separate asset</strong> (sky, hills, house, sun, character
+   parts) on flat chroma. Paper texture plates.
+2. Remotion: layers in depth (parallax), every move stepped at 10-15 fps, per-hold jitter, <code>@remotion/effects</code>
+   <code>paper</code>/<code>burlap</code>/<code>roughen-edges</code>, drop shadows, pop-up hinges (rotateX from 90° to 0° with <code>spring</code>).
+3. Omni: one or two shots of a paper world with "stop-motion paper puppets, 12 fps", then step it anyway.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Handmade paper-craft diorama photographed in a studio: layered cut coloured cardstock with visible
+fibres and slightly rough scissor edges, small real shadows between layers (2-5 mm depth), a few pencil guide marks
+left visible. Soft daylight from a window at left. Palette: &lt;names&gt;. Macro 50 mm, shallow depth of field. No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> NB2 makes plastic-looking "paper"; edges too perfect; Omni morphs paper into cloth. Fix: say
+"cardstock", "scissor edges", "pencil marks"; keep most motion in code.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-10 h; per ad 4-6 h. ≈ $2-4.</p>
+<hr />
+<h3 id="36-mixed-media-collage-photo-cut-outs-doodles">3.6 Mixed-media collage (photo cut-outs + doodles)</h3>
+<p dir="auto"><strong>Look.</strong> Real photo cut-outs with white sticker borders, halftone or photocopy textures, torn paper, tape, marker
+doodles (arrows, circles, underlines), mismatched "pick and mix" letters, scanner grain. It's Nice That 2026 trends:
+"make me a copy" (photocopier grain), "visual index" (numbered cut-outs like specimens), "pick and mix" type.</p>
+<p dir="auto"><strong>Best for.</strong> Energetic social ads, before/after, lists ("3 أسباب…"), youth brands, retail promos. Reads as
+human-made and native to Instagram.</p>
+<p dir="auto"><strong>Build route.</strong> NB2: photoreal cut-out subjects (installer, panel, fatoura, house) <strong>with a white sticker border on
+flat background</strong>; torn-paper and tape assets. Remotion: stop-motion placement (on threes), doodles as SVG paths drawn
+with <code>evolvePath</code>, <code>@remotion/effects</code> halftone + speckle + duotone, marker-scribble reveals, ransom-note headline
+built in code from mixed fonts (never AI-lettered). Omni: short live shots inside a torn-paper window.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Photographic cut-out of &lt;subject&gt; for a paper collage: realistic photo, cut out with a clean 3 mm
+white paper border like a sticker, slight paper curl and soft shadow, on a plain flat grey background. Neutral
+daylight, true colours. No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> AI "collages" melt pieces into one image; fake handwriting. Fix: generate pieces separately, write
+text in code, keep doodles as vector paths.</p>
+<p dir="auto"><strong>Time.</strong> Template 6-8 h; per ad 3-4 h. ≈ $1-3.</p>
+<hr />
+<h3 id="37-hand-drawn-whiteboard-doodle">3.7 Hand-drawn / whiteboard / doodle</h3>
+<p dir="auto"><strong>Look.</strong> Black line on white (or chalk on dark), a pen or hand drawing each element, light colour fills, arrows and
+labels, "line boil" (lines shimmer slightly between frames). Variants: sketchnote, chalkboard, marker on kraft paper.</p>
+<p dir="auto"><strong>Best for.</strong> Explaining with a story (evidence: progressive drawing + narrative improves retention). Tariffs,
+savings maths, "how it works". Also fits InfoLab-style teaching.</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2: line-art frames ("single-weight black ink line, no fills"). Convert to strokes: <code>vtracer</code>/<code>potrace</code> give
+   <strong>outlines</strong>, not centre-lines; for a true "pen drawing" reveal use <code>autotrace --centerline</code>, or draw key paths by
+   hand in Figma, or reveal the raster with a mask that follows the stroke order.
+2. Remotion: <code>evolvePath</code> per stroke in drawing order, a hand/pen PNG placed at <code>getPointAtLength</code> of the stroke tip,
+   fills fade in after the line, labels typed in code. <strong>Line boil</strong>: SVG <code>feTurbulence</code> + <code>feDisplacementMap</code>
+   (scale 2-3) whose <code>seed</code> changes every 3 frames.
+3. Omni/Veo: not needed. Veo can do "whiteboard" but draws gibberish text and redraws lines. [practitioner]</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Clean whiteboard line drawing, single-weight black marker line (3 px at 1080 wide), no fills, no
+shading, no text, simple friendly shapes, generous white space, pure white background.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Varying line weight inside one drawing; AI text in drawings; drawing order that makes no sense.
+Fix: ask for one weight, erase text by edit, author stroke order in code.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-10 h (hand + path tools); per ad 3-5 h. ≈ $1-2.</p>
+<hr />
+<h3 id="38-anime-manga-style">3.8 Anime / manga style</h3>
+<p dir="auto"><strong>Look.</strong> Cel-shaded characters (flat base + one hard shadow tone), thin clean line, big expressive eyes, painted
+backgrounds (soft watercolour or gouache skies), speed lines, impact frames, smears, held poses with camera pans,
+animation on twos/threes, dramatic sun flares used sparingly. Manga variant: black and white with screentone.</p>
+<p dir="auto"><strong>Best for.</strong> Youth (15-30), gaming, education, telecom, food delivery. Strong scroll-stopper in Tunisia's young
+audience [bg].</p>
+<p dir="auto"><strong>Build route.</strong> NB2 key frames and character sheet (describe the look, <strong>do not write studio names</strong>) → Omni for
+short acting beats (1-2 s: hair and cloth in wind, a head turn, a smile) → Remotion: step on twos/threes, speed-line
+overlays, impact frames (1-2 frames of inverted black/white with <code>@remotion/effects</code> invert), camera shake, text and
+SFX lettering in code. Omni restyle "make this video anime" also works on a real clip.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Japanese TV anime key frame: clean thin dark-brown line art, cel shading with one hard shadow tone and
+one highlight, flat colours, hand-painted watercolour background with soft clouds, warm late-afternoon light, 35 mm
+anime camera framing, expressive face, natural Tunisian features and clothes. No text, no speech bubbles.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Face and line drift between shots; Omni adds soft 3D shading; a "generic AI anime" look (glossy
+skin, sparkles). Copyright: naming Ghibli or other studios invites the Disney/Universal v. Midjourney kind of
+risk and looks derivative. Fix: master frame + character sheet in every call, short shots, stepped timing, a
+paper-grain overlay, describe attributes only.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-12 h; per ad 6-8 h. ≈ $3 NB2 + $15-30 Omni.</p>
+<hr />
+<h3 id="39-comic-book-graphic-novel-panels-motion-comic">3.9 Comic book / graphic novel panels (motion comic)</h3>
+<p dir="auto"><strong>Look.</strong> Ink outlines, halftone dots, flat or limited colour, panels and gutters, speech balloons, SFX lettering,
+camera moves across panels, 2.5D parallax inside a panel. Variants: Franco-Belgian "ligne claire", US superhero,
+European graphic novel, Tunisian satirical comic (Lab619 collective, Willis from Tunis) [bg].</p>
+<p dir="auto"><strong>Best for.</strong> Before/after stories ("Si Mohamed and his 300 dinar bill"), testimonials, humour, series of ads with a
+recurring character.</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2 does sequential art well ("Keep the character consistent across all panels" is in Google's own examples).
+   Generate each panel <strong>without balloons or text</strong>, plus the character and background of key panels as separate
+   layers for parallax.
+2. Remotion: page layout and gutters in code, camera moving panel to panel, panels sliding in, 2.5D parallax (3-4
+   layers), <code>@remotion/effects</code> <strong>halftone</strong> on colour areas, balloons and Arabic lettering in code (hand-lettered
+   Arabic display fonts: Marhey, Lalezar, Aref Ruqaa).
+3. Omni: 1-2 "panel comes alive" moments, then halftone + step.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Comic book panel, European clear-line style: uniform black ink outlines, flat colours with halftone
+dot shading, no gradients, clean readable staging, &lt;framing&gt;. Characters: &lt;from sheet&gt;. Leave empty space at top for a
+speech balloon. No text, no balloons, no letters.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> NB2 inserts gibberish balloons; line weight changes panel to panel. Fix: "no balloons, no letters",
+reference the first approved panel, edit instead of re-roll.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-10 h; per ad 4-6 h. ≈ $2-4.</p>
+<hr />
+<h3 id="310-pixar-like-3d-character-animation-stylised-feature-film-3d">3.10 Pixar-like 3D character animation (stylised feature-film 3D)</h3>
+<p dir="auto"><strong>Look.</strong> Stylised proportions, soft subsurface skin, big readable expressions, physically based materials,
+cinematic lighting (key, fill, rim), shallow depth of field, strong acting and squash/stretch, 24 fps smooth.</p>
+<p dir="auto"><strong>Best for.</strong> Emotional stories with a character, mascots, family audience. Expensive-looking.</p>
+<p dir="auto"><strong>Build route.</strong> NB2 character sheet + key frames → <strong>Omni/Veo are strongest in this look</strong> (they were trained on lots
+of it) → Remotion: text, grade, cuts. Keep the narrator voice (no lip-sync in Derja; lip-sync to Derja audio is not
+reliable).</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Stylised 3D animated feature-film look: appealing rounded proportions, soft subsurface skin, detailed
+fabric, physically based materials, cinematic three-point lighting with a warm key from left, 35 mm lens, gentle depth
+of field. Tunisian characters and setting: &lt;details&gt;. No text.</code> Describe; <strong>never write "Pixar", "Disney" or a film
+title</strong> (legal risk, and it pulls in known characters).</p>
+<p dir="auto"><strong>Failure modes.</strong> Uncanny mouths, identity drift, "AI glow" (rim light and bokeh everywhere), too glossy. Fix:
+character refs every call, restrained light (our one-key-light rule), cut short, grade flat-ish.</p>
+<p dir="auto"><strong>Time.</strong> Template 6-8 h; per ad 6-10 h. ≈ $3 NB2 + $30-40 Omni.</p>
+<hr />
+<h3 id="311-low-poly-toy-like-3d">3.11 Low-poly / toy-like 3D</h3>
+<p dir="auto"><strong>Look.</strong> Low-poly: visible flat facets, flat shading per triangle, gradient sky, simple geometry. Toy-like: glossy or
+soft-touch vinyl, rounded edges, tilt-shift miniature world, bright primaries, playful bounce.</p>
+<p dir="auto"><strong>Best for.</strong> Maps and journeys, games, kids and family, "mini-city" explainers (a whole neighbourhood going solar).</p>
+<p dir="auto"><strong>Build route.</strong> Two good routes:
+- <strong>Code 3D</strong> in <code>@remotion/three</code>: <code>meshStandardMaterial flatShading</code>, low-poly primitives, orthographic or long lens,
+  everything animatable by frame, zero drift. Best for maps and systems.
+- <strong>NB2 → Omni</strong>: faceted or toy frames; Omni handles camera moves over a miniature well (tilt-shift). Facets tend to
+  smooth out on big deformations: animate the camera, not the objects.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Low-poly 3D scene, clearly visible flat triangular facets, flat shading per facet, no textures, soft
+gradient sky, palette of 6 colours: &lt;names&gt;, tilt-shift miniature photography, 85 mm long lens from high angle.
+No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Facets melt into smooth shapes in video; toys get fake logos. Fix: code 3D for anything that moves
+a lot; "no logos, no printed marks".</p>
+<p dir="auto"><strong>Time.</strong> Code route: template 12-16 h, per ad 3-5 h. AI route: per ad 5-7 h.</p>
+<hr />
+<h3 id="312-retro-vhs-90s-tv-y2k-synthwave">3.12 Retro: VHS, 90s TV, Y2K, synthwave</h3>
+<p dir="auto"><strong>Look.</strong>
+- <strong>VHS / 90s TV:</strong> 4:3 frame inside 9:16, soft chroma bleed, scanlines, tracking lines, head-switching noise at the
+  bottom, date stamp, overscan, warm saturated video colours, 90s TV graphics (bevelled logos, "مباشر" bug).
+- <strong>Y2K:</strong> chrome and liquid metal type, bubble shapes, iridescent gradients, frosted glass, early web UI ("Frutiger
+  Aero" is back), pixel icons.
+- <strong>Synthwave:</strong> neon magenta/cyan on dark purple, perspective grid floor, sunset with bars, chrome logo, VHS grain.</p>
+<p dir="auto"><strong>Best for.</strong> Nostalgia hooks for 25-45 year-olds ("remember 90s bills?"), youth brands, music, events. Nostalgia is
+a strong 2025-26 marketing theme (Y2K references in many Gen Z campaigns; analog texture as relief from
+over-optimised visuals). [practitioner]</p>
+<p dir="auto"><strong>Build route.</strong> NB2: 90s-looking scenes (a Tunisian living room in 1996, CRT TV), Y2K chrome objects (no text).
+Omni: short shots. <strong>Remotion does the look</strong>: <code>@remotion/effects</code> scanlines, chromatic-aberration, noise,
+tv-signal-off (for transitions), wave (tracking), a 4:3 matte; synthwave grid and sun in <code>@remotion/three</code> or CSS 3D;
+chrome type with gradients + <code>emboss</code>/<code>shine</code> in code.</p>
+<p dir="auto"><strong>NB2 block (VHS scene).</strong> <code>Photo from a 1990s Tunisian home video: CRT television, patterned sofa, warm tungsten
+light, slightly soft focus, faded saturated colours, 4:3 framing composition. No text, no date stamp.</code> (Add the date
+stamp in code so the numbers are right.)</p>
+<p dir="auto"><strong>Failure modes.</strong> Fake date stamps and TV logos with garbled text; overdone effects that hurt readability. Fix: all
+overlays in code; keep captions clean on top of the effect (effects on the picture layer only).</p>
+<p dir="auto"><strong>Time.</strong> Template 6-8 h; per ad 3-4 h.</p>
+<hr />
+<h3 id="313-pixel-art-8-bit-game">3.13 Pixel art / 8-bit game</h3>
+<p dir="auto"><strong>Look.</strong> Low resolution (e.g. 180×320 for 9:16, scaled ×6), hard pixel edges, limited palette (16-32 colours),
+dithering, sprite animation at 6-12 fps, game UI (health bars, coins, "LEVEL UP"), chiptune SFX.</p>
+<p dir="auto"><strong>Best for.</strong> Gamification ("level up your bill"), youth, tech, telecom. Very distinctive in feeds.</p>
+<p dir="auto"><strong>Build route.</strong>
+1. NB2: scenes and <strong>sprite sheets</strong> (4-8 frames in a row, same size). AI pixel art has fake pixels (mixed sizes,
+   blurry edges). Fix with <strong>proper-pixel-art</strong> (<code>ppa input.png -c 16 -s 6</code>): detects the grid, locks one palette.
+   For sheets, quantise the <strong>whole sheet with one palette before slicing</strong>, or frames flicker.
+2. Remotion: CSS <code>image-rendering: pixelated</code>, sprite frame index = <code>Math.floor(frame / 4) % n</code>, movement snapped to
+   the pixel grid (round positions to multiples of the scale), UI and text in code. Pixel fonts: "Press Start 2P"
+   (Latin), <strong>Handjet</strong> (modular pixel font with Arabic support). <code>@remotion/effects</code> pixelate/pixel-dissolve for
+   transitions.
+3. Omni: avoid (it cannot hold a pixel grid). If you must, run the clip through <code>ppa</code> video mode (fixed grid and
+   palette over sampled frames) and step it.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>True pixel art, 16-colour limited palette, every pixel a clear square on a strict grid, 1-pixel dark
+outlines, no anti-aliasing, no blur, no gradients except ordered dithering, side-view game scene, flat background.
+No text, no UI.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Off-grid pixels, 200 colours, frame-to-frame palette flicker, text. Fix: <code>ppa</code> + shared palette +
+code UI.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-10 h (sprite pipeline); per ad 4-5 h. ≈ $1-2.</p>
+<hr />
+<h3 id="314-glitch-datamosh-brutalist">3.14 Glitch / datamosh / brutalist</h3>
+<p dir="auto"><strong>Look.</strong>
+- <strong>Glitch:</strong> RGB split, block displacement, tearing, scanline jumps, pixel sorting, 2-6 frame bursts on beats.
+- <strong>Datamosh:</strong> one shot "melts" into the next because keyframes were removed and motion vectors smear the old image.
+- <strong>Brutalist:</strong> raw grids, huge condensed type, black/white + one acid colour, visible structure (rules, numbers,
+  crop marks), hard cuts, no easing. 2026 relatives: "blotch" logos, "pick and mix" type, micrographics.</p>
+<p dir="auto"><strong>Best for.</strong> Tech, telecom, fashion, music, "breaking news"-style offers, transitions. Use as <strong>punctuation</strong> (a
+transition, a hook), rarely for a whole ad.</p>
+<p dir="auto"><strong>Build route.</strong> All code. <code>@remotion/effects</code>: chromatic-aberration, tear, tv-signal-off, pixelate, white-noise,
+scanlines, duotone, venetian-blinds, zigzag. Datamosh: render the A→B transition, then run a datamosh script
+(<code>tiberiuiancu/datamoshing</code>, FFglitch, or ffmpeg <code>select</code> of P-frames on an MPEG-4 AVI with a huge GOP) and bring the
+result back as a clip. Brutalist layout = CSS grid + big type in code.</p>
+<p dir="auto"><strong>NB2 block.</strong> Not needed (use existing shots). For brutalist textures: <code>Black and white photocopy texture, toner
+specks, high contrast, no text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Unreadable text; <strong>photosensitive risk</strong> (keep flashes under 3 per second, WCAG 2.3.1); glitch on
+captions. Fix: glitch the picture layer, keep captions stable; bursts ≤6 frames.</p>
+<p dir="auto"><strong>Time.</strong> Template 4-6 h; per ad 1-2 h (as transitions).</p>
+<hr />
+<h3 id="315-infographic-and-data-viz-animation">3.15 Infographic and data-viz animation</h3>
+<p dir="auto"><strong>Look.</strong> Clean charts (bars, lines, donuts), counters, icons, labels, one highlight colour, grids, callouts; bars
+grow with staggered springs, numbers count, lines draw. 2026 "micrographics": tiny technical labels as decoration.</p>
+<p dir="auto"><strong>Best for.</strong> Savings and payback ("فاتورة 300 د → 40 د"), comparisons, proof. Numbers make a claim concrete.</p>
+<p dir="auto"><strong>Build route.</strong> 100 % Remotion (SVG + D3 layouts; Remotion's charts guide: bars with staggered <code>spring</code>, pies with
+<code>strokeDashoffset</code> from 12 o'clock, bar races by interpolating snapshots). NB2 only for icons and illustrated
+backgrounds; <strong>never let NB2 draw numbers or charts</strong> (wrong values, garbled digits). Maps of Tunisia from Natural
+Earth in code (our rule).</p>
+<p dir="auto"><strong>NB2 block (icon set).</strong> <code>Set of 6 flat icons on a 3x2 grid: solar panel, house, sun, battery, bill, wrench. Same
+2.5 px rounded line, same corner radius, 2 colours: deep blue and sun yellow, plain white background, generous
+spacing. No text.</code> Then cut the grid in code.</p>
+<p dir="auto"><strong>Failure modes.</strong> Misleading scales (Meta and consumer-law risk), too many numbers per card. Fix: one number per
+beat, axis honest, source line in small text.</p>
+<p dir="auto"><strong>Time.</strong> Template 6-8 h; per ad 1.5-3 h. ≈ $0-1.</p>
+<hr />
+<h3 id="316-ui-app-screen-motion-product-walkthrough-phone-mockups">3.16 UI / app-screen motion (product walkthrough, phone mockups)</h3>
+<p dir="auto"><strong>Look.</strong> A phone (flat or 3D) showing screens: taps (ripple), scrolls, notifications, chat bubbles, form fills,
+cursor paths; zoom-ins on a detail; screens sliding in 3D.</p>
+<p dir="auto"><strong>Best for.</strong> Direct response: "send us your bill on WhatsApp", booking flows, apps, quotes, dashboards (monitoring
+app of the solar system). Practitioner advice: open with the product, not a logo; plain transitions.</p>
+<p dir="auto"><strong>Build route.</strong>
+- Screens are <strong>React components</strong> (exact Arabic text, RTL, prices), animated frame by frame. Never AI-generated UI.
+- Phone in hand: NB2 photo of a hand holding a phone with a <strong>plain green screen</strong>, then place the React screen with
+  <code>@remotion/effects</code> <strong>corner-pin</strong>. For a moving hand, Omni clip + corner-pin keyed by hand-placed points every
+  few frames (short shots only).
+- Chat UI: generic chat bubbles in your colours. Do not recreate WhatsApp's UI and logo pixel-for-pixel; use the
+  official "Send message" CTA of the ad format. Do not imitate a real STEG bill layout or logo: use a generic
+  "fatoura" design (impersonation risk).</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Close-up photo of a Tunisian man's hand holding a black smartphone upright, screen is solid flat
+green (chroma key), no reflections on the screen, soft daylight, blurred warm living-room background, 50 mm lens.
+No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Screen glare breaks keying; fake UI text. Fix: "no reflections on the screen", all UI in code.</p>
+<p dir="auto"><strong>Time.</strong> Template 8-10 h (UI kit); per ad 2-3 h.</p>
+<hr />
+<h3 id="317-3d-product-render-cgi-apple-style-hero">3.17 3D product render / CGI "Apple-style" hero</h3>
+<p dir="auto"><strong>Look.</strong> Product alone on a dark or seamless gradient void, single soft key + rim, slow orbit or macro dolly,
+reflections on glass, exploded views, big clean type reveals in white.</p>
+<p dir="auto"><strong>Best for.</strong> Premium equipment (panels, inverters, batteries, heat pumps), launch ads, "hero" first 3 s.</p>
+<p dir="auto"><strong>Build route.</strong>
+- <strong>AI route:</strong> NB2 product kit (same product from 3-4 angles, ideally from real product photos as references) →
+  Omni/Veo for orbit/dolly (they do camera moves around a single object well; "Always image-to-video, never
+  text-to-video" and "use only the best seconds" is the practitioner rule) → Remotion for type and specs.
+- <strong>Code route:</strong> a real GLB model (manufacturer CAD or a simple model) in <code>@remotion/three</code>: exact, reusable, no logo
+  morphing. Worth it for products we show in many ads.
+- Logos on products morph in AI video: keep them small, turned away, or composite the real logo in code.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Studio product render of &lt;product&gt; on a seamless charcoal-to-black gradient, one large soft key light
+from upper left, thin cool rim light from behind right, crisp reflections on glass, true materials (anodised
+aluminium frame, tempered glass), 100 mm lens, product occupies the middle third, empty space above. No text, no
+logos.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Changing cell count on panels, logo gibberish, melting edges in orbits. Fix: code 3D or very short
+moves; re-mint frames per shot.</p>
+<p dir="auto"><strong>Time.</strong> AI route per ad 3-5 h; code route template 10-16 h, per ad 2-3 h.</p>
+<hr />
+<h3 id="318-liquid-abstract-shape-motion">3.18 Liquid / abstract shape motion</h3>
+<p dir="auto"><strong>Look.</strong> Blobs that merge (metaballs), morphing shapes, flowing gradients, ink in water, marbling, "liquid glass"
+(Apple 2025), soft-body "oddly satisfying" simulations, shapes that squash and stretch on beats.</p>
+<p dir="auto"><strong>Best for.</strong> Transitions, brand identity moments, beauty and wellness, backgrounds behind type.</p>
+<p dir="auto"><strong>Build route.</strong> Mostly code: SVG goo filter (<code>feGaussianBlur</code> stdDeviation 10-14 + <code>feColorMatrix</code> alpha
+<code>0 0 0 20 -8</code>) for metaballs; <code>@remotion/noise</code> for organic outlines; <code>interpolatePath</code>/flubber for morphs;
+<code>@remotion/effects</code> liquid-contours, noise-displacement, wave, waves, glow. NB2: gradient and marbling textures.
+Omni/Veo: <strong>good at real fluids</strong> (ink macro, water, oil and paint) as b-roll or transitions.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Macro photograph of blue and yellow ink blooming in clear water on a white background, soft
+diffused light, high detail, no text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Looks like a screensaver if it carries no message; banding in gradients (add noise). Fix: tie the
+shape to the idea (sun → drop → coin), add fine grain.</p>
+<p dir="auto"><strong>Time.</strong> Template 4-6 h; per ad 1-2 h.</p>
+<hr />
+<h3 id="319-meme-formats-and-templates">3.19 Meme formats and templates</h3>
+<p dir="auto"><strong>Look.</strong> Native internet formats: top-and-bottom captions, "POV:", "Nobody: / Me:", two-panel reactions,
+expectation vs reality, zoom-punch on a face, reaction cut-ins, Notes-app screenshots, green-screen "creator" frames,
+fake-tweet cards, trending audio.</p>
+<p dir="auto"><strong>Best for.</strong> TikTok and Reels reach, humour, objection handling ("me when the STEG bill arrives"), retargeting.
+Tunisian meme culture is strong and very local [bg]. Performance "statistics" online are weak; test it.</p>
+<p dir="auto"><strong>Build route.</strong> Build <strong>our own</strong> meme templates in Remotion (panel layouts, zoom-punch, shake, freeze-frame with
+record-scratch SFX, "POV" header). Faces: NB2 original characters (e.g. the recurring clay or comic character) or a
+real team member. <strong>Never use meme stills from films, TV or other people</strong> (copyright and personality rights). Keep
+Derja humour lint-checked.</p>
+<p dir="auto"><strong>NB2 block.</strong> <code>Reaction shot, &lt;original character&gt; with an exaggerated shocked face, holding a paper bill, flat
+bright background, frontal medium close-up, same character as Image 1. No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Stale formats; cringe; looking like an ad. Fix: speed (post within the trend's life), one joke per
+ad, product appears as the punchline.</p>
+<p dir="auto"><strong>Time.</strong> Template 4-6 h; per ad 1-2 h.</p>
+<hr />
+<h3 id="320-rotoscope-painterly-watercolour">3.20 Rotoscope / painterly / watercolour</h3>
+<p dir="auto"><strong>Look.</strong> Real motion traced as drawing (A Scanner Darkly, "Take On Me"), or live footage turned into painted frames
+(oil, gouache, watercolour with paper bleed), painterly 3D (The Wild Robot look), brush strokes that stay stable.</p>
+<p dir="auto"><strong>Best for.</strong> Emotional testimonials, premium brand films, disguising low-quality phone footage, "real people but
+illustrated" (privacy-friendly).</p>
+<p dir="auto"><strong>Build route.</strong>
+- <strong>Omni video-to-video</strong>: film a real 5-10 s clip (installer on a roof, family at home, our own footage), then "make
+  this video a watercolour painting on textured paper, keep the same motion and framing". Keeps real timing and
+  acting. [official]
+- <strong>EbSynth</strong> (non-generative, texture synthesis): paint 1-3 keyframes (NB2 edit of a video frame into watercolour),
+  EbSynth propagates to the whole clip with high temporal stability; add keyframes when the subject turns a lot.
+  [practitioner]
+- Remotion: paper texture overlay (<code>paper</code>), stepped at 12-15 fps, soft vignette.</p>
+<p dir="auto"><strong>NB2 block (keyframe edit).</strong> <code>Repaint this exact frame as a loose watercolour painting on cold-press paper: soft
+wet-in-wet washes, visible paper texture, pencil under-drawing lines, keep every shape, pose and position exactly the
+same, same framing. No text.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Brush strokes "swim" and flicker frame to frame; faces change. Fix: EbSynth for stability, step on
+twos (hides swim), a static paper texture layer on top (a fixed texture reads as "one painting").</p>
+<p dir="auto"><strong>Time.</strong> Per ad 5-8 h (includes shooting). ≈ $5-15 Omni.</p>
+<hr />
+<h3 id="321-north-african-arabic-inspired-graphic-styles-tunisian">3.21 North-African / Arabic-inspired graphic styles (Tunisian)</h3>
+<p dir="auto">This is the style that can make Lead Up recognisably Tunisian. It is a <strong>layer system</strong> that combines with other
+styles (flat, paper, clay, isometric, kinetic type), not a style on its own.</p>
+<h4 id="a-source-material-use-real-tunisian-references">A. Source material (use real Tunisian references)</h4>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What it gives us</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sidi Bou Said</strong></td>
+<td>Lime-white + one deep blue; arched doors, mashrabiya window grilles, bougainvillea pink as accent</td>
+<td>White walls came from a 1930s public-health campaign; the blue was popularised by Baron Rodolphe d'Erlange (settled 1907); protected by decree since 1915. Blue doors in <strong>Djerba</strong> mean welcome and peace (Ibadi tradition). A palette with history, not a travel cliché if used with restraint.</td>
+</tr>
+<tr>
+<td><strong>Tunisian doors</strong></td>
+<td>Studded nail patterns (clous) forming arches, stars, fish, khomsa; blue, yellow, green doors</td>
+<td>Studs = perfect dot-grid animations: dots appear one by one to draw a motif.</td>
+</tr>
+<tr>
+<td><strong>Tunisian tiles ("zliz")</strong></td>
+<td>Painted ceramic tiles: Qallaline (Tunis, 17th-19th c.; yellow, green, blue, manganese), later Nabeul tiles with floral and geometric repeats [bg]</td>
+<td><strong>Not</strong> Moroccan cut-mosaic zellige (8- and 16-point star mosaics). Don't label Moroccan patterns as Tunisian.</td>
+</tr>
+<tr>
+<td><strong>Kairouan carpets</strong></td>
+<td>Zerbia (knotted, central medallion, arabesque borders, parallel stripe frames); Mergoum (kilim with diamond/lozenge patterns); Alloucha (undyed natural wool: cream, brown, grey)</td>
+<td>Borders and stripe frames are ideal "frame" graphics for 9:16. Alloucha palette = calm premium neutrals.</td>
+</tr>
+<tr>
+<td><strong>Pottery</strong></td>
+<td>Nabeul (blue/green/yellow on white, fish, floral, geometric); Guellala/Djerba (earth tones, Berber signs); Sejnane (handmade Amazigh pottery, UNESCO-listed, red-brown geometric painting) [bg for Sejnane]</td>
+<td>Brush-stroke motifs → hand-drawn line animation.</td>
+</tr>
+<tr>
+<td><strong>Amazigh signs</strong></td>
+<td>Yaz ⵣ (free human), lozenges (protection, home), triangles, crosses, dotted "eye" patterns; used in tattoos, carpets, jewellery, pottery</td>
+<td>Meaningful symbols: use for identity, not as random filler. Moroccan artist Hamza Khafif (TaSh36) shows a modern, political use of Amazigh motifs.</td>
+</tr>
+<tr>
+<td><strong>Arabic script</strong></td>
+<td>Kufic (square/geometric, strong in Kairouan's history), Maghrebi script, modern display Arabic</td>
+<td>Modern bilingual typography: Morcos Key (Kufam typeface, bilingual identities), Studio Safar (Beirut), TYPE01 (Arabic-only branding platform), Khatt Foundation. Calligraffiti: <strong>eL Seed</strong> (French-Tunisian; Jara mosque minaret in Gabès 2012; Louis Vuitton foulard 2013; Cairo "Perception").</td>
+</tr>
+<tr>
+<td><strong>Roman mosaics</strong></td>
+<td>Tunisia's Bardo holds one of the largest Roman mosaic collections [bg]</td>
+<td>Tesserae = pixel-like grids; a mosaic "assembling" is a great transition.</td>
+</tr>
+<tr>
+<td><strong>Daily vernacular</strong></td>
+<td>Hand-painted shop signs, yellow taxis, louage stripes, fouta stripes, chechia red, jasmine, harissa red, olive green</td>
+<td>The most modern and least clichéd source. Street typography is a strong local style.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="b-how-to-use-it-tastefully-rules">B. How to use it tastefully (rules)</h4>
+<ol>
+<li dir="auto"><strong>One motif family per ad.</strong> Blue/white + door studs, <em>or</em> Kairouan border + Alloucha neutrals, <em>or</em> Nabeul
+   pottery brushwork. Mixing all reads as a souvenir shop.</li>
+<li dir="auto"><strong>Structure, not decoration.</strong> A pattern should do a job: frame the 9:16 (carpet border), transition (tile grid
+   flips, mosaic assembles), reveal (door opens onto the offer), count (studs light up as kWh saved).</li>
+<li dir="auto"><strong>Modern type first.</strong> Contemporary Arabic display faces + clean Latin; calligraphy only as a hero word, drawn in
+   code or by a calligrapher, never AI-lettered (AI Arabic is garbled).</li>
+<li dir="auto"><strong>No sacred text as decoration.</strong> No Qur'anic verses, no "Allah" or "Bismillah" as ornament, no mosque imagery to
+   sell products. Kairouan pottery's calligraphy is often religious: take the geometry, not the words.</li>
+<li dir="auto"><strong>Avoid self-orientalism</strong> (research term for Arab designers reproducing the Western "exotic" gaze): no camels,
+   deserts, lanterns, "1001 nights" fake-Arabic Latin fonts, belly dance, generic Gulf gold. Show today's Tunisia:
+   rooftops, cafés, STEG meters, markets, families, young technicians.</li>
+<li dir="auto"><strong>Regional accuracy.</strong> Tunisian ≠ Moroccan ≠ Gulf. Check motifs with a Tunisian eye before publishing.</li>
+<li dir="auto"><strong>Build patterns in code.</strong> Geometric patterns are maths: generate them in SVG (open-source Islamic geometry
+   generators: TheBeachLab/islamic-geometry, Girih generators, INKJET 500 SVG patterns including zellige stars) and
+   animate them (draw the construction lines first with <code>evolvePath</code>, then fill: the "compass and ruler" reveal is
+   beautiful and truthful to how the patterns are made).</li>
+</ol>
+<h4 id="c-build-route">C. Build route</h4>
+<ul>
+<li dir="auto">NB2: textures and photographed materials (painted tile close-ups, carpet weave macro, whitewashed wall, studded door),
+  scenes in real Tunisian places. Ask for "painted ceramic tile in the Nabeul tradition", not "Moroccan".</li>
+<li dir="auto">Remotion: all patterns, borders, studs, calligraphic hero words (SVG paths drawn with <code>evolvePath</code>), tile-flip and
+  mosaic-assemble transitions (grid of divs with staggered <code>rotateY</code> springs), palette.</li>
+<li dir="auto">Omni: real-world shots (a blue door opening, sunlight moving on a white wall, a Sidi Bou Said rooftop with panels).</li>
+</ul>
+<p dir="auto"><strong>NB2 block.</strong> <code>Close-up photo of a hand-painted Tunisian ceramic tile panel in the Nabeul tradition: cobalt blue,
+olive green and saffron yellow brushwork on a white glaze, slightly irregular hand-painted lines, small glaze
+crackles, soft daylight, straight-on, flat. No text, no Arabic letters.</code></p>
+<p dir="auto"><strong>Failure modes.</strong> Moroccan zellige appears when you say "zellige"; fake Arabic letters appear inside patterns;
+motifs from the Gulf or Turkey. Fix: name Tunisian sources and colours, "no letters", patterns in code.</p>
+<p dir="auto"><strong>Time.</strong> Pattern kit template 10-14 h (reusable forever); per ad +1-2 h on top of the base style.</p>
+<p dir="auto"><strong>Local market note.</strong> Tunisian motion agencies (Elly, Ikigai, Motion Adverts and others) mostly sell generic 2D
+explainers [practitioner]. A modern, well-researched Tunisian visual system is an open lane.</p>
+<hr />
+<h3 id="322-other-styles-worth-owning">3.22 Other styles worth owning</h3>
+<table>
+<thead>
+<tr>
+<th>Style</th>
+<th>Look</th>
+<th>Best for</th>
+<th>Route (NB2 → Omni/Veo → Remotion)</th>
+<th>Time (tpl / ad)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Blueprint / technical drawing ("micrographics")</strong></td>
+<td>White or cyan line on blueprint blue, dimension lines, callouts, tiny technical labels, exploded views</td>
+<td><strong>Installers</strong>: show expertise (panel angles, cable runs, roof loads). 2026 trend: micrographics</td>
+<td>NB2 line drawings of objects (no text) → no Omni → Remotion: lines drawn with <code>evolvePath</code>, dimension labels and numbers in code, <code>gridlines</code> effect</td>
+<td>6-8 h / 2-3 h</td>
+</tr>
+<tr>
+<td><strong>Lo-fi / Notes-app / UGC-graphic</strong></td>
+<td>Phone screenshots, Notes lists, tweet cards, marker on a photo, shaky zooms</td>
+<td>TikTok native feel, testimonials, lists</td>
+<td>Real photos or NB2 photos → Remotion UI cards and marker scribbles</td>
+<td>3-4 h / 1 h</td>
+</tr>
+<tr>
+<td><strong>Sticker / scrapbook</strong></td>
+<td>Die-cut stickers with white borders, washi tape, stamps, doodles</td>
+<td>Retail, youth, promos, "3 reasons"</td>
+<td>NB2 sticker assets on flat bg → Remotion stop-motion placement, drop shadows</td>
+<td>5-6 h / 2-3 h</td>
+</tr>
+<tr>
+<td><strong>Risograph / photocopy</strong></td>
+<td>2-3 spot colours, misregistration, grain, halftone</td>
+<td>Events, youth, culture, anti-AI look</td>
+<td>NB2 plates → <code>duotone</code> + <code>halftone</code> + offset layers ±2 px in code</td>
+<td>3-4 h / +1 h</td>
+</tr>
+<tr>
+<td><strong>Linocut / woodblock print</strong></td>
+<td>Carved lines, bold black, paper texture, one colour</td>
+<td>Artisans, food, heritage, olive oil</td>
+<td>NB2 print frames → step on threes, <code>paper</code></td>
+<td>4-6 h / 3-4 h</td>
+</tr>
+<tr>
+<td><strong>Vernacular Tunisian street graphics</strong></td>
+<td>Hand-painted shop-sign lettering, taxi yellow, louage stripes, bold outlines</td>
+<td>Local SMEs, humour, "our neighbourhood"</td>
+<td>NB2 street textures (no text) → Remotion lettering with display Arabic fonts, paint-stroke reveals</td>
+<td>6-8 h / 2-3 h</td>
+</tr>
+<tr>
+<td><strong>Liquid glass / glossy UI</strong></td>
+<td>Frosted translucent panels, refraction, soft gradients</td>
+<td>Premium tech, app UIs</td>
+<td>Code (CSS <code>backdrop-filter</code>, SVG displacement) over NB2 or Omni plates</td>
+<td>4-6 h / 1-2 h</td>
+</tr>
+<tr>
+<td><strong>2D/3D hybrid</strong></td>
+<td>Flat 2D characters in simple 3D space, painterly textures on 3D</td>
+<td>Brand films with depth</td>
+<td><code>@remotion/three</code> planes with NB2 textures (cards in 3D), camera moves in code</td>
+<td>10-12 h / 4-6 h</td>
+</tr>
+<tr>
+<td><strong>Chalkboard</strong></td>
+<td>Chalk strokes on dark green/black, dust</td>
+<td>Education, InfoLab</td>
+<td>Same as whiteboard with a chalk texture and rough line filter</td>
+<td>+2 h over 3.7</td>
+</tr>
+<tr>
+<td><strong>ASCII / coded motion</strong></td>
+<td>Characters as pixels, generative particle fields</td>
+<td>Tech, telecom, events</td>
+<td>Pure code (canvas/Skia) over footage luminance</td>
+<td>4-6 h / 1-2 h</td>
+</tr>
+<tr>
+<td><strong>Oddly satisfying simulation</strong></td>
+<td>Soft-body snaps, perfect loops, folding objects</td>
+<td>Hooks, product "click into place"</td>
+<td>Omni/Veo for real-material physics or baked physics in code</td>
+<td>per ad 2-4 h</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-capability-matrix-how-much-each-engine-should-carry">4. Capability matrix (how much each engine should carry)</h2>
+<p dir="auto">Scores 0-3: how well the engine holds the style. "Code share" = share of screen time built in Remotion. [ours,
+from practitioner reports + our Omni/NB2 lessons]</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Style</th>
+<th>NB2</th>
+<th>Omni/Veo</th>
+<th>Code share</th>
+<th>Main risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Kinetic type</td>
+<td>1 (textures)</td>
+<td>0</td>
+<td>95-100 %</td>
+<td>Over-animation</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Flat 2D vector</td>
+<td>2</td>
+<td>1</td>
+<td>70-90 %</td>
+<td>Shading drift</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Isometric</td>
+<td>3</td>
+<td>0-1</td>
+<td>70-90 %</td>
+<td>Perspective creep</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Clay (current)</td>
+<td>3</td>
+<td>3</td>
+<td>20-30 %</td>
+<td>Too smooth / glossy</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Paper / cut-out</td>
+<td>2</td>
+<td>2</td>
+<td>60-80 %</td>
+<td>Plastic paper</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Collage</td>
+<td>3 (cut-outs)</td>
+<td>1</td>
+<td>60-80 %</td>
+<td>Melted pieces</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Whiteboard</td>
+<td>2</td>
+<td>0-1</td>
+<td>90 %</td>
+<td>Line weight, AI text</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Anime</td>
+<td>3</td>
+<td>2</td>
+<td>30-40 %</td>
+<td>Face/line drift</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Comic</td>
+<td>3</td>
+<td>1-2</td>
+<td>60-70 %</td>
+<td>Balloons, line drift</td>
+</tr>
+<tr>
+<td>10</td>
+<td>3D character</td>
+<td>3</td>
+<td>3</td>
+<td>15-25 %</td>
+<td>Uncanny, AI glow</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Low-poly/toy</td>
+<td>2</td>
+<td>2</td>
+<td>30-100 % (code 3D)</td>
+<td>Facets smoothing</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Retro</td>
+<td>2</td>
+<td>2</td>
+<td>50-60 % (finish)</td>
+<td>Fake overlays</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Pixel art</td>
+<td>1 (needs ppa)</td>
+<td>0</td>
+<td>90 %</td>
+<td>Off-grid pixels</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Glitch / brutalist</td>
+<td>0</td>
+<td>0</td>
+<td>100 %</td>
+<td>Flashing, legibility</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Data-viz</td>
+<td>1 (icons)</td>
+<td>0</td>
+<td>100 %</td>
+<td>Wrong numbers</td>
+</tr>
+<tr>
+<td>16</td>
+<td>UI / phone</td>
+<td>2 (hand plates)</td>
+<td>1</td>
+<td>90 %</td>
+<td>Glare, fake UI</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Product CGI</td>
+<td>3</td>
+<td>3</td>
+<td>30 % (or 100 % code 3D)</td>
+<td>Logo/geometry morph</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Liquid / abstract</td>
+<td>2 (textures)</td>
+<td>2 (real fluids)</td>
+<td>70 %</td>
+<td>Screensaver look</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Memes</td>
+<td>2 (characters)</td>
+<td>1</td>
+<td>80 %</td>
+<td>Copyright, cringe</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Rotoscope / painterly</td>
+<td>2 (keyframes)</td>
+<td>3 (v2v restyle)</td>
+<td>20 %</td>
+<td>Stroke swim</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Tunisian layer</td>
+<td>2 (materials)</td>
+<td>2 (places)</td>
+<td>70 %</td>
+<td>Cliché, wrong region</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-recommendations-for-lead-up-next-styles-to-master-in-order">5. Recommendations for Lead Up (next styles to master, in order)</h2>
+<ol>
+<li dir="auto"><strong>Isometric house cut-away with energy flow</strong> (3.3 + 3.15): explains solar in one image, all code-driven, cheap,
+   reusable across installers. Pairs with our clay characters as cut-outs.</li>
+<li dir="auto"><strong>Kinetic type + phone/UI</strong> (3.1 + 3.16) as the direct-response workhorse: hooks, prices, "send your bill".
+   Cheapest way to A/B test hooks (hooks move results far more than design).</li>
+<li dir="auto"><strong>Paper-craft / collage with a Tunisian pattern layer</strong> (3.5/3.6 + 3.21): the strongest "made by humans, made here"
+   signal, fits 2026 craft taste, mostly code.</li>
+<li dir="auto"><strong>Motion comic with a recurring character</strong> (3.9): series potential, local comic tradition, NB2 is good at it.</li>
+<li dir="auto"><strong>Blueprint / technical</strong> (3.22): signals expertise for installers; almost free once the path tools exist.
+Keep clay (3.4) as the brand-film look; add the stepped-timing and fingerprint fixes.</li>
+</ol>
+<p dir="auto">Build order for tools (each unlocks several styles): stepping wrapper + jitter → <code>@remotion/effects</code> → path
+drawing kit (hand, boil) → cut-out puppet rig → phone/UI kit → pattern kit (Tunisian) → <code>@remotion/three</code> scene.</p>
+<hr />
+<h2 id="6-snippets-reference-not-yet-in-the-repo">6. Snippets (reference, not yet in the repo)</h2>
+<pre><code class="language-tsx">// Stepped timing: hold each image `every` frames (2 = &quot;on twos&quot; = 15 fps look at 30 fps)
+import {Freeze, useCurrentFrame, random} from 'remotion';
+export const Stepped: React.FC&lt;{every?: number; jitter?: number; children: React.ReactNode}&gt; =
+  ({every = 2, jitter = 0, children}) =&gt; {
+  const f = useCurrentFrame();
+  const hold = Math.floor(f / every);
+  const dx = jitter ? (random(`x${hold}`) - 0.5) * 2 * jitter : 0;
+  const dr = jitter ? (random(`r${hold}`) - 0.5) * 0.6 : 0;
+  return (
+    &lt;div style={{position: 'absolute', inset: 0, transform: `translate(${dx}px,0) rotate(${dr}deg)`}}&gt;
+      &lt;Freeze frame={hold * every}&gt;{children}&lt;/Freeze&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+<pre><code class="language-tsx">// Line boil for hand-drawn SVG: new noise seed every 3 frames
+const seed = Math.floor(useCurrentFrame() / 3) % 4;
+&lt;filter id=&quot;boil&quot;&gt;&lt;feTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.03&quot; numOctaves={2} seed={seed}/&gt;
+  &lt;feDisplacementMap in=&quot;SourceGraphic&quot; scale={2.5}/&gt;&lt;/filter&gt;
+</code></pre>
+<pre><code class="language-tsx">// Pen drawing: stroke reveal + pen at the tip (@remotion/paths)
+const {strokeDasharray, strokeDashoffset} = evolvePath(p, d);
+const tip = getPointAtLength(d, getLength(d) * p);
+</code></pre>
+<pre><code class="language-tsx">// Metaball &quot;goo&quot; filter for liquid shapes
+&lt;filter id=&quot;goo&quot;&gt;&lt;feGaussianBlur stdDeviation={12}/&gt;
+  &lt;feColorMatrix values=&quot;1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8&quot;/&gt;&lt;/filter&gt;
+</code></pre>
+<pre><code class="language-bash"># Pixel art clean-up (grid + fixed 16-colour palette), also works on video
+uvx --from proper-pixel-art ppa sprite.png -o sprite_clean.png -c 16 -s 6
+</code></pre>
+<hr />
+<h2 id="7-open-questions-verify-before-relying-on-them">7. Open questions (verify before relying on them)</h2>
+<ul>
+<li dir="auto"><code>@remotion/effects</code> applies to Remotion canvas components (<code>&lt;Img&gt;</code>, <code>&lt;Video&gt;</code>, <code>&lt;Solid&gt;</code>, shapes). Check on 4.0.498
+  that it works on <code>&lt;OffthreadVideo&gt;</code> in our render path and how it affects render time.</li>
+<li dir="auto">Omni v2v restyle: regional restriction on editing clips with recognisable people; test with our own footage.</li>
+<li dir="auto"><code>@remotion/gsap</code> needs ≥4.0.517: upgrading all <code>@remotion/*</code> together is a separate, tested change.</li>
+<li dir="auto">Whether Meta shows an "AI info" label on stylised (non-photoreal) AI animation: not checked in this session.</li>
+<li dir="auto">Claims marked [bg] (Qallaline tiles, Sejnane, Bardo, Lab619, Willis from Tunis) were not re-checked online this
+  session (search budget ran out); confirm before quoting them in client material.</li>
+</ul>
+<hr />
+<h2 id="sources">Sources</h2>
+<p dir="auto">Trends and industry
+- <a href="https://elements.envato.com/learn/motion-design-trends" target="_blank" rel="noopener">https://elements.envato.com/learn/motion-design-trends</a>
+- <a href="https://blog.videobolt.net/post/top-motion-graphics-trends-2026" target="_blank" rel="noopener">https://blog.videobolt.net/post/top-motion-graphics-trends-2026</a>
+- <a href="https://genesismotiondesign.com/motion-design-trends-2026/" target="_blank" rel="noopener">https://genesismotiondesign.com/motion-design-trends-2026/</a>
+- <a href="https://garagefarm.net/blog/animation-trends-to-watch" target="_blank" rel="noopener">https://garagefarm.net/blog/animation-trends-to-watch</a>
+- <a href="https://www.itsnicethat.com/features/forward-thinking-graphic-trends-2026-graphic-design-120126" target="_blank" rel="noopener">https://www.itsnicethat.com/features/forward-thinking-graphic-trends-2026-graphic-design-120126</a>
+- <a href="https://schoolofmotion.com/blog/eoy2025" target="_blank" rel="noopener">https://schoolofmotion.com/blog/eoy2025</a>
+- <a href="https://www.stashmedia.tv/what-do-you-really-think-state-of-design-survey-2026/" target="_blank" rel="noopener">https://www.stashmedia.tv/what-do-you-really-think-state-of-design-survey-2026/</a>
+- <a href="https://www.lambdafilms.co.uk/animation-styles/" target="_blank" rel="noopener">https://www.lambdafilms.co.uk/animation-styles/</a>
+- <a href="https://prolificstudio.co/blog/collage-animation/" target="_blank" rel="noopener">https://prolificstudio.co/blog/collage-animation/</a>
+- <a href="https://www.clapstickmedia.com/isometric-explainer-animation-video/" target="_blank" rel="noopener">https://www.clapstickmedia.com/isometric-explainer-animation-video/</a>
+- <a href="https://en.wikipedia.org/wiki/Corporate_Memphis" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Corporate_Memphis</a>
+- <a href="https://webflow.com/blog/after-corporate-memphis" target="_blank" rel="noopener">https://webflow.com/blog/after-corporate-memphis</a>
+- <a href="https://www.vfxapprentice.com/blog/what-is-2-5d-animation-games" target="_blank" rel="noopener">https://www.vfxapprentice.com/blog/what-is-2-5d-animation-games</a>
+- <a href="https://en.wikipedia.org/wiki/Motion_comic" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Motion_comic</a>
+- <a href="https://www.pulse-advertising.com/news/nostalgia-marketing-cultural-revival/" target="_blank" rel="noopener">https://www.pulse-advertising.com/news/nostalgia-marketing-cultural-revival/</a></p>
+<p dir="auto">Studios
+- <a href="https://motionarray.com/learn/motion-design/industry-spotlight-buck/" target="_blank" rel="noopener">https://motionarray.com/learn/motion-design/industry-spotlight-buck/</a>
+- <a href="https://motionarray.com/learn/motion-design/beautiful-cel-animated-motion-graphics/" target="_blank" rel="noopener">https://motionarray.com/learn/motion-design/beautiful-cel-animated-motion-graphics/</a>
+- <a href="https://www.ordinaryfolk.co/" target="_blank" rel="noopener">https://www.ordinaryfolk.co/</a>
+- <a href="https://motionarray.com/learn/motion-design/studio-spotlight-oddfellows/" target="_blank" rel="noopener">https://motionarray.com/learn/motion-design/studio-spotlight-oddfellows/</a>
+- <a href="https://vidico.com/news/animated-video-production-companies/" target="_blank" rel="noopener">https://vidico.com/news/animated-video-production-companies/</a></p>
+<p dir="auto">Ad performance and platform guidance
+- <a href="https://www.rocketshiphq.com/text-overlays-video-ads-mobile/" target="_blank" rel="noopener">https://www.rocketshiphq.com/text-overlays-video-ads-mobile/</a>
+- <a href="https://adlibrary.com/posts/meta-ads-creative-best-practices" target="_blank" rel="noopener">https://adlibrary.com/posts/meta-ads-creative-best-practices</a>
+- <a href="https://coinis.com/how-to/first-3-seconds-facebook-video-ad" target="_blank" rel="noopener">https://coinis.com/how-to/first-3-seconds-facebook-video-ad</a>
+- <a href="https://www.stackmatix.com/blog/facebook-video-vs-image-ads-performance-2026" target="_blank" rel="noopener">https://www.stackmatix.com/blog/facebook-video-vs-image-ads-performance-2026</a>
+- <a href="https://www.stackmatix.com/blog/tiktok-creative-center-top-ads-analysis" target="_blank" rel="noopener">https://www.stackmatix.com/blog/tiktok-creative-center-top-ads-analysis</a>
+- <a href="https://searchengineland.com/ugly-ads-outperforming-polished-creative-475007" target="_blank" rel="noopener">https://searchengineland.com/ugly-ads-outperforming-polished-creative-475007</a>
+- <a href="https://www.kantar.com/industries/technology-and-telecoms/validating-googles-abcd-framework-with-the-power-of-artificial-intelligence" target="_blank" rel="noopener">https://www.kantar.com/industries/technology-and-telecoms/validating-googles-abcd-framework-with-the-power-of-artificial-intelligence</a>
+- <a href="https://support.google.com/google-ads/answer/14783551" target="_blank" rel="noopener">https://support.google.com/google-ads/answer/14783551</a>
+- <a href="https://www.nielsen.com/insights/2010/should-marketers-re-think-animated-tv-ads-during-the-holidays/" target="_blank" rel="noopener">https://www.nielsen.com/insights/2010/should-marketers-re-think-animated-tv-ads-during-the-holidays/</a>
+- <a href="https://www.adweek.com/brand-marketing/live-action-ads-beat-animation-brand-recall-108049/" target="_blank" rel="noopener">https://www.adweek.com/brand-marketing/live-action-ads-beat-animation-brand-recall-108049/</a>
+- <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9898452/" target="_blank" rel="noopener">https://pmc.ncbi.nlm.nih.gov/articles/PMC9898452/</a>
+- <a href="https://www.sciencedirect.com/science/article/abs/pii/S0360131516300550" target="_blank" rel="noopener">https://www.sciencedirect.com/science/article/abs/pii/S0360131516300550</a>
+- <a href="https://blog.videoscribe.co/whiteboard-animation-beats-slides-for-retention-new-research" target="_blank" rel="noopener">https://blog.videoscribe.co/whiteboard-animation-beats-slides-for-retention-new-research</a>
+- <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11730234/" target="_blank" rel="noopener">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11730234/</a>
+- <a href="https://khrisdigital.com/meme-marketing-statistics/" target="_blank" rel="noopener">https://khrisdigital.com/meme-marketing-statistics/</a> (example of a weak "statistics" source)
+- <a href="https://www.w3.org/WAI/WCAG21/Understanding/three-flashes-or-below-threshold.html" target="_blank" rel="noopener">https://www.w3.org/WAI/WCAG21/Understanding/three-flashes-or-below-threshold.html</a></p>
+<p dir="auto">Google models
+- <a href="https://ai.google.dev/gemini-api/docs/image-generation" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/image-generation</a>
+- <a href="https://deepmind.google/models/gemini-image/flash/" target="_blank" rel="noopener">https://deepmind.google/models/gemini-image/flash/</a>
+- <a href="https://ai.google.dev/gemini-api/docs/omni" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/omni</a>
+- <a href="https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-omni-1-1-flash/" target="_blank" rel="noopener">https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-omni-1-1-flash/</a>
+- <a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni-builders/" target="_blank" rel="noopener">https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni-builders/</a>
+- <a href="https://runware.ai/docs/models/google-gemini-omni-flash/guides/editing-video" target="_blank" rel="noopener">https://runware.ai/docs/models/google-gemini-omni-flash/guides/editing-video</a>
+- <a href="https://www.analyticsvidhya.com/blog/2026/06/gemini-omni-ai-video-generation/" target="_blank" rel="noopener">https://www.analyticsvidhya.com/blog/2026/06/gemini-omni-ai-video-generation/</a>
+- <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/video/use-reference-images-to-guide-video-generation" target="_blank" rel="noopener">https://cloud.google.com/vertex-ai/generative-ai/docs/video/use-reference-images-to-guide-video-generation</a>
+- <a href="https://discuss.ai.google.dev/t/veo-3-1-reference-images-docs-say-available-api-says-not-supported/111853" target="_blank" rel="noopener">https://discuss.ai.google.dev/t/veo-3-1-reference-images-docs-say-available-api-says-not-supported/111853</a>
+- <a href="https://ulazai.com/create-anime-videos-veo3/" target="_blank" rel="noopener">https://ulazai.com/create-anime-videos-veo3/</a>
+- <a href="https://www.elser.ai/blog/best-ai-video-generator-for-anime-creators-in-2026-7-tools-tested-and-ranked" target="_blank" rel="noopener">https://www.elser.ai/blog/best-ai-video-generator-for-anime-creators-in-2026-7-tools-tested-and-ranked</a>
+- <a href="https://masonry.so/blog/nano-banana-2-guide" target="_blank" rel="noopener">https://masonry.so/blog/nano-banana-2-guide</a>
+- <a href="https://www.aifreeapi.com/en/posts/nano-banana-2-prompts" target="_blank" rel="noopener">https://www.aifreeapi.com/en/posts/nano-banana-2-prompts</a>
+- <a href="https://heymramit.medium.com/10-pro-nano-banana-tips-for-high-quality-asset-production-93c25b7385b2" target="_blank" rel="noopener">https://heymramit.medium.com/10-pro-nano-banana-tips-for-high-quality-asset-production-93c25b7385b2</a>
+- <a href="https://nanoprompts.org/use-cases/spatial-design/isometric-3d-model" target="_blank" rel="noopener">https://nanoprompts.org/use-cases/spatial-design/isometric-3d-model</a>
+- ../06-nano-banana-2.md (our NB2 research: ids, prices, reference budgets)</p>
+<p dir="auto">AI style workflows
+- <a href="https://www.opus.pro/blog/claymation-ai" target="_blank" rel="noopener">https://www.opus.pro/blog/claymation-ai</a>
+- <a href="https://prompts.aiolaola.com/p/claymation" target="_blank" rel="noopener">https://prompts.aiolaola.com/p/claymation</a>
+- <a href="https://www.atlabs.ai/blog/create-full-cgi-ads-ai-complete-guide" target="_blank" rel="noopener">https://www.atlabs.ai/blog/create-full-cgi-ads-ai-complete-guide</a>
+- <a href="https://github.com/KennethJAllen/proper-pixel-art" target="_blank" rel="noopener">https://github.com/KennethJAllen/proper-pixel-art</a>
+- <a href="https://www.spritefusion.com/pixel-snapper" target="_blank" rel="noopener">https://www.spritefusion.com/pixel-snapper</a>
+- <a href="https://ebsynth.com/" target="_blank" rel="noopener">https://ebsynth.com/</a>
+- <a href="https://digitalproduction.com/2025/09/24/ebsynth-v2-real-time-preview-timeline-layers/" target="_blank" rel="noopener">https://digitalproduction.com/2025/09/24/ebsynth-v2-real-time-preview-timeline-layers/</a>
+- <a href="https://github.com/tiberiuiancu/datamoshing" target="_blank" rel="noopener">https://github.com/tiberiuiancu/datamoshing</a>
+- <a href="https://glitchology.com/datamoshing/" target="_blank" rel="noopener">https://glitchology.com/datamoshing/</a>
+- <a href="https://huehd.com/stop-motion-animation-frame-rates-explained/" target="_blank" rel="noopener">https://huehd.com/stop-motion-animation-frame-rates-explained/</a>
+- <a href="https://community.adobe.com/t5/after-effects-discussions/after-effects-why-set-posterize-time-to-12-fps-in-24fps-comp/td-p/14382456" target="_blank" rel="noopener">https://community.adobe.com/t5/after-effects-discussions/after-effects-why-set-posterize-time-to-12-fps-in-24fps-comp/td-p/14382456</a>
+- <a href="https://www.washingtonpost.com/technology/2025/06/11/disney-universal-sue-midjourney-ai-copyright/" target="_blank" rel="noopener">https://www.washingtonpost.com/technology/2025/06/11/disney-universal-sue-midjourney-ai-copyright/</a>
+- <a href="https://www.law.georgetown.edu/tech-institute/research-insights/insights/disney-nbc-universal-and-dreamworks-file-major-ip-lawsuit-against-ai-image-generator-midjourney/" target="_blank" rel="noopener">https://www.law.georgetown.edu/tech-institute/research-insights/insights/disney-nbc-universal-and-dreamworks-file-major-ip-lawsuit-against-ai-image-generator-midjourney/</a></p>
+<p dir="auto">Remotion and animation libraries
+- <a href="https://www.remotion.dev/docs/third-party" target="_blank" rel="noopener">https://www.remotion.dev/docs/third-party</a>
+- <a href="https://www.remotion.dev/docs/three" target="_blank" rel="noopener">https://www.remotion.dev/docs/three</a>
+- <a href="https://www.remotion.dev/docs/paths/evolve-path" target="_blank" rel="noopener">https://www.remotion.dev/docs/paths/evolve-path</a>
+- <a href="https://www.remotion.dev/docs/effects/api" target="_blank" rel="noopener">https://www.remotion.dev/docs/effects/api</a>
+- <a href="https://www.npmjs.com/package/@remotion/effects" target="_blank" rel="noopener">https://www.npmjs.com/package/@remotion/effects</a> (tarballs 4.0.498 and 4.0.529 inspected)
+- <a href="https://www.remotion.dev/docs/rive/" target="_blank" rel="noopener">https://www.remotion.dev/docs/rive/</a>
+- <a href="https://www.remotion.dev/docs/animated-emoji/" target="_blank" rel="noopener">https://www.remotion.dev/docs/animated-emoji/</a>
+- <a href="https://www.remotion.dev/docs/light-leaks/api" target="_blank" rel="noopener">https://www.remotion.dev/docs/light-leaks/api</a>
+- <a href="https://www.remotion.dev/elements/data" target="_blank" rel="noopener">https://www.remotion.dev/elements/data</a>
+- <a href="https://github.com/vercel-labs/json-render/blob/main/skills/remotion-best-practices/rules/charts.md" target="_blank" rel="noopener">https://github.com/vercel-labs/json-render/blob/main/skills/remotion-best-practices/rules/charts.md</a>
+- <a href="https://github.com/vshukla7/remotion-captions-themes" target="_blank" rel="noopener">https://github.com/vshukla7/remotion-captions-themes</a>
+- <a href="https://www.remotion.dev/templates/tiktok" target="_blank" rel="noopener">https://www.remotion.dev/templates/tiktok</a>
+- <a href="https://unicornicons.com/learn/rive-vs-lottie" target="_blank" rel="noopener">https://unicornicons.com/learn/rive-vs-lottie</a>
+- <a href="https://rive.app/blog/why-importing-lotties-isn-t-the-workflow-rive-was-built-for" target="_blank" rel="noopener">https://rive.app/blog/why-importing-lotties-isn-t-the-workflow-rive-was-built-for</a>
+- <a href="https://www.bram.us/2017/06/21/smooth-svg-path-morphing-with-flubber/" target="_blank" rel="noopener">https://www.bram.us/2017/06/21/smooth-svg-path-morphing-with-flubber/</a>
+- <a href="https://css-tricks.com/svg-line-animation-works/" target="_blank" rel="noopener">https://css-tricks.com/svg-line-animation-works/</a></p>
+<p dir="auto">Arabic, Maghreb and Tunisian design
+- <a href="https://type-01.com/the-typographic-studio-platform-specialising-solely-in-arabic-branding/" target="_blank" rel="noopener">https://type-01.com/the-typographic-studio-platform-specialising-solely-in-arabic-branding/</a>
+- <a href="https://morcoskey.com/projects/kufam" target="_blank" rel="noopener">https://morcoskey.com/projects/kufam</a>
+- <a href="https://www.gqmiddleeast.com/article/the-designer-behind-mamdanis-arabic-campaign-has-a-bigger-vision" target="_blank" rel="noopener">https://www.gqmiddleeast.com/article/the-designer-behind-mamdanis-arabic-campaign-has-a-bigger-vision</a>
+- <a href="https://the-brandidentity.com/project/zainas-bilingual-identity-for-mira-unites-arabic-and-latin-scripts-through-shared-punctuation" target="_blank" rel="noopener">https://the-brandidentity.com/project/zainas-bilingual-identity-for-mira-unites-arabic-and-latin-scripts-through-shared-punctuation</a>
+- <a href="https://vanschneider.com/blog/design-in/design-in-lebanon-featuring-studio-safar/" target="_blank" rel="noopener">https://vanschneider.com/blog/design-in/design-in-lebanon-featuring-studio-safar/</a>
+- <a href="https://www.milleworld.com/graphic-design-studios-arab-world/" target="_blank" rel="noopener">https://www.milleworld.com/graphic-design-studios-arab-world/</a>
+- <a href="https://en.wikipedia.org/wiki/Kashida" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Kashida</a>
+- <a href="https://design.tutsplus.com/tutorials/creative-arabic-calligraphy-kashida-tajim-and-tashkil--cms-23240" target="_blank" rel="noopener">https://design.tutsplus.com/tutorials/creative-arabic-calligraphy-kashida-tajim-and-tashkil--cms-23240</a>
+- <a href="https://blacksparrowagency.com/plugins/Kashida%20-%20Dynamic%20Arabic%20Stretching%20&amp;%20Animation%20Tool/" target="_blank" rel="noopener">https://blacksparrowagency.com/plugins/Kashida%20-%20Dynamic%20Arabic%20Stretching%20&amp;%20Animation%20Tool/</a>
+- <a href="https://www.animatedcalligraphy.com/" target="_blank" rel="noopener">https://www.animatedcalligraphy.com/</a>
+- <a href="https://anasarab.com/motion/" target="_blank" rel="noopener">https://anasarab.com/motion/</a>
+- <a href="https://elseed-art.com/" target="_blank" rel="noopener">https://elseed-art.com/</a>
+- <a href="https://carthagemagazine.com/el-seed-tunisian-calligraffiti-artist/" target="_blank" rel="noopener">https://carthagemagazine.com/el-seed-tunisian-calligraffiti-artist/</a>
+- <a href="https://ajammc.com/2013/09/17/word-as-image-contextualizing-calligraffiti-1984-2013-with-french-tunisian-street-artist-el-seed/" target="_blank" rel="noopener">https://ajammc.com/2013/09/17/word-as-image-contextualizing-calligraffiti-1984-2013-with-french-tunisian-street-artist-el-seed/</a>
+- <a href="https://en.wikipedia.org/wiki/Hamza_Khafif" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Hamza_Khafif</a>
+- <a href="https://amazighworldnews.com/amazigh-tattoos-and-patterns-symbolism-and-cultural-significance/" target="_blank" rel="noopener">https://amazighworldnews.com/amazigh-tattoos-and-patterns-symbolism-and-cultural-significance/</a>
+- <a href="https://www.mosaicnorthafrica.com/why-are-doors-blue-in-tunisia/" target="_blank" rel="noopener">https://www.mosaicnorthafrica.com/why-are-doors-blue-in-tunisia/</a>
+- <a href="https://www.mychakchouka.com/sidi-bou-said-myths-and-truths-blue-and-white" target="_blank" rel="noopener">https://www.mychakchouka.com/sidi-bou-said-myths-and-truths-blue-and-white</a>
+- <a href="https://tunartis.com/tunisian-pottery-styles/" target="_blank" rel="noopener">https://tunartis.com/tunisian-pottery-styles/</a>
+- <a href="https://www.discovertunisia.com/en/tunisie-arts-and-crafts/weaving-and-carpets" target="_blank" rel="noopener">https://www.discovertunisia.com/en/tunisie-arts-and-crafts/weaving-and-carpets</a>
+- <a href="https://qartaj.com/blog/The-different-models-of-handicrafts-rugs" target="_blank" rel="noopener">https://qartaj.com/blog/The-different-models-of-handicrafts-rugs</a>
+- <a href="https://www.behance.net/search/projects/zellige" target="_blank" rel="noopener">https://www.behance.net/search/projects/zellige</a>
+- <a href="https://en.wikipedia.org/wiki/Inkman" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Inkman</a>
+- <a href="https://www.researchgate.net/publication/317957975_Identity_representation_self-Orientalism_and_hyper-nationalism_in_Arab_design" target="_blank" rel="noopener">https://www.researchgate.net/publication/317957975_Identity_representation_self-Orientalism_and_hyper-nationalism_in_Arab_design</a>
+- <a href="https://fmkjournals.fmk.edu.rs/index.php/AM/article/view/119" target="_blank" rel="noopener">https://fmkjournals.fmk.edu.rs/index.php/AM/article/view/119</a>
+- <a href="https://artjournal.collegeart.org/?p=17030" target="_blank" rel="noopener">https://artjournal.collegeart.org/?p=17030</a>
+- <a href="https://www.liverpoolmuseums.org.uk/stories/exploring-arabic-design" target="_blank" rel="noopener">https://www.liverpoolmuseums.org.uk/stories/exploring-arabic-design</a>
+- <a href="https://github.com/TheBeachLab/islamic-geometry" target="_blank" rel="noopener">https://github.com/TheBeachLab/islamic-geometry</a>
+- <a href="https://github.com/reyrove/Girih-1-Generative-Art" target="_blank" rel="noopener">https://github.com/reyrove/Girih-1-Generative-Art</a>
+- <a href="https://dragoon0x.github.io/inkjet/" target="_blank" rel="noopener">https://dragoon0x.github.io/inkjet/</a>
+- <a href="https://ikigai.tn/agence-creation-video-2d-motion-design-tunisie/" target="_blank" rel="noopener">https://ikigai.tn/agence-creation-video-2d-motion-design-tunisie/</a>
+- <a href="https://elly-agency.com/agence-de-creation-video-en-tunisie/" target="_blank" rel="noopener">https://elly-agency.com/agence-de-creation-video-en-tunisie/</a></p></main></body></html>

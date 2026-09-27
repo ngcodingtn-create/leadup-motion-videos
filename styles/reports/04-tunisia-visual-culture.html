@@ -1,0 +1,1203 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tunisian visual culture &amp; market · Lead Up research</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#0B1426;color:#E8EDF7;font:16px/1.65 Montserrat,system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+a{color:#FFB800;word-break:break-word}h1{font-size:30px;line-height:1.2}h2{margin-top:44px;color:#fff;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}
+h3{margin-top:28px;color:#FFD466}code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:.9em}pre{background:#101C36;padding:14px;border-radius:12px;overflow-x:auto;font-size:13px}
+table{border-collapse:collapse;display:block;overflow-x:auto;font-size:13.5px;margin:14px 0}th,td{border:1px solid rgba(255,255,255,.14);padding:7px 9px;vertical-align:top}th{background:#15234A}
+blockquote{border-left:3px solid #FFB800;margin:0;padding:4px 14px;color:#AFC0E0}.top{position:sticky;top:0;background:rgba(11,20,38,.94);backdrop-filter:blur(8px);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px}
+[dir=auto]{unicode-bidi:plaintext}</style></head>
+<body><div class="top"><a href="../#reports">← Style engine</a> · Research report · Tunisian visual culture &amp; market</div><main><h1 id="04-tunisia-visual-culture-styles-formats-and-cultural-codes-for-tunisian-ads">04 · Tunisia visual culture: styles, formats and cultural codes for Tunisian ads</h1>
+<p dir="auto">Research date: September 2026. Scope: what looks, sounds and converts as authentically Tunisian in 30-60 s vertical
+ads (Facebook, Instagram, TikTok) for Lead Up clients: solar PV and alarm/camera installers first, then clinics,
+schools, restaurants, real estate, car dealers and e-commerce.</p>
+<p dir="auto"><strong>How to read this.</strong> Sections 1-6 are findings, each ending in <strong>→ Engine rule</strong> lines. Section 7 is the <strong>style
+library</strong>: ready-to-use style cards for the AI engine. Section 8 is the cliché and "wrong country" blacklist, and
+section 9 lists Derja copy codes. Confidence tags: <strong>[S]</strong> = sourced (see URLs at the end), <strong>[F]</strong> = field knowledge
+or common practice that no source here confirms (check it with the owner or a local creative before relying on it).</p>
+<p dir="auto">Pipeline constraints (from the repo's <code>CLAUDE.md</code>): AI images and videos are <strong>text-free</strong>, all on-screen text lives in
+Remotion with thick black-outline captions, Omni is always 720p, and the WhatsApp copy stays under 16 MB. The guidance
+below respects these constraints.</p>
+<hr />
+<h2 id="0-tldr-the-ten-things-that-matter-most">0. TL;DR (the ten things that matter most)</h2>
+<ol>
+<li dir="auto"><strong>Facebook is still the Tunisian public square, and TikTok is the fast-growing second screen.</strong> Facebook ad reach is
+   7.8 M (87 % of adults) and TikTok reaches 6.0 M adults, 58 % of them men. Instagram (4.05 M) skews female and
+   younger. [S: DataReportal 2026] Design every ad for <strong>FB/IG Reels first, TikTok second</strong>, in a single 9:16 master.</li>
+<li dir="auto"><strong>Media is cheap and attention is scarce.</strong> Meta CPM runs about <strong>3-8 DT</strong> and CPC about 0.15-0.45 DT. [S: visibility.tn]
+   The spend goes a long way, so the constraint is the creative. The first 1-2 seconds and burned-in captions decide the result.</li>
+<li dir="auto"><strong>Derja is the default language of Tunisian advertising.</strong> About 90 % of advertisers use the dialect. French-language
+   audiences collapsed after 2011 (French TV share went from about 25 % to 3 %). [S: IFPO] Speak Derja, write bilingual,
+   and keep French for trade words, brand names and prices.</li>
+<li dir="auto"><strong>Ramadan works like the Super Bowl for Tunisian ads.</strong> It rewards <strong>humor + nostalgia + family + a remixed
+   familiar song</strong>. [S: Prosdelacom, Managers, L'Écho] The winning grammar is warm, collective and self-mocking, not
+   aspirational-luxury.</li>
+<li dir="auto"><strong>The music-parody formula is proven.</strong> All three telecom operators hit big with a <strong>re-written familiar melody</strong>:
+   TT with Fatma Boussaha's mezwed classic, Ooredoo with a KTYBON parody, Orange with patrimoine + rap (Jenjoon).
+   [S: L'Écho] Take the lesson (a familiar rhythm and a local feel) and not the copyrighted songs.</li>
+<li dir="auto"><strong>Tunisians are scam-aware, and solar has a documented scam problem.</strong> "Free panels", "zero bill forever" and
+   fake urgency are all common. [S: VLD Solar] Trust comes from real faces, a real local address, a +216 number,
+   WhatsApp, ANME/Prosol mentions, and honest numbers in DT.</li>
+<li dir="auto"><strong>Summer 2026 hurt:</strong> a record heatwave from July 11 brought load-shedding, and STEG blamed air conditioning at the
+   14:00-16:00 peak. STEG authorised <strong>home batteries with hybrid inverters</strong> on 24 July 2026. [S: pv magazine, African Manager]
+   This gives solar and battery ads their strongest hook for the next 12 months.</li>
+<li dir="auto"><strong>The authentic look is the ordinary look.</strong> Show a Tunis-suburb flat roof with its water tank and dish, a tiled
+   <em>salon</em>, a Sahel villa, a café capucin, a louage with its red stripe, jasmine and harissa. Sidi Bou Said
+   blue-and-white is a postcard and should be used sparingly.</li>
+<li dir="auto"><strong>Wrong-country cues kill credibility at once.</strong> These include Moroccan zellige, riads and djellabas, Gulf thobes and
+   ghutras, Egyptian galabeya, the Egyptian fanous as <em>the</em> Ramadan symbol, and MSA voice-over.</li>
+<li dir="auto"><strong>Law and platform rules are practical, not heavy.</strong> Don't use the <strong>national flag</strong> commercially without
+    authorisation (Law 2001-36 and a Ministry warning). Avoid misleading claims: Law 92-117 carries fines of
+    1,000-20,000 DT and Law 98-40 requires advertisers to prove their claims. Don't disparage named competitors.
+    Collect leads in line with Law 2004-63 (INPDP). On Meta, avoid "personal attribute" copy and before/after shots
+    for clinics, and expect "AI info" labels to be triggered by C2PA metadata.</li>
+</ol>
+<hr />
+<h2 id="1-the-tunisian-digital-landscape-2025-2026">1. The Tunisian digital landscape 2025-2026</h2>
+<h3 id="11-key-numbers-datareportal-digital-2026-tunisia-data-as-of-oct-2025-s">1.1 Key numbers (DataReportal, <em>Digital 2026: Tunisia</em>, data as of Oct 2025) [S]</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Population</td>
+<td>12.4 M, median age 32.9, 71 % urban</td>
+<td>25-54 = 42 % of population, which is the buyer core</td>
+</tr>
+<tr>
+<td>Internet users</td>
+<td>10.4 M (84.3 %)</td>
+<td></td>
+</tr>
+<tr>
+<td>Social media identities</td>
+<td>7.83 M (63.3 %), <strong>87.3 % of adults</strong></td>
+<td>53.5 % male / 46.5 % female</td>
+</tr>
+<tr>
+<td><strong>Facebook</strong> ad reach</td>
+<td><strong>7.80 M</strong>, 87.3 % of adults</td>
+<td>+9.1 % YoY. The default platform for every age group</td>
+</tr>
+<tr>
+<td>YouTube</td>
+<td>7.83 M</td>
+<td>50/50 gender</td>
+</tr>
+<tr>
+<td><strong>TikTok</strong> (18+)</td>
+<td><strong>6.00 M</strong>, 67.6 % of adults</td>
+<td><strong>58.2 % male</strong>. Strong with 18-24</td>
+</tr>
+<tr>
+<td>Messenger</td>
+<td>5.85 M</td>
+<td>Messenger remains a real lead channel</td>
+</tr>
+<tr>
+<td><strong>Instagram</strong></td>
+<td>4.05 M (32.8 %)</td>
+<td><strong>52.6 % female</strong>, younger, urban</td>
+</tr>
+<tr>
+<td>Snapchat</td>
+<td>2.05 M</td>
+<td>63 % female</td>
+</tr>
+<tr>
+<td>LinkedIn</td>
+<td>2.70 M members</td>
+<td>B2B only</td>
+</tr>
+<tr>
+<td>Mobile median download</td>
+<td><strong>67 Mbps</strong> (+153 % YoY)</td>
+<td>Fixed line only 17 Mbps. The market is mobile-first</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Other sources (lower confidence, from agency blogs): about <strong>92 % of access is via smartphone</strong>, the <strong>peak is 20:00-23:00
+on weekdays</strong> with a secondary peak on Friday afternoon, the average time on Facebook is about 61 h/month vs TikTok
+about 54 h/month, Facebook organic reach is only 3-5 % while Reels do 4-6× better, and <strong>Derja content gets 40-60 % more
+engagement than French</strong> content. [S: web6.tn, digital-discovery.tn, La Presse]</p>
+<h3 id="12-ad-costs-in-tunisia-s-visibilitytn-2025-smart-target-2023-web6tn">1.2 Ad costs in Tunisia [S: visibility.tn 2025, Smart Target 2023, web6.tn]</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Tunisia range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Meta CPM</td>
+<td><strong>3-8 DT</strong> (≈ $1-2.7). Reported awareness CPMs are 2-5 DT</td>
+</tr>
+<tr>
+<td>Meta CPC</td>
+<td>0.15-0.45 DT (down from 0.80-1.20 DT in 2023)</td>
+</tr>
+<tr>
+<td>CPL (lead gen)</td>
+<td>2-12 DT depending on sector. Real estate 3-8 DT, training 2-5 DT</td>
+</tr>
+<tr>
+<td>Click-to-WhatsApp</td>
+<td>≈ 0.3-1.5 DT per conversation (single source, low confidence)</td>
+</tr>
+<tr>
+<td>Video cost per view (2023)</td>
+<td>≈ 0.02 DT</td>
+</tr>
+<tr>
+<td>TikTok CPM</td>
+<td>≈ 2-5 DT (single source)</td>
+</tr>
+<tr>
+<td>Test budget</td>
+<td>20-30 DT/day for 7-14 days. Sponsoring usually starts at 200-300 DT/month</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">The recommended creative length is 15-30 s, and <strong>about 85 % of users watch without sound</strong>. [S: visibility.tn]
+That figure is a global industry number repeated locally. Treat the audience as sound-off on Facebook feed and
+sound-on on TikTok and Reels.</p>
+<h3 id="13-engine-rules-platform-and-delivery">1.3 → Engine rules (platform and delivery)</h3>
+<ul>
+<li dir="auto"><strong>Master format is 9:16, 720×1280</strong>, 30-45 s by default. Cut a <strong>15-20 s version</strong> from every ad for Reels and TikTok
+  hooks, and a <strong>4:5 crop</strong> for the FB feed.</li>
+<li dir="auto"><strong>The ad must work sound-off.</strong> Use burned-in Derja captions (already house style), and the key promise, price and CTA
+  must be readable without audio. <strong>It must also work sound-on:</strong> the voice and a familiar-feeling beat are what carry
+  TikTok.</li>
+<li dir="auto"><strong>Keep files light.</strong> Bandwidth is fine (67 Mbps median), but many users are on prepaid data packs and ads get re-shared
+  on WhatsApp. Keep the 16 MB WhatsApp copy rule, and there is no need for 1080p.</li>
+<li dir="auto"><strong>Schedule for evenings.</strong> Launch or boost at 19:30-23:00 and on Friday afternoon. During Ramadan, target the
+  <strong>after-iftar window (≈ 20:00-01:00)</strong> and the <strong>pre-suhoor scroll</strong>, and avoid the 17:00-iftar rush, when people are
+  cooking and driving.</li>
+<li dir="auto"><strong>Split by platform audience.</strong> Solar, alarms and cars (male-skewed decision makers) go <strong>FB + TikTok</strong>. Clinics,
+  beauty, schools and restaurants add <strong>Instagram</strong> (female-skewed). Schools also go to FB mothers aged 30-50.</li>
+<li dir="auto"><strong>Use Messenger / WhatsApp CTAs.</strong> Lead Up's funnel should end in a conversation, not a web form (see §4).</li>
+</ul>
+<hr />
+<h2 id="2-tunisian-advertising-culture">2. Tunisian advertising culture</h2>
+<h3 id="21-ramadan-is-the-peak-season-s">2.1 Ramadan is the peak season [S]</h3>
+<ul>
+<li dir="auto"><strong>"Ramadan is the Super Bowl of advertising in Tunisia"</strong> (TBWA\PointCarré ops director). Campaigns are produced in
+  45-60 days, and Ramadan is where brands take creative risks. [S: Prosdelacom]</li>
+<li dir="auto">Ramadan is the one moment when all targets (rich and poor, urban and rural, young and old) <strong>watch TV together as a
+  family</strong> for about 2.5 h after iftar. About 60 % of ad recall comes from creative quality, not spend
+  (Sigma study). [S: Kapitalis]</li>
+<li dir="auto">Ramadan 2026 saw a <strong>historic 11 % drop in ad spend</strong>, and TV still dominated, with three channels taking &gt; 84 % of
+  audience. [S: African Manager] The TV budget is about 150 MD, half of it controlled by five companies, and <strong>digital is
+  only 20 % but growing</strong>. Agencies' own motto: "not the brand that hits hardest but the one that touches the heart."
+  <strong>Strong opening seconds</strong> were critical. [S: Managers / Ramadanes'Comm 2026]</li>
+<li dir="auto"><strong>Pub&amp;Co Ramadan Awards 2026 winners:</strong> Orange (telecom), Lloyd (insurance), Tunisie Booking (services), Saïda
+  (sweets and jury prize), Danette, Président, El Mazraa, L'Épi d'Or, Lilas, Boga, Skoda, Kyufi, and Thon La Goulette
+  (radio). The awards celebrate <strong>"humor, Tunisian identity and audiovisual innovation"</strong> and pay homage to legendary
+  1980s-90s slogans such as <em>Jean Fantasia</em>, <em>Chorba frik</em> and <em>Javel Judy</em>. [S: Managers]</li>
+<li dir="auto"><strong>Celebrity endorsement is normal and valued.</strong> There are awards for best male and female celebrity performance, and
+  Tunisie Telecom won with actor Jaleleddine Saadi (Fibre TT, 2025). [S: Webdo]</li>
+</ul>
+<h3 id="22-the-telecom-trio-sets-the-creative-bar-s">2.2 The telecom trio sets the creative bar [S]</h3>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Brand</th>
+<th>Idea</th>
+<th>Takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2023</td>
+<td>Ooredoo, "Omi Omi"</td>
+<td>A boy tries to steal Aïd pastries. The rap song "Galbi Galbi" is remixed into a song about mothers</td>
+<td>Childhood nostalgia, the mother figure, Aïd sweets, a remixed hit. A little girl ("Kmaira") imitating it went viral, and Ooredoo hosted her. [S: WMC]</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>Orange, "Anagata Anago"</td>
+<td>A wedding where the groom plays a traditional children's game</td>
+<td>Traditional kids' games = collective nostalgia</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>Tunisie Telecom, "Malla Laab"</td>
+<td>Games / play</td>
+<td></td>
+</tr>
+<tr>
+<td>2024</td>
+<td>Tunisie Telecom</td>
+<td>Fatma Boussaha's <strong>mezwed classic</strong> with new lyrics, sung by actress Hela Ayed, plus a <strong>TikTok/IG filter</strong> to guess the lyrics</td>
+<td>Heritage melody + a star + a participative filter drove UGC [S: L'Écho]</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>Ooredoo</td>
+<td>Rapper <strong>KTYBON parodies his own hit</strong></td>
+<td>Self-parody by the artist himself, aimed at youth</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>Orange</td>
+<td>A patrimoine song (Ali Riahi) fused with rap (Jenjoon), with a cast of all ages</td>
+<td>Heritage + rap = generational bridge</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>Tunisie Telecom, "Recharge Omra"</td>
+<td>Spirituality + emotion + interactivity</td>
+<td>A religious theme handled through a product (recharge) and a prize, not preaching</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>Ooredoo, "الفيكس طار طار"</td>
+<td>A humorous take on fixed internet</td>
+<td>Wordplay in the title</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto"><strong>Pattern:</strong> the recipe is (1) a familiar Tunisian melody or hook, (2) a Derja rewrite with wordplay, (3) a warm
+ensemble cast across generations, (4) a nostalgic or everyday setting, (5) a participative tail (filter, challenge, UGC).</p>
+<h3 id="23-food-and-fmcg-codes-delice-vitalait-warda-diari-saida-s-f">2.3 Food and FMCG codes (Délice, Vitalait, Warda, Diari, Saïda...) [S + F]</h3>
+<ul>
+<li dir="auto">Pasta, couscous, harissa, tuna and dairy brands carry the <strong>mother / family table</strong> narrative. A Warda pasta spot
+  showed a mother supporting her university child who later sends money home from abroad, which touches the
+  <strong>emigration reality inside every family</strong>. [S: Khatt30]</li>
+<li dir="auto">Food brands dominate both ads and actual Ramadan consumption (couscous, pasta, <em>chorba frik</em>). [S: Managers]</li>
+<li dir="auto"><strong>Representation is a sensitive area.</strong> A Natilait spot with a Black actor drew racist backlash from a far-right
+  movement, and a Tunisie Telecom spot featuring the historical figure Moncef Bey was withdrawn after backlash.
+  [S: Khatt30] Casting diverse Tunisians is right, but brands must be ready to stand by it. Historical and political
+  figures are a minefield.</li>
+<li dir="auto">The media regulator <strong>HAICA has been inactive since 2023</strong>. Some channels ran 27-36 min of ads in prime slots. [S: Khatt30]
+  The audience is <strong>saturated and critical</strong>: Tunisians now review and compare ads publicly. [S: Prosdelacom]</li>
+</ul>
+<h3 id="24-tv-series-and-sitcom-aesthetics-s-f">2.4 TV series and sitcom aesthetics [S + F]</h3>
+<ul>
+<li dir="auto"><em>Choufli Hal</em> (2005-2009) is still rebroadcast on several channels. It is set in a Tunis apartment building and
+  relies on the comedy of a naïve half-brother (Sboui) and meddling neighbours, and it is endlessly quoted and memed.
+  <em>Nsibti Laaziza</em> (Nessma) is a family sitcom about in-laws. [S: Wikipedia, Tekiano]</li>
+<li dir="auto">Ramadan 2026 moved to <strong>short 10-15 episode series</strong>. Comedies included <em>Hadhi Akhretha</em> (El Hiwar), <em>Sahbak Rajet 2</em>
+  (Nessma) and <em>Bab Bnet</em>. Dramas are grittier: counterfeit money, Ben Guerdane, moral collapse. [S: La Presse]</li>
+<li dir="auto"><em>Fallujah</em> (a high-school drama) set the audience record with nearly 4 M viewers and an 85 % share. [S: Kapitalis]</li>
+<li dir="auto"><strong>Visual grammar [F]:</strong> sitcoms use bright, flat, multi-camera lighting, a real-looking middle-class salon (sofa,
+  TV, tiles, curtains), and ensemble shots at a doorway or around a table. Dramas use teal-orange grading, handheld
+  camera, and working-class neighbourhoods (Hay Ettadhamen, Jebel Jelloud types).</li>
+</ul>
+<h3 id="25-creators-and-influencer-formats-s">2.5 Creators and influencer formats [S]</h3>
+<ul>
+<li dir="auto">The top profiles (Favikon 2026) are Samy Chaffai (filmmaking), <strong>Douha Laribi</strong> (humor/lifestyle, about 18.6 M
+  followers across networks), <strong>Warda Omri</strong> (traditional recipes), Oussema "BNL" (gaming), <strong>Fidaal Ben Zareb</strong>
+  ("qesma w nsib" fate memes), Rafika Aouaay (comedy skits) and Ela Ben Salem (fitness). Riomadon does comedic
+  storytelling (more than 6 M on YouTube and TikTok). Actress Dorra Zarrouk has about 17 M on IG. [S: Favikon, WMC]</li>
+<li dir="auto"><strong>Dominant formats:</strong> POV and relatable skits, <strong>one person playing several family roles</strong> (mother / son / neighbour),
+  "street interview" micro-trottoir, recipe and kitchen close-ups, "storytime" talking head, reaction duets.</li>
+<li dir="auto">→ <strong>For Lead Up [F]:</strong> "<em>one actor, several roles</em>" and "<em>talking-head installer / owner</em>" are the two most native
+  formats and the cheapest to fake convincingly with AI. Never imitate a specific real creator (see §6).</li>
+</ul>
+<h3 id="26-meme-and-humor-codes-s-f">2.6 Meme and humor codes [S + F]</h3>
+<ul>
+<li dir="auto">Big meme pages include <em>Sarcasm Tunisia</em> (about 980 K likes) and <em>Tunisian Memes</em>. [S: Facebook pages]</li>
+<li dir="auto"><strong>Tunisian humor [F]</strong> is self-deprecating and sarcastic, about daily struggle: prices, the STEG bill, administration
+  ("<em>ija ghodwa</em>", "come back tomorrow"), louage chaos, the <em>bac</em>, in-laws, the summer wedding circuit, Aïd sheep
+  prices. It features exaggerated reaction faces, and freeze-frame + zoom + a dramatic sound are memes in themselves.</li>
+<li dir="auto">Wordplay mixes Derja and French ("<em>ya3tik essa7a</em>", "<em>c'est bon</em>", "<em>normal</em>"). The sitcom quotes are shared
+  cultural capital.</li>
+<li dir="auto"><strong>Regional jokes</strong> (Sfaxiens and money, Jebalia, "Sahel") are popular in memes but <strong>risky for brands</strong>: they alienate
+  a region. Avoid them.</li>
+</ul>
+<h3 id="27-music-s-f">2.7 Music [S + F]</h3>
+<table>
+<thead>
+<tr>
+<th>Genre</th>
+<th>What it signals</th>
+<th>Use it for</th>
+<th>Caution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mezwed</strong> (bagpipe + darbouka)</td>
+<td>Popular class, weddings, parties, "our people"</td>
+<td>Energetic offers, summer, weddings, promos, anything <em>chaabi</em></td>
+<td>Some see it as low-brow. Fits mass-market offers, not premium clinics</td>
+</tr>
+<tr>
+<td><strong>Rap tounsi / trap</strong> (Balti, Samara, A.L.A, Jenjoon, Nordo, Sanfara, Klay)</td>
+<td>Youth, street credibility, modernity. Rap is now mainstream [S]</td>
+<td>TikTok hooks, cars, e-commerce, youth offers</td>
+<td>Don't imitate a specific artist's voice or flow</td>
+</tr>
+<tr>
+<td><strong>Mezwed + trap fusion</strong></td>
+<td>Modern and Tunisian at once. A growing trend [S]</td>
+<td><strong>Default house sound</strong> for Lead Up</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Malouf</strong> (Andalusian, Rachidia, oud / violin / nay)</td>
+<td>Heritage, elegance, Ramadan nights, national identity [S]</td>
+<td>Ramadan brand films, premium restaurants, real estate, heritage</td>
+<td>Can feel old or slow. Use short motifs</td>
+</tr>
+<tr>
+<td><strong>Salhi / Bedouin</strong> (gasba flute, bendir)</td>
+<td>South and interior, roots, pride</td>
+<td>Regional campaigns (Gafsa, Kasserine, Sidi Bouzid), authenticity</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Stambeli</strong> (gumbri, shqasheq castanets)</td>
+<td>Black Tunisian Sufi trance ritual</td>
+<td>Rarely: art/culture pieces only</td>
+<td>It is a <strong>spiritual ritual</strong>. Don't use it as a comedic jingle</td>
+</tr>
+<tr>
+<td>Tunisian "patrimoine" songs (Saliha, Hedi Jouini era)</td>
+<td>Grandparents, nostalgia</td>
+<td>Ramadan nostalgia, family, food</td>
+<td>The melodies may be under copyright or neighbouring rights. Compose "in the style of"</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">→ <strong>Engine rule:</strong> generate <strong>original</strong> music "in the style of" (mezwed-trap, malouf motif, salhi flute). Never
+re-use or re-sing a real song's melody or lyrics without rights. The big brands license them, and Lead Up can't.</p>
+<hr />
+<h2 id="3-visual-identity-authentic-cues-vs-cliches">3. Visual identity: authentic cues vs clichés</h2>
+<h3 id="31-architecture-by-region-s-f">3.1 Architecture by region [S + F]</h3>
+<table>
+<thead>
+<tr>
+<th>Place</th>
+<th>Authentic look</th>
+<th>Prompt snippet (text-free)</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tunis medina</strong></td>
+<td>Narrow whitewashed alleys, <strong>studded arched doors</strong> (blue, yellow, green, often a small door inside the big one), souk arcades, painted tile panels, domes</td>
+<td>"narrow Tunis medina alley, whitewashed walls with ochre patches, arched wooden door studded with black iron nails painted Tunisian blue, afternoon light"</td>
+<td>Heritage, restaurants, Ramadan nights</td>
+</tr>
+<tr>
+<td><strong>Downtown Tunis</strong></td>
+<td>Colonial Art Nouveau / Haussmann façades on <strong>Avenue Habib Bourguiba</strong>, ficus trees, cafés, the tram (métro léger)</td>
+<td>"Avenue Habib Bourguiba Tunis, white colonial facades with balconies, ficus trees, café terraces"</td>
+<td>Urban, professional, banks, schools</td>
+</tr>
+<tr>
+<td><strong>Northern suburbs</strong> (La Marsa, Carthage, Ennasr, Lac)</td>
+<td>Modern villas and flats, white or cream render, glass, palm trees, new towers at Les Berges du Lac</td>
+<td>"modern Tunisian villa in La Marsa, white render, flat roof terrace, bougainvillea"</td>
+<td>Premium real estate, clinics, cars</td>
+</tr>
+<tr>
+<td><strong>Popular suburbs</strong> (Ettadhamen, Ben Arous, Mourouj, Manouba)</td>
+<td>Unfinished <strong>red-brick top floors with rebar</strong>, flat roofs with <strong>water tanks and satellite dishes</strong>, small shops</td>
+<td>"dense Tunis suburb rooftops, flat concrete terraces, white and beige houses, black water tanks, satellite dishes, one unfinished red-brick floor"</td>
+<td><strong>The best real backdrop for solar PV</strong>. Honest and relatable</td>
+</tr>
+<tr>
+<td><strong>Sidi Bou Said</strong></td>
+<td>White + blue (a 1915 ordinance protects the look; the blues vary: cobalt, turquoise, indigo), bougainvillea, sea view [S]</td>
+<td>Use sparingly</td>
+<td>Tourism, weddings, cafés, "Tunisia" ID shot. <strong>Postcard cliché if overused</strong></td>
+</tr>
+<tr>
+<td><strong>Sahel</strong> (Sousse, Monastir, Mahdia)</td>
+<td>White houses with blue or green shutters, olive groves, ribat/fortified medina, big family villas</td>
+<td>"Sahel coastal town, white houses with green wooden shutters, olive trees"</td>
+<td>Family, SMEs, real estate</td>
+</tr>
+<tr>
+<td><strong>Sfax</strong></td>
+<td>A walled medina with robust ramparts, dense workshops and industry, <em>borj</em> country houses with olive groves [S]</td>
+<td>"Sfax medina ramparts, busy workshops, olive groves"</td>
+<td>Industry, B2B, hard-working tone</td>
+</tr>
+<tr>
+<td><strong>Kairouan</strong></td>
+<td>The Great Mosque (don't use it as a product backdrop), carpets, <em>makroudh</em> sweets</td>
+<td>"Kairouan carpet shop, hand-knotted rugs"</td>
+<td>Craft, food (makroudh)</td>
+</tr>
+<tr>
+<td><strong>Djerba</strong></td>
+<td>Stark <strong>white Ibadite mosques and menzels</strong>, sky-blue doors, palm trees, pottery (Guellala) [S]</td>
+<td>"Djerba menzel, white domed house, sky-blue door, palm trees"</td>
+<td>Tourism, hospitality, summer</td>
+</tr>
+<tr>
+<td><strong>Tozeur / Nefta</strong></td>
+<td><strong>Yellow clay brick</strong> with geometric patterned façades, palm oasis, dates [S]</td>
+<td>"Tozeur facade of patterned yellow bricks, palm grove"</td>
+<td>South, dates, authentic heritage</td>
+</tr>
+<tr>
+<td><strong>Tataouine / Medenine</strong></td>
+<td><strong>Ksour</strong> with stacked ghorfa granaries [S]</td>
+<td>"ksar with stacked ghorfa vaults, desert light"</td>
+<td>Star Wars cliché; heritage only</td>
+</tr>
+<tr>
+<td><strong>Matmata</strong></td>
+<td>Troglodyte pit houses [S]</td>
+<td>Rarely used</td>
+<td>Heritage cliché</td>
+</tr>
+<tr>
+<td><strong>Northwest</strong> (Béja, Jendouba, Kef, Aïn Draham)</td>
+<td>Green hills, wheat fields, cork oaks, stone houses, winter snow</td>
+<td>"rolling green wheat hills of Béja, spring"</td>
+<td>Agriculture, winter, regional pride</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">→ <strong>Engine rule:</strong> a <strong>default background for trade ads</strong> is an <em>ordinary</em> Tunisian house or street, e.g. a
+suburb flat roof, a tiled <em>salon</em>, a neighbourhood shop, not a landmark. Use a landmark only as a 1-second
+"where" establishing shot.</p>
+<h3 id="32-interiors-s-f">3.2 Interiors [S + F]</h3>
+<ul>
+<li dir="auto"><strong>The <em>salon tunisien</em>:</strong> tiled floors (often marble or granito-look), <strong>painted ceramic tile skirting or wall bands
+  (<em>jliz</em>)</strong> in blue, green and ochre patterns (Qallaline heritage, today mostly Nabeul production). Traditional <em>salon
+  arbi</em> banquettes line the walls with cushions and colourful textiles, and there is often a modern corner sofa in beige
+  or grey too. The room also has heavy curtains, a big TV, a woven <em>klim</em> rug, copper or brass trays, and plastic-covered
+  furniture in some homes. [S: Tanitdeco, Qallalin tiles]</li>
+<li dir="auto"><strong>Kitchen:</strong> a gas bottle, a <em>tajine</em>-style tiled worktop, harissa and olive oil bottles, a <em>couscoussier</em>, a
+  bread basket (baguette + <em>tabouna</em>).</li>
+<li dir="auto"><strong>Summer interiors:</strong> a split <strong>air-conditioner unit on the wall</strong> (the icon of STEG bills), a fan, closed shutters
+  at noon.</li>
+<li dir="auto"><strong>Winter interiors:</strong> cold tiled homes, a blue-flame gas heater (<em>chauffage</em>), blankets, <em>kachabia</em> at home.</li>
+<li dir="auto"><strong>Moroccan vs Tunisian:</strong> Tunisian tiles are <strong>square painted tiles</strong>. Moroccan <strong>zellige</strong> is a mosaic of small
+  cut pieces. Tunisian doors are <strong>studded wood with arched tops</strong>, not Moroccan carved cedar keyhole arches.</li>
+</ul>
+<h3 id="33-street-life-s-f">3.3 Street life [S + F]</h3>
+<ul>
+<li dir="auto"><strong>Louage:</strong> a white minivan with a <strong>coloured stripe</strong> (red = intercity, blue = regional, yellow = south, green =
+  northwest), shouting drivers, leaving when full. [S: Wikipedia, The National]</li>
+<li dir="auto"><strong>Taxis:</strong> individual taxis are yellow. [F]</li>
+<li dir="auto"><strong>Cafés:</strong> men's neighbourhood cafés with plastic or metal chairs, cards (<em>rami, chkoba</em>), shisha, <strong>capucin, direct,
+  express, qahwa arbi</strong>. Coffee is drunk seated, never "to go". The morning café ritual is sacred. [S: Carthage Magazine,
+  Engaging Cultures] Mixed youth cafés and <em>salons de thé</em> exist in the suburbs. [F]</li>
+<li dir="auto"><strong>Markets:</strong> the Marché Central of Tunis, weekly <em>souk</em> in towns, stacked oranges, peppers, harissa, fish on ice,
+  olive oil in plastic bottles. [F]</li>
+<li dir="auto"><strong>Food on the street:</strong> <em>kaskrout</em>, <strong>lablabi</strong>, fricassé, <em>chapati</em> (Tunisian style), makloub, brik, bambalouni, and
+  jasmine (<em>mechmoum</em>) sellers in summer. [F]</li>
+<li dir="auto"><strong>Everyday textures:</strong> the orange-and-white road kerbs, the Tunisian licence plate (black with white characters, <em>تونس</em>), motorcycles
+  (Forza-style scooters), Isuzu pick-ups on building sites, 206/Clio/Polo/Kia cars, blue electric poles, STEG
+  meters on façades. [F] Plates and logos must be text-free in AI shots. Blur or omit them.</li>
+</ul>
+<h3 id="34-clothing-and-casting-s-f">3.4 Clothing and casting [S + F]</h3>
+<ul>
+<li dir="auto"><strong>Everyday wear is modern and Mediterranean:</strong> jeans, polo shirts, sneakers, hoodies and leather jackets in winter;
+  women with <strong>and</strong> without hijab in the same frame (both are normal), colourful modern headscarves, no niqab or abaya.
+  [F]</li>
+<li dir="auto"><strong>The traditional pieces are occasion wear.</strong> The <strong>chechia</strong> is red and worn mainly by older men on holidays and
+  religious feasts. [S: Wikipedia] The <strong>jebba</strong> (men) and the <em>blouza</em> / <em>kaftan</em> (women) appear at <strong>weddings,
+  Aïd, Friday prayer and March 16 (National Dress Day)</strong>. [F] The <em>sefsari</em> (white veil) is worn by very old women in
+  medina scenes only. Rural winter wear is the <em>kachabia</em> (hooded wool cloak).</li>
+<li dir="auto"><strong>Faces:</strong> Tunisians are Mediterranean / North African, with olive to brown skin tones, <strong>real diversity including
+  Black Tunisians</strong> (south, Djerba, Gabès, Medenine), dark curly or straight hair, men often with short beards or
+  stubble, and women with visible curly hair. [F] Avoid Gulf features and styling, Europeanised "stock" faces, and
+  over-lightened skin.</li>
+<li dir="auto"><strong>Workers (installers):</strong> a work polo with a (text-free) logo patch, cargo trousers, safety shoes, harness on roofs,
+  a cap. They are <strong>young to mid-age Tunisian technicians</strong>, and <strong>female engineers are credible in Tunisia</strong> (a large
+  share of engineering graduates). [F]</li>
+<li dir="auto"><strong>Gender norms:</strong> Tunisia has the most liberal family code in the Arab world (CSP 1956), so mixed-gender scenes,
+  working women and couples in a home are all normal. Keep it family-decent: no kissing, modest beachwear.</li>
+</ul>
+<h3 id="35-colours-s-f">3.5 Colours [S + F]</h3>
+<table>
+<thead>
+<tr>
+<th>Palette</th>
+<th>Hex (suggested)</th>
+<th>Meaning</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tunisian red + white</td>
+<td><code>#E70013</code> / <code>#FFFFFF</code></td>
+<td>Flag, patriotism, national team</td>
+<td>Accents only, and never the flag itself (§6)</td>
+</tr>
+<tr>
+<td>Sidi Bou blue + lime white</td>
+<td><code>#1F5FA8</code> / <code>#2E86C1</code> / <code>#F5F3EE</code></td>
+<td>Mediterranean, calm, clean</td>
+<td>Clinics, water, summer, trust</td>
+</tr>
+<tr>
+<td>Harissa red + olive oil gold</td>
+<td><code>#B3261E</code> / <code>#C9A227</code></td>
+<td>Food, warmth, appetite</td>
+<td>Restaurants, FMCG, Ramadan</td>
+</tr>
+<tr>
+<td>Olive green + sand</td>
+<td><code>#6B7A3A</code> / <code>#E8D5B0</code></td>
+<td>Land, olive harvest, Sahel / Sfax</td>
+<td>Agriculture, eco, solar</td>
+</tr>
+<tr>
+<td>Tozeur ochre brick</td>
+<td><code>#C8955A</code> / <code>#A0643C</code></td>
+<td>South, heritage</td>
+<td>Heritage, dates, desert</td>
+</tr>
+<tr>
+<td>Jasmine white + night navy</td>
+<td><code>#FFFDF7</code> / <code>#14213D</code></td>
+<td>Summer nights, weddings, Ramadan</td>
+<td>Night scenes, premium</td>
+</tr>
+<tr>
+<td>Solar sky</td>
+<td><code>#FFB703</code> / <code>#219EBC</code></td>
+<td>Sun + sky + panels</td>
+<td>Solar brand system</td>
+</tr>
+</tbody>
+</table>
+<h3 id="36-typography-and-script-s-f">3.6 Typography and script [S + F]</h3>
+<ul>
+<li dir="auto"><strong>Bilingual is the norm in Tunisian advertising.</strong> Arabic and French are often <strong>complementary, not redundant</strong>:
+  e.g. technical info in one language and emotion in the other. [S: Cairn ELA] Derja entered written advertising in the
+  late 1990s and is now used by about 90 % of advertisers. MSA is rare in ads outside cultural or institutional events.
+  [S: IFPO]</li>
+<li dir="auto"><strong>Arabizi / Tunizi</strong> (Latin + digits) is the script of comments and chats: <strong>3 = ع, 7 = ح, 9 = ق, 5 = خ, 8 = غ,
+  2 = ء</strong>. [S: Ithaca Bound, TUNIZI] It is youthful and TikTok-native, but harder to read quickly for 40+.</li>
+<li dir="auto">Tunisian specifics: <strong>9 = ق</strong> and <strong>5 = خ</strong> are very common. In Gulf Arabizi 9 usually means ص, and Egyptian writers
+    rarely use 9 or 5. A Gulf-style spelling therefore reads as "not from here". [S + F]</li>
+<li dir="auto"><strong>Engine rule (Remotion):</strong>
+  1. <strong>Headline / hook in Derja in Arabic script</strong> (bold, high contrast). Default for 30+ audiences.
+  2. <strong>Prices, brand, technical terms in Latin / French</strong>: "Onduleur hybride", "kWc", "Prosol", "1 500 DT".
+  3. <strong>Arabizi only</strong> for youth / TikTok variants and for comment-style overlays ("<em>3aychek</em>", "<em>9adeh?</em>"). Always test
+     it against the Arabic-script version.
+  4. Numbers on screen are digits (house rule). The Tunisian dinar has 3 decimals, so prefer round numbers
+     ("1 500 DT", "49 DT/mois") and avoid "1.500,000".
+  5. Fonts: modern geometric Arabic sans (e.g. <em>Cairo, Tajawal, IBM Plex Sans Arabic, Noto Kufi Arabic</em>) paired with a
+     clean Latin sans. <strong>Avoid Diwani / Thuluth calligraphy</strong> in normal ads because it reads as Gulf / religious.
+     Use it only as a Ramadan ornament.</li>
+</ul>
+<hr />
+<h2 id="4-what-converts-for-tunisian-smes-and-tradesmen">4. What converts for Tunisian SMEs and tradesmen</h2>
+<h3 id="41-trust-signals-in-order-of-power-s-f">4.1 Trust signals (in order of power) [S + F]</h3>
+<ol>
+<li dir="auto"><strong>A real face</strong>: the owner or technician talking to camera in Derja, ideally on a real roof or in a real shop. AI
+   faces must look like ordinary Tunisians, never models.</li>
+<li dir="auto"><strong>Proof of place</strong>: the city name ("Sfax", "Sousse", "Ben Arous") on screen, a recognisable street, and "we come to
+   you in [governorate]".</li>
+<li dir="auto"><strong>A +216 number and a WhatsApp CTA.</strong> Show the number as <code>XX XXX XXX</code> and use the WhatsApp icon (drawn in Remotion).
+   Tunisians expect to <strong>chat before buying</strong>, and many pages answer "<em>prix en inbox</em>". [F] <strong>Showing the price or a
+   "starting from" price is a trust differentiator.</strong></li>
+<li dir="auto"><strong>Official anchors</strong> (only if true): ANME approval / <strong>Prosol Elec eligibility</strong> (500 DT classic or <strong>1,500 DT
+   Prosol Elec économique</strong> subsidy, repaid over 7-10 years through the STEG bill at 3 % for the économique version),
+   STEG connection handled, warranties, known equipment brands. [S: La Presse, STES, VLD Solar]</li>
+<li dir="auto"><strong>Social proof:</strong> real client testimonials (with written consent), "+120 installations in the Sahel" (only if true),
+   before/after <strong>bills</strong> (not bodies, §6).</li>
+<li dir="auto"><strong>Honesty against scams:</strong> Tunisian solar buyers have heard "free panels", "zero bill forever", "payback in 2 years"
+   and "offer ends tomorrow". [S: VLD Solar] <strong>Anti-scam framing converts:</strong> "no fake promises: here is the real
+   calculation", a site visit before the quote, a written quote.</li>
+<li dir="auto"><strong>"Made / installed in Tunisia"</strong> and a local team: pride in local work. [F]</li>
+<li dir="auto"><strong>Cash on delivery / pay later</strong> for e-commerce: online card payment is still a barrier and COD is standard. [S:
+   agence-web-tunis ("obstacles to online payment") + F]</li>
+</ol>
+<h3 id="42-language-strategy-s">4.2 Language strategy [S]</h3>
+<ul>
+<li dir="auto"><strong>Voice: Derja (Tunis-neutral accent)</strong> always. French trade words stay French (house rule). No MSA voice-over
+  (it sounds like the news or a government notice). No Egyptian or Gulf accent.</li>
+<li dir="auto"><strong>On-screen: Arabic-script Derja + French terms</strong>, with Arabizi only for youth variants.</li>
+<li dir="auto"><strong>Premium or medical sectors</strong> (private clinics, international schools, real estate at La Marsa or Lac) can lean
+  <strong>more French</strong> in text: French still signals competence and class among urban elites. The voice stays Derja-first
+  with French code-switching, which is how Tunisian doctors actually talk. [F]</li>
+</ul>
+<h3 id="43-what-to-avoid-s-f">4.3 What to avoid [S + F]</h3>
+<ul>
+<li dir="auto"><strong>Wrong country:</strong> Moroccan (zellige, riad, djellaba, babouches, tagine as <em>the</em> dish), Gulf (thobe, ghutra, majlis
+  gold, desert-and-camel luxury, Diwani gold calligraphy), Egyptian (galabeya, fanous-lantern Ramadan, Cairo street,
+  Egyptian accent), Algerian or Libyan cues passed off as Tunisian.</li>
+<li dir="auto"><strong>Western stock:</strong> blond families in American suburbs, wooden detached houses, pitched roofs with solar panels
+  (Tunisian roofs are <strong>flat terraces</strong>), US-style kitchens and pickup trucks.</li>
+<li dir="auto"><strong>Religious misuse:</strong> Quran recitation or verses as ad audio, a mosque as product backdrop, prayer scenes selling
+  products, a sheikh endorsing. Religious <em>occasions</em> (Ramadan, Aïd, Mouled) are fine and expected, but keep them
+  festive and familial, not devotional. (TT's "Recharge Omra" shows spirituality can work when tied to a real
+  product benefit.) [S + F]</li>
+<li dir="auto"><strong>Politics:</strong> no president, parties, UGTT, elections, the 2011 revolution, migration controversies, or satire of
+  officials. Decree-law 2022-54 penalises "false news" online. [S: Village Justice] Historical figures can backfire, as
+  the TT / Moncef Bey spot did. [S: Khatt30]</li>
+<li dir="auto"><strong>Regional stereotypes</strong> (Sfaxien stinginess, "Jebali", etc.) and <strong>racial jokes</strong>.</li>
+<li dir="auto"><strong>Alcohol, gambling, "easy money"</strong> imagery: this is also bad for trust with installers. [F]</li>
+<li dir="auto"><strong>Excessive luxury</strong> (gold, Lamborghinis, Dubai skylines): Tunisians read it as a scam or as Gulf content. [F]</li>
+</ul>
+<hr />
+<h2 id="5-seasonal-hooks-with-2026-2027-dates">5. Seasonal hooks (with 2026-2027 dates)</h2>
+<p dir="auto">Islamic dates are approximate (± 1 day, decided by moon sighting). [F]</p>
+<table>
+<thead>
+<tr>
+<th>Period</th>
+<th>Dates</th>
+<th>Mood / hooks</th>
+<th>Best sectors</th>
+<th>Style card (§7)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rentrée</strong></td>
+<td>Mid-Sept (schools ≈ 15 Sept); universities Oct</td>
+<td>Supplies, fees, private schools, tutoring, "new start"</td>
+<td>Schools, training, e-commerce</td>
+<td>S8, S3</td>
+</tr>
+<tr>
+<td><strong>Mouled</strong> (Mawlid)</td>
+<td>≈ 15 Aug 2027 (was ≈ 25 Aug 2026)</td>
+<td><em>Assida zgougou</em> (pine-nut pudding), family visits</td>
+<td>Food, pastry</td>
+<td>S1</td>
+</tr>
+<tr>
+<td><strong>Autumn</strong></td>
+<td>Oct-Nov</td>
+<td>Back to normal budget; olive harvest begins (Nov-Jan, Sfax / Sahel)</td>
+<td>Solar ("prepare before summer" with Prosol financing), cars</td>
+<td>S4, S10</td>
+</tr>
+<tr>
+<td><strong>Winter</strong></td>
+<td>Dec-Feb</td>
+<td>Cold tiled homes, gas heaters, <strong>winter STEG bill</strong>, rain, <em>kachabia</em>, <em>lablabi</em></td>
+<td>Solar + reversible AC, alarms (long nights), clinics</td>
+<td>S5, S2</td>
+</tr>
+<tr>
+<td><strong>New Year + school break</strong></td>
+<td>Late Dec - early Jan</td>
+<td>Family outings, gifts</td>
+<td>E-commerce, restaurants</td>
+<td>S3</td>
+</tr>
+<tr>
+<td><strong>Ramadan 2027</strong></td>
+<td>≈ <strong>8 Feb - 9 Mar 2027</strong></td>
+<td>Family iftar, brik, <em>chorba frik</em>, dates, night outings, sahriya, TV series, charity, "saha ftourkom"</td>
+<td>All: restaurants (iftar menus), FMCG, telecom, e-commerce (Aïd clothes)</td>
+<td><strong>S1</strong>, S3</td>
+</tr>
+<tr>
+<td><strong>Aïd el-Fitr</strong></td>
+<td>≈ <strong>10 Mar 2027</strong></td>
+<td>New clothes for kids, pastries (baklawa, ghraiba, kaak warka), visits</td>
+<td>E-commerce, pastry, fashion</td>
+<td>S1</td>
+</tr>
+<tr>
+<td><strong>Independence Day</strong></td>
+<td>20 March</td>
+<td>National pride</td>
+<td>Accent only, no flag misuse</td>
+<td>S12</td>
+</tr>
+<tr>
+<td><strong>Spring / weddings start</strong></td>
+<td>April-June</td>
+<td>Wedding prep, <em>outia</em> (trousseau), halls, photographers</td>
+<td>Event services, jewellery, real estate</td>
+<td>S9</td>
+</tr>
+<tr>
+<td><strong>Aïd el-Adha</strong></td>
+<td>≈ <strong>16-17 May 2027</strong></td>
+<td><strong>Sheep price</strong> debates (a classic meme topic), family, grills, butchers</td>
+<td>Food, e-commerce, credit</td>
+<td>S3, S6</td>
+</tr>
+<tr>
+<td><strong>Bac results / exams</strong></td>
+<td>June-July</td>
+<td>Stress, <em>bac</em> results day, orientation</td>
+<td>Schools, tutoring, universities</td>
+<td>S8</td>
+</tr>
+<tr>
+<td><strong>Summer</strong></td>
+<td>June-Sept</td>
+<td><strong>Heat, air conditioning, STEG bill spike, load-shedding</strong>, beach, TRE diaspora return, <strong>wedding season</strong> (July-Aug), jasmine, festivals (Carthage, Hammamet)</td>
+<td><strong>Solar + batteries</strong>, clim, real estate (diaspora buyers), cars, restaurants</td>
+<td><strong>S4</strong>, S9, S10</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto"><strong>Summer 2027 solar hook (key):</strong> the summer-2026 memories are fresh. A record heatwave started on 11 July 2026,
+load-shedding followed, STEG blamed air conditioning at the 14:00-16:00 peak, and STEG authorised home batteries with
+hybrid inverters on 24 July 2026. [S: pv magazine, African Manager] Campaigns should start in <strong>March-May 2027</strong>:
+"Next summer, keep the clim on even when the power goes off", "your panels produce most exactly when you use the clim".</p>
+<hr />
+<h2 id="6-legal-and-platform-basics-not-legal-advice-confirm-with-a-tunisian-lawyer">6. Legal and platform basics (not legal advice; confirm with a Tunisian lawyer)</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Rule</th>
+<th>Source</th>
+<th>Engine rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Misleading advertising</td>
+<td>Law <strong>92-117</strong> (consumer protection), art. 13: advertising with false or misleading claims is forbidden. Fines of <strong>1,000-20,000 DT</strong></td>
+<td>[S: FAO / Juridoc, over-blog]</td>
+<td>No invented stats, savings or reviews. Every number in a script must have a client source recorded in <code>decisions.md</code></td>
+</tr>
+<tr>
+<td>Ad substantiation</td>
+<td>Law <strong>98-40</strong> (sales techniques and commercial advertising), arts. 35-43: the advertiser must <strong>prove its claims</strong> (art. 37). The Minister can suspend an ad for one month, renewable (art. 38). Advertiser and agency are jointly liable (art. 40)</td>
+<td>[S: Jurisite]</td>
+<td><strong>Lead Up is jointly liable</strong>, so keep proof of every claim</td>
+</tr>
+<tr>
+<td>Comparative advertising</td>
+<td>Not explicitly authorised in Tunisia. The first open competitor jab in a Tunisian spot was treated as a novelty</td>
+<td>[S: Jurisite analysis, Business News headline]</td>
+<td><strong>Never name or show a competitor.</strong> Compare with "the old way" or "the bill", not a brand</td>
+</tr>
+<tr>
+<td>National flag</td>
+<td>Law <strong>2001-36</strong> on trademarks (amended 2007) and Paris Convention art. 6ter: state symbols need written authorisation. Minister of Commerce warning of 10 April 2011 on flag misuse in ads. Penal code art. 129 on insulting the flag</td>
+<td>[S: Prosdelacom, Wikipedia FR]</td>
+<td><strong>No flag in ads.</strong> Suggest it with red + white colour accents, a crescent-free abstract, or a football crowd with no readable flag</td>
+</tr>
+<tr>
+<td>Personal data</td>
+<td>Organic Law <strong>2004-63</strong> / INPDP: consent, declaration to INPDP before processing, rights of access</td>
+<td>[S: INPDP, DPO Consulting]</td>
+<td>Lead forms: a consent line in the form or the WhatsApp opener. Client testimonials need <strong>written image consent</strong></td>
+</tr>
+<tr>
+<td>Online speech</td>
+<td>Decree-law <strong>2022-54</strong>: prison for spreading "false news"</td>
+<td>[S: Village Justice]</td>
+<td>No satire of officials or institutions, no "STEG is lying" framing. Criticising the <em>bill</em>, not the company, is safer</td>
+</tr>
+<tr>
+<td>Meta, personal attributes</td>
+<td>No asserting or implying the viewer's health, finances, religion etc. ("Are you suffering from...?")</td>
+<td>[S: Meta Transparency]</td>
+<td>Clinic scripts should say "our dermatology service", not "your acne"</td>
+</tr>
+<tr>
+<td>Meta, before/after</td>
+<td>Before/after bodies get rejected (health, weight, cosmetic)</td>
+<td>[S: Meta policy blogs]</td>
+<td>Allowed for <strong>bills, roofs and rooms</strong>, never bodies</td>
+</tr>
+<tr>
+<td>Meta, AI labels</td>
+<td>"AI info" labels are triggered by C2PA/IPTC metadata or self-disclosure. Disclosure is mandatory for political / social-issue ads</td>
+<td>[S: Meta newsroom]</td>
+<td>Expect labels on AI shots. Keep AI shots for scenes and real footage for faces or proof when possible</td>
+</tr>
+<tr>
+<td>Meta, special categories</td>
+<td>Financial products (credit, insurance) and housing / real estate special categories carry targeting limits (enforced mainly in US/EU)</td>
+<td>[S: Jon Loomer, Data Axle]</td>
+<td>For Prosol <strong>financing</strong> or real estate ads, check whether Meta forces a Special Ad Category in the TN account</td>
+</tr>
+<tr>
+<td>Impersonation</td>
+<td>—</td>
+<td>Common sense + Meta policy</td>
+<td><strong>Never</strong> use a real celebrity, a creator's likeness or voice, a brand's jingle, or a TT/Ooredoo/Orange look-alike</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-style-library-tunisian-style-cards-for-the-ai-engine">7. STYLE LIBRARY: Tunisian style cards for the AI engine</h2>
+<p dir="auto">Each card gives: <strong>When</strong>, <strong>Palette</strong>, <strong>Settings</strong>, <strong>Casting / wardrobe</strong>, <strong>Camera and edit</strong>, <strong>Text (Remotion)</strong>,
+<strong>Music / SFX</strong>, <strong>Voice tone</strong>, <strong>Hook patterns</strong>, <strong>Avoid</strong>, and a <strong>prompt seed</strong> (English, text-free, for Nano Banana 2
+or Omni).</p>
+<h3 id="s1-ramadan-family-tv-warm-cinematic-nostalgic">S1 · "Ramadan family TV" (warm cinematic, nostalgic)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> Ramadan (from 2 weeks before until Aïd), Aïd el-Fitr, Mouled. FMCG, restaurants (iftar menus),
+  telecom-like services, e-commerce (Aïd clothes). For solar: "a cool house for the whole family".</li>
+<li dir="auto"><strong>Palette:</strong> amber / honey <code>#E0A458</code>, deep navy night <code>#14213D</code>, harissa red <code>#B3261E</code>, jasmine white.</li>
+<li dir="auto"><strong>Settings:</strong> a living room at iftar (a low table then the dining table, brik, <em>chorba frik</em>, dates, <em>lben</em>, bread),
+  a medina street at night with string lights, a grandmother's kitchen, a café after iftar.</li>
+<li dir="auto"><strong>Casting:</strong> three generations. The grandmother (sometimes a <em>sefsari</em> or headscarf), a mother (hijab or none), a
+  father in a sweater, kids, and an uncle making jokes.</li>
+<li dir="auto"><strong>Camera:</strong> warm tungsten practicals, slow push-ins, table top-shots, handheld family chaos, 24 fps feel.</li>
+<li dir="auto"><strong>Text:</strong> "صحة فطوركم", "رمضان مبروك" style greetings (check the Derja lint), in a soft rounded Arabic font. Keep
+  ornament to a thin crescent line, not heavy calligraphy.</li>
+<li dir="auto"><strong>Music:</strong> a <strong>malouf</strong> motif (oud + violin) or an original <strong>mezwed-lite</strong> tune with a kids' chant. Sound design:
+  the adhan cue is <strong>implied</strong> by the sunset and the clock (don't use a real adhan recording in an ad), brik sizzling,
+  laughter.</li>
+<li dir="auto"><strong>Voice:</strong> warm, the mother or grandfather narrating. Humor with tenderness.</li>
+<li dir="auto"><strong>Hooks:</strong> "the kid who steals a <em>brik</em> before the adhan", "the wait-for-iftar countdown", "grandma's recipe vs
+  the delivery app".</li>
+<li dir="auto"><strong>Avoid:</strong> the Egyptian fanous as the main symbol, a Gulf <em>majlis</em>, Quran audio, showing eating during fasting hours
+  as a joke about fasting.</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian family iftar at sunset in a modest tiled living room, three generations around a table with brik,
+  chorba frik soup, dates and bread, warm tungsten light, candid laughter, no text".</li>
+</ul>
+<h3 id="s2-talking-head-craftsman-ugc-trust-the-installer-speaks">S2 · "Talking-head craftsman" (UGC trust, the installer speaks)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> the always-on base format for <strong>installers</strong> (solar, alarms, AC, plumbing) and any owner-led SME.</li>
+<li dir="auto"><strong>Palette:</strong> natural daylight, the client's brand colour as a small accent.</li>
+<li dir="auto"><strong>Settings:</strong> a <strong>real flat roof in a Tunisian suburb</strong> (water tank, dish, parapet, neighbouring rooftops), a van,
+  a workshop, a client's <em>salon</em>.</li>
+<li dir="auto"><strong>Casting:</strong> a Tunisian technician aged 28-45 with stubble, a work polo and a cap. A female engineer variant is fine.</li>
+<li dir="auto"><strong>Camera:</strong> selfie-style or a tripod at chest height, jump cuts every 2-3 s, B-roll inserts (screwing panels,
+  an inverter screen, a phone app).</li>
+<li dir="auto"><strong>Text:</strong> big outlined Derja captions (house style), key numbers in digits, "📍 Sfax"-style location chips drawn in
+  code, and a WhatsApp button at the end.</li>
+<li dir="auto"><strong>Music:</strong> a light mezwed-trap loop at a low level, or none.</li>
+<li dir="auto"><strong>Voice:</strong> direct, <em>tutoiement</em>, confident, a little humor.</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>Facture STEG 300 DT? Chouf chnowa sar m3a Si Mohamed</em>", "3 questions everyone asks me before
+  installing panels", "don't sign anything before you hear this".</li>
+<li dir="auto"><strong>Avoid:</strong> suits, a studio backdrop, a Western house, over-polished AI skin.</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian solar technician in his thirties on a flat concrete rooftop in a Tunis suburb, black water tanks
+  and satellite dishes behind, holding a drill, talking to camera, natural midday light, candid phone-video look,
+  no text".</li>
+</ul>
+<h3 id="s3-sketch-comedy-one-actor-many-roles-tiktok-native-humor">S3 · "Sketch comedy / one actor, many roles" (TikTok-native humor)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> awareness, TikTok, youth, e-commerce, restaurants, schools. Good for the "problem" part of any ad.</li>
+<li dir="auto"><strong>Palette:</strong> bright and flat sitcom lighting, saturated clothes.</li>
+<li dir="auto"><strong>Settings:</strong> a middle-class <em>salon</em> (sofa, TV, tiles, curtains), a neighbourhood shop, a louage, an office
+  counter.</li>
+<li dir="auto"><strong>Casting:</strong> the same actor as mother / son / neighbour, sitcom archetypes: the naïve cousin, the know-it-all
+  neighbour, the stingy uncle (never tied to a region).</li>
+<li dir="auto"><strong>Camera:</strong> static frontal shots, fast cuts, <strong>freeze-frame + zoom + a "boom" SFX</strong> meme grammar, reaction close-ups.</li>
+<li dir="auto"><strong>Text:</strong> meme-style captions, <strong>Arabizi allowed</strong> in youth variants, emoji drawn in code.</li>
+<li dir="auto"><strong>Music / SFX:</strong> sitcom stings, vine-boom-style hits, a dramatic violin sting, and original meme sounds (no
+  copyrighted audio).</li>
+<li dir="auto"><strong>Voice:</strong> fast, exaggerated, Tunis street Derja, wordplay.</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>Ki tjik facture STEG fi awsst juillet</em>" (the face-reaction meme), "POV: your mother discovers the price of...",
+  "the neighbour who always knows better".</li>
+<li dir="auto"><strong>Avoid:</strong> regional jokes, jokes on religion, women or officials, and mocking the customer.</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian man in his twenties sitting on a beige corner sofa in a tiled living room with a wall-mounted air
+  conditioner, exaggerated shocked expression while looking at a paper bill, bright flat sitcom lighting, no text".</li>
+</ul>
+<h3 id="s4-summer-heat-and-steg-bill-problem-solution-solar-and-battery-hero">S4 · "Summer heat and STEG bill" (problem → solution, solar and battery hero)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> <strong>March-August</strong> (peak in June-July), and replays after any outage news. Solar PV, hybrid batteries,
+  inverter AC, insulation.</li>
+<li dir="auto"><strong>Palette:</strong> a hot overexposed exterior (<code>#FFB703</code> sun, bleached white), then a <strong>cool blue interior</strong> (<code>#219EBC</code>)
+  after the solution: the colour temperature tells the story.</li>
+<li dir="auto"><strong>Settings:</strong> a heat-shimmer street at 14:00, shutters closed, a sweating family under a fan, a <strong>power cut</strong>
+  (dark flat, phone flashlight), then panels on the roof and the AC humming, the fridge light on.</li>
+<li dir="auto"><strong>Casting:</strong> a family of 4, a grandfather with a fan, kids with ice cream.</li>
+<li dir="auto"><strong>Camera:</strong> heat haze, slow motion on sweat, a hard cut to darkness for the outage, a satisfying reveal of the
+  panels at golden hour.</li>
+<li dir="auto"><strong>Text:</strong> bill amount "450 DT" → "120 DT" (only real client numbers), "Batterie = ma3adech coupure", "Prosol:
+  -1 500 DT" (only if eligible).</li>
+<li dir="auto"><strong>Music:</strong> tension drone → release into a bright mezwed-trap drop.</li>
+<li dir="auto"><strong>Voice:</strong> empathetic, then confident.</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>14h, 45°, w t9os edhaw</em>" (the power cut), "your roof is paying the sun for nothing", "your panels produce
+  most exactly when your clim runs".</li>
+<li dir="auto"><strong>Avoid:</strong> "zero bill forever", "free panels", fake urgency; pitched Western roofs.</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian family in a dim tiled living room during a summer power cut, closed shutters with bright slits of
+  sunlight, grandfather fanning himself, children on the floor, hot hazy atmosphere, no text".</li>
+</ul>
+<h3 id="s5-night-watch-security-alarms-cameras">S5 · "Night-watch security" (alarms, cameras)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> autumn-winter (long nights), before summer holidays ("you're at the beach, your house is alone"), Aïd
+  travel, and new shop openings.</li>
+<li dir="auto"><strong>Palette:</strong> night navy <code>#14213D</code>, sodium-orange street light, the cold cyan of a phone screen.</li>
+<li dir="auto"><strong>Settings:</strong> a quiet Tunisian residential street at night (villa walls with <strong>wrought-iron gates</strong>, broken glass or
+  spikes on top of walls [F], a parked Clio), a small shop's metal shutter, a phone showing a live camera feed.</li>
+<li dir="auto"><strong>Casting:</strong> a shop owner, a mother alone with kids, a diaspora (TRE) owner checking home from France.</li>
+<li dir="auto"><strong>Camera:</strong> CCTV angles, slow dolly, phone POV, a notification pop.</li>
+<li dir="auto"><strong>Text:</strong> "Chouf darek men telifounek", a 24/7 badge, "installation f nhar" (only if true).</li>
+<li dir="auto"><strong>Music:</strong> a low pulse, a minimal beat.</li>
+<li dir="auto"><strong>Voice:</strong> calm, reassuring; <strong>never fear-mongering or crime statistics</strong>.</li>
+<li dir="auto"><strong>Avoid:</strong> masked burglars with weapons (too violent, can trip Meta rules), police uniforms and emblems, the
+  identifiable faces of "thieves".</li>
+<li dir="auto"><strong>Seed:</strong> "quiet Tunisian residential street at night, white villa with a black wrought-iron gate and a small
+  security camera on the wall, warm sodium street light, parked small hatchback, calm atmosphere, no text".</li>
+</ul>
+<h3 id="s6-souk-market-energy-promo-price-volume">S6 · "Souk / market energy" (promo, price, volume)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> promos, Aïd el-Adha, soldes (Tunisian sales seasons, winter and summer [F]), restaurants, e-commerce drops.</li>
+<li dir="auto"><strong>Palette:</strong> saturated reds, oranges and greens of produce; harissa red; a sunlit canvas awning.</li>
+<li dir="auto"><strong>Settings:</strong> a weekly souk, the Marché Central, stacked peppers and oranges, a <em>hanout</em> (neighbourhood shop),
+  a delivery scooter.</li>
+<li dir="auto"><strong>Casting:</strong> vendors and shoppers of all ages, a delivery rider.</li>
+<li dir="auto"><strong>Camera:</strong> quick whip-pans, top shots of crates, handheld crowd energy, stop-motion price reveals.</li>
+<li dir="auto"><strong>Text:</strong> a <strong>price in DT</strong> with a bounce animation, "livraison partout f Tounes", "khalles ki tousel" (cash on
+  delivery).</li>
+<li dir="auto"><strong>Music:</strong> fast <strong>mezwed</strong> with darbouka rolls, vendor-shout samples (original).</li>
+<li dir="auto"><strong>Voice:</strong> a loud, joyful market-vendor style.</li>
+<li dir="auto"><strong>Avoid:</strong> Moroccan spice-cone souks (Marrakech look), Egyptian markets.</li>
+<li dir="auto"><strong>Seed:</strong> "busy Tunisian weekly market, stacked red peppers and oranges in wooden crates, canvas awnings, sunny
+  morning, shoppers in everyday modern clothes, no text".</li>
+</ul>
+<h3 id="s7-cafe-capucin-talk-word-of-mouth-male-decision-makers">S7 · "Café capucin talk" (word-of-mouth, male decision-makers)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> solar, cars, insurance and financing. "A friend tells a friend" testimonials.</li>
+<li dir="auto"><strong>Palette:</strong> cream <code>#F3E9DC</code>, espresso brown, a green metal-chair accent.</li>
+<li dir="auto"><strong>Settings:</strong> a neighbourhood café terrace, morning, small glasses of <strong>capucin</strong> and <strong>direct</strong>, cards on the
+  table, a TV showing football (no readable logos).</li>
+<li dir="auto"><strong>Casting:</strong> 2-3 men aged 35-60, one sceptical and one convinced; a mixed-youth café variant for younger targets.</li>
+<li dir="auto"><strong>Camera:</strong> eye-level two-shots, close-ups of the coffee glass, a phone passed across the table showing the app / bill.</li>
+<li dir="auto"><strong>Text:</strong> a dialogue in captions, the CTA as "<em>ab3ath lel WhatsApp</em>".</li>
+<li dir="auto"><strong>Music:</strong> ambient café, a light oud.</li>
+<li dir="auto"><strong>Voice:</strong> a natural bantering dialogue (two TTS voices).</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>9olli, facture mte3ek 9adeh?</em>", the sceptic's question answered by the neighbour's real bill.</li>
+<li dir="auto"><strong>Avoid:</strong> shisha as a hero prop (health policy + image), alcohol, European café décor.</li>
+<li dir="auto"><strong>Seed:</strong> "two Tunisian men in their forties at a neighbourhood café terrace in the morning, small glasses of
+  espresso with milk foam on a metal table, one showing his phone to the other, plastic chairs, a street behind,
+  no text".</li>
+</ul>
+<h3 id="s8-bac-and-rentree-schools-training-tutoring">S8 · "Bac and rentrée" (schools, training, tutoring)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> September rentrée, the January semester, May-June exams, and the <em>bac</em> results in July.</li>
+<li dir="auto"><strong>Palette:</strong> school blue <code>#1F5FA8</code>, notebook white, a highlighter-yellow accent.</li>
+<li dir="auto"><strong>Settings:</strong> a Tunisian lycée gate (white wall, blue gate), a bedroom desk with exercise books, a tutoring room, a
+  proud family in the <em>salon</em> on results day.</li>
+<li dir="auto"><strong>Casting:</strong> teenagers in modern clothes (hoodies, sneakers), mothers (key decision makers), a teacher.</li>
+<li dir="auto"><strong>Camera:</strong> clean, bright, stop-motion of stationery, a results-day celebration with a <em>zgharit</em> (ululation) moment.</li>
+<li dir="auto"><strong>Text:</strong> bilingual (Arabic headline + French subject names: "Maths", "Physique", "Info"), a Tunisian grade feel
+  ("/20").</li>
+<li dir="auto"><strong>Music:</strong> an upbeat modern pop / rap-lite beat; ululation on the success beat.</li>
+<li dir="auto"><strong>Voice:</strong> a mix of encouraging parent and peer.</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>El bac mouch ghoul</em>", "the average moves from 9 to 14 in 3 months" (only with proof).</li>
+<li dir="auto"><strong>Avoid:</strong> school uniforms from other countries (UK-style ties, US lockers), MSA textbook voice.</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian teenage student at a small desk in a bedroom with tiled floor, exercise books and a laptop, warm
+  evening lamp, focused expression, no text".</li>
+</ul>
+<h3 id="s9-summer-wedding-jasmine-night-celebration-premium-feel">S9 · "Summer wedding / jasmine night" (celebration, premium feel)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> June-September. Events, photographers, jewellery, beauty, restaurants, real estate for newlyweds, cars.</li>
+<li dir="auto"><strong>Palette:</strong> jasmine white <code>#FFFDF7</code>, gold <code>#C9A227</code>, night navy, bougainvillea magenta.</li>
+<li dir="auto"><strong>Settings:</strong> a terrace or salle des fêtes at night with string lights, a Sidi Bou Said-style staircase (one shot),
+  the <em>outia</em> trousseau, a car convoy honking.</li>
+<li dir="auto"><strong>Casting:</strong> a bride in a <em>kaftan</em> / regional dress (the <em>henna</em> night) and a white dress (wedding night), a groom in a
+  jebba (henna) and a suit, aunties dancing, kids.</li>
+<li dir="auto"><strong>Camera:</strong> bokeh night shots, slow motion dancing, drone-like wide shots of the convoy.</li>
+<li dir="auto"><strong>Text:</strong> elegant, but still Derja ("<em>mabrouk</em>").</li>
+<li dir="auto"><strong>Music:</strong> a <strong>mezwed</strong> / <em>tabbal</em> wedding energy or a malouf romantic motif; <em>zgharit</em>.</li>
+<li dir="auto"><strong>Avoid:</strong> Gulf gold-heavy styling, Moroccan <em>amariya</em> throne and <em>negafa</em> (a distinctly Moroccan wedding code).</li>
+<li dir="auto"><strong>Seed:</strong> "Tunisian summer wedding party at night on a terrace with warm string lights, women in colourful embroidered
+  kaftans dancing, jasmine garlands, joyful atmosphere, no text".</li>
+</ul>
+<h3 id="s10-heritage-premium-slow-mediterranean-clinics-real-estate-premium-restaurants">S10 · "Heritage premium / slow Mediterranean" (clinics, real estate, premium restaurants)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> brand films, premium real estate (La Marsa, Gammarth, Lac, Hammamet, Sousse Kantaoui), private clinics
+  (including medical tourism), premium restaurants, diaspora (TRE) buyers in July-August.</li>
+<li dir="auto"><strong>Palette:</strong> lime white, Sidi Bou blue, olive, sand; soft golden hour.</li>
+<li dir="auto"><strong>Settings:</strong> a white terrace with a sea view, painted tile bands, a studded blue door (one shot), a modern bright
+  clinic with a Mediterranean light, an olive grove.</li>
+<li dir="auto"><strong>Casting:</strong> a composed professional (a Tunisian doctor or architect aged 40-55), a returning diaspora family.</li>
+<li dir="auto"><strong>Camera:</strong> slow gimbal, symmetrical frames, long takes, restrained edits.</li>
+<li dir="auto"><strong>Text:</strong> a more French-leaning layout, thin elegant Latin + Arabic, minimal.</li>
+<li dir="auto"><strong>Music:</strong> a malouf motif re-arranged (piano + oud), or an ambient nay flute.</li>
+<li dir="auto"><strong>Voice:</strong> calm Derja with French code-switching (like real Tunisian professionals).</li>
+<li dir="auto"><strong>Avoid:</strong> Santorini (Greek blue domes), Moroccan riads, Dubai glass towers, before/after bodies (Meta).</li>
+<li dir="auto"><strong>Seed:</strong> "bright modern Tunisian villa terrace at golden hour overlooking the Mediterranean, white walls, a band of
+  hand-painted blue ceramic tiles, olive tree in a terracotta pot, no people, no text".</li>
+</ul>
+<h3 id="s11-regional-pride-real-tunisia-interior-and-south-roots">S11 · "Regional pride / real Tunisia" (interior and south, roots)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> campaigns targeting a governorate (Sfax, Gabès, Kairouan, Gafsa, Kasserine, Béja, Jendouba, Tozeur);
+  agriculture, dates, olive oil, local SMEs; solar for farms and pumping.</li>
+<li dir="auto"><strong>Palette:</strong> ochre, olive, wheat gold, deep sky.</li>
+<li dir="auto"><strong>Settings:</strong> an olive grove at harvest, wheat fields of Béja, a Tozeur palm grove with brick façades, a solar pump
+  in a field, a rural <em>borj</em>.</li>
+<li dir="auto"><strong>Casting:</strong> farmers (a <em>kachabia</em> in winter, a straw hat in summer), multigenerational rural families, a Black
+  Tunisian family in the south (authentic diversity).</li>
+<li dir="auto"><strong>Camera:</strong> wide landscapes, hands close-up (olives, soil, dates), golden hour.</li>
+<li dir="auto"><strong>Text:</strong> the town name as hero ("Sidi Bouzid, heka ahna"), in simple Arabic.</li>
+<li dir="auto"><strong>Music:</strong> <strong>salhi</strong> / gasba flute + bendir, or Bedouin chant with a modern beat.</li>
+<li dir="auto"><strong>Voice:</strong> a regional accent is allowed for testimonials; the narrator stays neutral.</li>
+<li dir="auto"><strong>Avoid:</strong> misery aesthetics, Star Wars ksour for non-tourism, camel clichés.</li>
+<li dir="auto"><strong>Seed:</strong> "olive harvest in a Tunisian grove near Sfax, family members with nets under the trees, winter sun, older man
+  in a brown wool hooded kachabia, no text".</li>
+</ul>
+<h3 id="s12-clean-motion-graphics-explainer-remotion-first-data">S12 · "Clean motion-graphics explainer" (Remotion-first, data)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> Prosol / financing explainers, price lists, "how it works", retargeting. Low AI cost.</li>
+<li dir="auto"><strong>Palette:</strong> the client's brand colour + white + one Tunisian accent (red <code>#E70013</code> sparingly).</li>
+<li dir="auto"><strong>Settings:</strong> abstract, with light touches of <strong>tile-pattern geometry</strong> (Tunisian 8-point star / Qallaline-inspired
+  motifs, drawn as vector) as backgrounds.</li>
+<li dir="auto"><strong>Text:</strong> the hero is the kinetic typography: bilingual, numbers in digits, DT prices, an animated STEG bill (a
+  generic document, not the real STEG logo).</li>
+<li dir="auto"><strong>Music:</strong> a clean mezwed-trap loop.</li>
+<li dir="auto"><strong>Voice:</strong> clear, explanatory Derja.</li>
+<li dir="auto"><strong>Avoid:</strong> the flag, the STEG / ANME logos without permission (describe them instead: "<em>mwafa9 3lih men ANME</em>" only if
+  true), MSA.</li>
+</ul>
+<h3 id="s13-louage-street-pov-energetic-urban-youth">S13 · "Louage / street POV" (energetic urban, youth)</h3>
+<ul>
+<li dir="auto"><strong>When:</strong> TikTok, delivery services, e-commerce, youth offers, driving schools, cars.</li>
+<li dir="auto"><strong>Palette:</strong> the white of the louage + a red stripe, asphalt grey, bright sky.</li>
+<li dir="auto"><strong>Settings:</strong> a louage station (Bab Saadoun / Moncef Bey style), tram crossings, the busy Avenue Bourguiba, a
+  scooter ride.</li>
+<li dir="auto"><strong>Camera:</strong> POV, GoPro-style, speed ramps.</li>
+<li dir="auto"><strong>Text:</strong> Arabizi allowed, meme captions.</li>
+<li dir="auto"><strong>Music:</strong> <strong>rap tounsi</strong> / trap with a mezwed sample.</li>
+<li dir="auto"><strong>Hooks:</strong> "<em>Wa9t el louage ykammel...</em>", the waiting joke, then product delivery beats the louage.</li>
+<li dir="auto"><strong>Seed:</strong> "white Tunisian louage minivans with a single red side stripe lined up at a busy station, drivers calling
+  passengers, afternoon light, no readable text or plates".</li>
+</ul>
+<hr />
+<h2 id="8-blacklist-cliches-and-wrong-country-cues-negative-prompt-material">8. Blacklist: clichés and wrong-country cues (negative prompt material)</h2>
+<p dir="auto"><strong>Negative prompt terms (add to every Tunisian scene):</strong> <code>Moroccan zellige mosaic, Marrakech riad, djellaba, babouche
+slippers, keyhole Moroccan arch, tagine centerpiece, Gulf thobe, ghutra, agal, abaya with niqab, Emirati majlis,
+gold Arabic calligraphy wall, Egyptian galabeya, Ramadan fanous lantern (as hero), Cairo street, Santorini blue domes,
+pitched tiled roof, wooden American house, snowy pine forest, blond family, camels in a city, belly dancer, readable
+text, logos, license plates, flags</code>.</p>
+<p dir="auto"><strong>Overused but Tunisian (use at most one shot per ad):</strong> Sidi Bou Said blue doors, the Tataouine / Star Wars ksour,
+Matmata caves, El Jem amphitheatre, camels in the Douz dunes, the red chechia on young people, couscous as <em>the</em>
+answer to everything.</p>
+<p dir="auto"><strong>Tone clichés to avoid:</strong> orientalist "1001 nights", misery porn about the interior regions, Gulf luxury
+(Lamborghinis, gold), American "hustle" bro-speak, MSA news-anchor voice.</p>
+<hr />
+<h2 id="9-derja-copy-codes-for-scripts-check-them-with-lintderja">9. Derja copy codes for scripts (check them with <code>lintDerja</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Derja pattern [F]</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Money</td>
+<td>"<em>alf</em>" = 1 DT colloquially (1,000 millimes); "<em>malyoun</em>" = 1,000 DT; "<em>mya alf</em>" = 100 DT</td>
+<td>Older and working-class buyers count in millimes. The screen always shows "DT" in digits</td>
+</tr>
+<tr>
+<td>CTA</td>
+<td>"<em>ab3athelna 3al WhatsApp</em>", "<em>kallemna</em>", "<em>sajjel ismek</em>", "<em>ija chouf</em>"</td>
+<td>WhatsApp is the natural next step</td>
+</tr>
+<tr>
+<td>Trust</td>
+<td>"<em>bla klem fareg</em>" (no empty talk), "<em>nwarriwlek el 7seb</em>" (we show you the calculation)</td>
+<td>Anti-scam framing</td>
+</tr>
+<tr>
+<td>Greetings</td>
+<td>"<em>Saha ftourkom</em>" (Ramadan), "<em>3idkom mabrouk</em>" (Aïd), "<em>Mabrouk</em>" (weddings)</td>
+<td>Avoid Gulf "<em>Ramadan kareem</em>" as the only greeting</td>
+</tr>
+<tr>
+<td>Heat / bill</td>
+<td>"<em>sakhana</em>", "<em>facture STEG</em>", "<em>el clim</em>", "<em>t9os edhaw</em>" (power cut)</td>
+<td>French trade words stay French</td>
+</tr>
+<tr>
+<td>Phone</td>
+<td>+216 <strong>XX XXX XXX</strong> (8 digits)</td>
+<td>On screen, grouped 2-3-3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-confidence-notes-and-open-questions">10. Confidence notes and open questions</h2>
+<ul>
+<li dir="auto"><strong>Platform numbers:</strong> DataReportal is solid. Agency-blog figures (peak hours, Derja +40-60 % engagement, WhatsApp
+  cost per conversation, TikTok CPM) are single-source. Validate them with Lead Up's own first campaigns (A/B:
+  Arabic-script vs Arabizi captions, Derja-only vs Derja + French text).</li>
+<li dir="auto"><strong>Unverified [F] items to check with a Tunisian creative:</strong> the louage station names, the solde seasons, the STEG
+  tariff-tranche mechanics (a good hook if confirmed: going over a consumption tranche raises the price of all kWh),
+  the claim that alcohol advertising is banned, and the Mouled / Aïd 2027 dates.</li>
+<li dir="auto"><strong>Meta special ad categories in Tunisia:</strong> check in Ads Manager whether financing (Prosol credit) or real estate
+  ads force a category in TN.</li>
+<li dir="auto"><strong>Music rights:</strong> the telecom parodies were licensed. Lead Up must compose originals.</li>
+<li dir="auto"><strong>Web search budget ran out</strong> before a few planned lookups: Délice / Vitalait visual archives, Meta's
+  Tunisia-specific policy page, e-commerce COD statistics. Those items are marked [F].</li>
+</ul>
+<hr />
+<h2 id="sources">Sources</h2>
+<p dir="auto"><strong>Digital landscape and ad costs</strong>
+- DataReportal, Digital 2026: Tunisia: <a href="https://datareportal.com/reports/digital-2026-tunisia" target="_blank" rel="noopener">https://datareportal.com/reports/digital-2026-tunisia</a>
+- DataReportal, Digital 2025: Tunisia: <a href="https://datareportal.com/reports/digital-2025-tunisia" target="_blank" rel="noopener">https://datareportal.com/reports/digital-2025-tunisia</a>
+- La Presse, réseaux sociaux (Dec 2025): <a href="https://www.lapresse.tn/2025/12/30/reseaux-sociaux-facebook-tiktok-et-instagram-dominent-le-paysage-numerique-tunisien/" target="_blank" rel="noopener">https://www.lapresse.tn/2025/12/30/reseaux-sociaux-facebook-tiktok-et-instagram-dominent-le-paysage-numerique-tunisien/</a>
+- web6.tn, stats réseaux sociaux Tunisie 2026: <a href="https://web6.tn/blog/statistiques-reseaux-sociaux-tunisie-2026/" target="_blank" rel="noopener">https://web6.tn/blog/statistiques-reseaux-sociaux-tunisie-2026/</a>
+- Digital Discovery, chiffres 2025: <a href="https://digital-discovery.tn/chiffres-reseaux-sociaux-tunisie-2025/" target="_blank" rel="noopener">https://digital-discovery.tn/chiffres-reseaux-sociaux-tunisie-2025/</a>
+- CDCP, Digital 2025 Tunisie, 5 paradoxes: <a href="https://www.cdcp-tn.com/digital-2025-tunisie-5-paradoxes/" target="_blank" rel="noopener">https://www.cdcp-tn.com/digital-2025-tunisie-5-paradoxes/</a>
+- Agence Web Tunis, habitudes internet 2026: <a href="https://agence-web-tunis.com/en/les-habitudes-des-tunisiens-sur-internet-en-2026-analyse-approfondie-des-usages-numeriques/" target="_blank" rel="noopener">https://agence-web-tunis.com/en/les-habitudes-des-tunisiens-sur-internet-en-2026-analyse-approfondie-des-usages-numeriques/</a>
+- Visibility.tn, Facebook &amp; Instagram Ads Tunisie 2025: <a href="https://visibility.tn/guides/publicite-facebook-ads-tunisie-2025" target="_blank" rel="noopener">https://visibility.tn/guides/publicite-facebook-ads-tunisie-2025</a>
+- Smart Target, sponsoring Facebook en Tunisie: <a href="https://www.thesmartarget.com/2023/04/01/sponsoring-facebook-en-tunisie/" target="_blank" rel="noopener">https://www.thesmartarget.com/2023/04/01/sponsoring-facebook-en-tunisie/</a></p>
+<p dir="auto"><strong>Advertising culture, Ramadan, TV, creators</strong>
+- Prosdelacom, Aymen Mazigh "Ramadan = Super Bowl": <a href="https://prosdelacom.com/article/3520/actualites/aymen-mazigh-584514" target="_blank" rel="noopener">https://prosdelacom.com/article/3520/actualites/aymen-mazigh-584514</a>
+- Managers, Pub&amp;Co Ramadan Awards 2026: <a href="https://managers.tn/2026/03/17/pubco-ramadan-awards-2026-quand-la-creativite-prime/" target="_blank" rel="noopener">https://managers.tn/2026/03/17/pubco-ramadan-awards-2026-quand-la-creativite-prime/</a>
+- Managers, Ramadanes'Comm 2026: <a href="https://managers.tn/2026/06/18/ramadanescomm2026-le-phenomene-de-la-consommation-du-ramadan-raconte-et-decrypte/" target="_blank" rel="noopener">https://managers.tn/2026/06/18/ramadanescomm2026-le-phenomene-de-la-consommation-du-ramadan-raconte-et-decrypte/</a>
+- African Manager, Ramadan 2026 ad drop: <a href="https://en.africanmanager.com/what-happened-during-ramadan-2026-why-was-there-less-ads/" target="_blank" rel="noopener">https://en.africanmanager.com/what-happened-during-ramadan-2026-why-was-there-less-ads/</a>
+- Kapitalis, la stratégie Ramadan du marketing: <a href="https://kapitalis.com/archive/187-kanal/1115-la-strategie-ramadan-du-marketing-en-tunisie" target="_blank" rel="noopener">https://kapitalis.com/archive/187-kanal/1115-la-strategie-ramadan-du-marketing-en-tunisie</a>
+- L'Écho Tunisien, Ramadan 2024 telecom ads: <a href="https://lechotunisien.com/ramadan-2024-publicites-les-operateurs-telephoniques-reinventent-la-communication/" target="_blank" rel="noopener">https://lechotunisien.com/ramadan-2024-publicites-les-operateurs-telephoniques-reinventent-la-communication/</a>
+- Webdo, Tunisie Telecom awarded (2025): <a href="https://www.webdo.tn/fr/actualite/national/creativite-et-emotion-tunisie-telecom-recompensee-pour-ses-campagnes/221144" target="_blank" rel="noopener">https://www.webdo.tn/fr/actualite/national/creativite-et-emotion-tunisie-telecom-recompensee-pour-ses-campagnes/221144</a>
+- Entreprises Magazine, TT engaged ad: <a href="https://www.entreprises-magazine.com/tunisie-telecom-recompensee-pour-sa-publicite-engagee-pendant-le-ramadan/" target="_blank" rel="noopener">https://www.entreprises-magazine.com/tunisie-telecom-recompensee-pour-sa-publicite-engagee-pendant-le-ramadan/</a>
+- WMC, Ooredoo and "Kmaira": <a href="https://www.webmanagercenter.com/2023/04/16/505947/ooredoo-tunisie-etait-honoree-daccueillir-kmaira-la-petite-star-de-ramadan/" target="_blank" rel="noopener">https://www.webmanagercenter.com/2023/04/16/505947/ooredoo-tunisie-etait-honoree-daccueillir-kmaira-la-petite-star-de-ramadan/</a>
+- Ooredoo Ramadan 2025 spot (YouTube): <a href="https://www.youtube.com/watch?v=3-fWpstv9Bk" target="_blank" rel="noopener">https://www.youtube.com/watch?v=3-fWpstv9Bk</a>
+- Khatt30, سلطة إعلانات رمضان (critical analysis): <a href="https://khatt30.com/%D8%B3%D9%84%D8%B7%D8%A9-%D8%A5%D8%B9%D9%84%D8%A7%D9%86%D8%A7%D8%AA-%D8%B1%D9%85%D8%B6%D8%A7%D9%86/" target="_blank" rel="noopener">https://khatt30.com/%D8%B3%D9%84%D8%B7%D8%A9-%D8%A5%D8%B9%D9%84%D8%A7%D9%86%D8%A7%D8%AA-%D8%B1%D9%85%D8%B6%D8%A7%D9%86/</a>
+- Al Majalla, Ramadan in Tunisia: <a href="https://www.majalla.com/node/329999/" target="_blank" rel="noopener">https://www.majalla.com/node/329999/</a>
+- La Presse, Ramadan 2026 TV grids: <a href="https://www.lapresse.tn/2026/02/14/grilles-des-teles-du-mois-de-ramadan-des-series-courtes-entre-drames-et-comedies/" target="_blank" rel="noopener">https://www.lapresse.tn/2026/02/14/grilles-des-teles-du-mois-de-ramadan-des-series-courtes-entre-drames-et-comedies/</a>
+- Kapitalis, Fallujah audience record: <a href="https://kapitalis.com/tunisie/2023/04/12/tunisie-la-serie-fallujah-detient-le-record-daudience/" target="_blank" rel="noopener">https://kapitalis.com/tunisie/2023/04/12/tunisie-la-serie-fallujah-detient-le-record-daudience/</a>
+- Wikipedia, Choufli Hal: <a href="https://en.wikipedia.org/wiki/Choufli_Hal" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Choufli_Hal</a>
+- Favikon, top TikTokers Tunisia 2026: <a href="https://www.favikon.com/blog/top-tiktokers-tunisia" target="_blank" rel="noopener">https://www.favikon.com/blog/top-tiktokers-tunisia</a>
+- Directinfo, TikTok creators and youth culture: <a href="https://directinfo.webmanagercenter.com/2026/04/19/tunisie-succes-des-createurs-tiktok-et-nouvelle-expression-de-la-culture-jeune/" target="_blank" rel="noopener">https://directinfo.webmanagercenter.com/2026/04/19/tunisie-succes-des-createurs-tiktok-et-nouvelle-expression-de-la-culture-jeune/</a>
+- WMC, top 5 influenceurs tunisiens: <a href="https://www.webmanagercenter.com/2024/11/10/534083/reseaux-sociaux-tiktok-youtube-instagram-top-5-des-influenceurs-tunisiens/" target="_blank" rel="noopener">https://www.webmanagercenter.com/2024/11/10/534083/reseaux-sociaux-tiktok-youtube-instagram-top-5-des-influenceurs-tunisiens/</a>
+- Sarcasm Tunisia (Facebook): <a href="https://www.facebook.com/Tunisia.Sarcasm" target="_blank" rel="noopener">https://www.facebook.com/Tunisia.Sarcasm</a></p>
+<p dir="auto"><strong>Music</strong>
+- Wikipedia, Music of Tunisia: <a href="https://en.wikipedia.org/wiki/Music_of_Tunisia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Music_of_Tunisia</a>
+- Wikipedia, Mezwed: <a href="https://en.wikipedia.org/wiki/Mezwed" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Mezwed</a>
+- Wikipedia, Ma'luf: <a href="https://en.wikipedia.org/wiki/Ma%27luf" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Ma%27luf</a>
+- Arabsounds, Tunisian hip-hop: <a href="https://www.arabsounds.net/blog/tunisian-hiphop-these-are-the-most-popular-rappers-from-tunisia/" target="_blank" rel="noopener">https://www.arabsounds.net/blog/tunisian-hiphop-these-are-the-most-popular-rappers-from-tunisia/</a>
+- Wikipedia, Balti: <a href="https://en.wikipedia.org/wiki/Balti_(singer" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Balti_(singer</a>)</p>
+<p dir="auto"><strong>Language and script</strong>
+- IFPO / OpenEdition, French in Tunisian media: <a href="https://books.openedition.org/ifpo/19129?lang=en" target="_blank" rel="noopener">https://books.openedition.org/ifpo/19129?lang=en</a>
+- Cairn, "La foire aux langues" (ELA 2019): <a href="https://shs.cairn.info/revue-ela-2019-4-page-363?lang=fr" target="_blank" rel="noopener">https://shs.cairn.info/revue-ela-2019-4-page-363?lang=fr</a>
+- Nawaat, le dialecte tunisien: <a href="https://nawaat.org/2023/08/30/le-dialectal-tunisien-de-la-stigmatisation-a-la-revendication/" target="_blank" rel="noopener">https://nawaat.org/2023/08/30/le-dialectal-tunisien-de-la-stigmatisation-a-la-revendication/</a>
+- Ithaca Bound, numbers as letters in Tunisian Arabic: <a href="https://www.ithacaboundlanguages.com/articles/numbers-as-letters-in-tunisian-arabic/" target="_blank" rel="noopener">https://www.ithacaboundlanguages.com/articles/numbers-as-letters-in-tunisian-arabic/</a>
+- TUNIZI dataset (arXiv): <a href="https://arxiv.org/abs/2004.14303" target="_blank" rel="noopener">https://arxiv.org/abs/2004.14303</a></p>
+<p dir="auto"><strong>Visual identity</strong>
+- Carthage Magazine, Tunisian architecture: <a href="https://carthagemagazine.com/the-tunisian-architecture/" target="_blank" rel="noopener">https://carthagemagazine.com/the-tunisian-architecture/</a>
+- My Chakchouka, Sidi Bou Said myths and truths: <a href="https://www.mychakchouka.com/sidi-bou-said-myths-and-truths-blue-and-white" target="_blank" rel="noopener">https://www.mychakchouka.com/sidi-bou-said-myths-and-truths-blue-and-white</a>
+- Wikipedia, Sidi Bou Said: <a href="https://en.wikipedia.org/wiki/Sidi_Bou_Said" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Sidi_Bou_Said</a>
+- Wikipedia, Qallalin tiles: <a href="https://en.wikipedia.org/wiki/Qallalin_tiles" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Qallalin_tiles</a>
+- Wikipedia, Menzel (Djerba): <a href="https://en.wikipedia.org/wiki/Menzel_(Djerba" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Menzel_(Djerba</a>)
+- Wikipedia, Chechia: <a href="https://en.wikipedia.org/wiki/Chechia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Chechia</a>
+- Wikipedia, Louage / share taxi: <a href="https://en.wikipedia.org/wiki/Louage" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Louage</a>
+- The National, the Tunisian louage: <a href="https://www.thenationalnews.com/lifestyle/travel/the-tunisian-louage-is-a-vehicle-of-a-different-stripe-1.555083" target="_blank" rel="noopener">https://www.thenationalnews.com/lifestyle/travel/the-tunisian-louage-is-a-vehicle-of-a-different-stripe-1.555083</a>
+- Engaging Cultures, coffee culture: <a href="https://www.engagingcultures.com/coffee-culture-in-tunisia-tips-for-travelers/" target="_blank" rel="noopener">https://www.engagingcultures.com/coffee-culture-in-tunisia-tips-for-travelers/</a>
+- Carthage Magazine, coffee culture: <a href="https://carthagemagazine.com/coffee-culture-in-tunisia/" target="_blank" rel="noopener">https://carthagemagazine.com/coffee-culture-in-tunisia/</a>
+- Tanit Déco, salon arabesque: <a href="https://www.tanitdeco.com/salon-arabesque.html" target="_blank" rel="noopener">https://www.tanitdeco.com/salon-arabesque.html</a></p>
+<p dir="auto"><strong>Energy, solar, seasonal</strong>
+- pv magazine, Tunisia authorises residential solar-plus-storage (24 Jul 2026): <a href="http://www.pv-magazine.com/2026/07/24/tunisia-authorizes-residential-solar-plus-storage-amid-heatwave/" target="_blank" rel="noopener">http://www.pv-magazine.com/2026/07/24/tunisia-authorizes-residential-solar-plus-storage-amid-heatwave/</a>
+- African Manager, SONEDE vs STEG, air conditioners (summer 2026): <a href="https://en.africanmanager.com/when-sonede-blames-steg-and-steg-blames-air-conditioners/" target="_blank" rel="noopener">https://en.africanmanager.com/when-sonede-blames-steg-and-steg-blames-air-conditioners/</a>
+- African Manager, STEG ready for summer 2026: <a href="https://en.africanmanager.com/ready-for-summer-2026-with-stable-electricity-supply-says-steg-ceo/" target="_blank" rel="noopener">https://en.africanmanager.com/ready-for-summer-2026-with-stable-electricity-supply-says-steg-ceo/</a>
+- La Presse, Prosol Elec économique: <a href="https://www.lapresse.tn/2025/11/25/photovoltaique-lanme-lance-son-prosol-elec-economique/" target="_blank" rel="noopener">https://www.lapresse.tn/2025/11/25/photovoltaique-lanme-lance-son-prosol-elec-economique/</a>
+- STES, subventions photovoltaïque 2026: <a href="https://www.stes.tn/subventions-photovoltaique-tunisie-prosol-anme/" target="_blank" rel="noopener">https://www.stes.tn/subventions-photovoltaique-tunisie-prosol-anme/</a>
+- VLD Solar, arnaques dans le solaire en Tunisie: <a href="https://vldsolar.com/arnaques-et-promesses-trompeuses-dans-le-solaire-en-tunisie-comment-les-eviter/" target="_blank" rel="noopener">https://vldsolar.com/arnaques-et-promesses-trompeuses-dans-le-solaire-en-tunisie-comment-les-eviter/</a>
+- STEG, list of eligible Prosol suppliers: <a href="https://www.steg.com.tn/fr/document/liste-des-fournisseurs-%C3%A9ligibles-au-programme-prosol-dans-le-secteur-r%C3%A9sidentiel" target="_blank" rel="noopener">https://www.steg.com.tn/fr/document/liste-des-fournisseurs-%C3%A9ligibles-au-programme-prosol-dans-le-secteur-r%C3%A9sidentiel</a>
+- Wikipedia, Public holidays in Tunisia: <a href="https://en.wikipedia.org/wiki/Public_holidays_in_Tunisia" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Public_holidays_in_Tunisia</a></p>
+<p dir="auto"><strong>Legal and platform</strong>
+- Jurisite, Loi 98-40 (techniques de vente et publicité), arts. 35-43: <a href="https://www.jurisitetunisie.com/tunisie/codes/vente/ven1035.htm" target="_blank" rel="noopener">https://www.jurisitetunisie.com/tunisie/codes/vente/ven1035.htm</a>
+- Loi 92-117 protection du consommateur (FAO): <a href="https://faolex.fao.org/docs/pdf/Tun190410.pdf" target="_blank" rel="noopener">https://faolex.fao.org/docs/pdf/Tun190410.pdf</a>
+- Prosdelacom, flag use in ads forbidden: <a href="https://prosdelacom.com/article/1525/coulisses-de-la-com/interdite-274323" target="_blank" rel="noopener">https://prosdelacom.com/article/1525/coulisses-de-la-com/interdite-274323</a>
+- Wikipédia FR, Drapeau de la Tunisie: <a href="https://fr.wikipedia.org/wiki/Drapeau_de_la_Tunisie" target="_blank" rel="noopener">https://fr.wikipedia.org/wiki/Drapeau_de_la_Tunisie</a>
+- INPDP texts: <a href="https://www.inpdp.tn/textes.xhtml" target="_blank" rel="noopener">https://www.inpdp.tn/textes.xhtml</a>
+- DPO Consulting, Loi 2004-63 guide 2026: <a href="https://www.dpo-consulting.com/fr-fr/blog/loi-tunisienne-sur-la-protection-des-donnees" target="_blank" rel="noopener">https://www.dpo-consulting.com/fr-fr/blog/loi-tunisienne-sur-la-protection-des-donnees</a>
+- Village Justice, décret-loi 54 vs loi 2004-63: <a href="https://www.village-justice.com/articles/decret-loi-face-loi-2004-sur-les-donnees-personnelles-une-perspective-critique,54276.html" target="_blank" rel="noopener">https://www.village-justice.com/articles/decret-loi-face-loi-2004-sur-les-donnees-personnelles-une-perspective-critique,54276.html</a>
+- Meta, labeling AI-generated content: <a href="https://about.fb.com/news/2024/04/metas-approach-to-labeling-ai-generated-content-and-manipulated-media/" target="_blank" rel="noopener">https://about.fb.com/news/2024/04/metas-approach-to-labeling-ai-generated-content-and-manipulated-media/</a>
+- Meta Transparency, personal attributes: <a href="https://transparency.meta.com/policies/ad-standards/objectionable-content/privacy-violations-personal-attributes/" target="_blank" rel="noopener">https://transparency.meta.com/policies/ad-standards/objectionable-content/privacy-violations-personal-attributes/</a>
+- Meta Transparency, social issues / political ads: <a href="https://transparency.meta.com/policies/ad-standards/SIEP-advertising/SIEP/" target="_blank" rel="noopener">https://transparency.meta.com/policies/ad-standards/SIEP-advertising/SIEP/</a>
+- Jon Loomer, Financial Products and Services special ad category: <a href="https://www.jonloomer.com/qvt/financial-products-and-services/" target="_blank" rel="noopener">https://www.jonloomer.com/qvt/financial-products-and-services/</a>
+- Primores wiki, Meta health / before-after policy: <a href="https://primores.org/wiki/marketing/meta-ad-policy/" target="_blank" rel="noopener">https://primores.org/wiki/marketing/meta-ad-policy/</a></p></main></body></html>

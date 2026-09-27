@@ -1,0 +1,1055 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engine architecture, routing &amp; 10/10 QC · Lead Up research</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#0B1426;color:#E8EDF7;font:16px/1.65 Montserrat,system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+a{color:#FFB800;word-break:break-word}h1{font-size:30px;line-height:1.2}h2{margin-top:44px;color:#fff;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}
+h3{margin-top:28px;color:#FFD466}code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:.9em}pre{background:#101C36;padding:14px;border-radius:12px;overflow-x:auto;font-size:13px}
+table{border-collapse:collapse;display:block;overflow-x:auto;font-size:13.5px;margin:14px 0}th,td{border:1px solid rgba(255,255,255,.14);padding:7px 9px;vertical-align:top}th{background:#15234A}
+blockquote{border-left:3px solid #FFB800;margin:0;padding:4px 14px;color:#AFC0E0}.top{position:sticky;top:0;background:rgba(11,20,38,.94);backdrop-filter:blur(8px);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px}
+[dir=auto]{unicode-bidi:plaintext}</style></head>
+<body><div class="top"><a href="../#reports">← Style engine</a> · Research report · Engine architecture, routing &amp; 10/10 QC</div><main><h1 id="05-style-engine-architecture-model-routing-and-automatic-1010-qc">05 · Style engine: architecture, model routing and automatic 10/10 QC</h1>
+<p dir="auto">Research for Lead Up's multi-style ad engine (vertical 9:16, 30-60 s, Tunisian Derja). Date: 2026-09-27.
+Scope: engineering of a "style engine" (any look, same script), model routing per shot, automatic quality control,
+creative testing and orchestration. Research only: no media generated, nothing spent.</p>
+<p dir="auto">Evidence tags: <strong>[official]</strong> Google/Meta docs or blogs · <strong>[paper]</strong> peer-reviewed or arXiv · <strong>[practitioner]</strong> blogs,
+tool vendors, agencies · <strong>[ours]</strong> measured in this repo (<code>ai-docs/03-lessons-learned.md</code>) · <strong>[unverified]</strong> claim
+seen once, or numbers with no traceable source · <strong>[proposal]</strong> my design recommendation.</p>
+<p dir="auto">Related earlier research (not repeated here): <code>research/01-omni-prompting.md</code>, <code>05-omni-pro-workflows.md</code>,
+<code>06-nano-banana-2.md</code>, <code>07-anti-ai-look.md</code>, <code>08-hybrid-pipeline.md</code>.</p>
+<hr />
+<h2 id="0-tldr">0. TL;DR</h2>
+<ol>
+<li dir="auto"><strong>Split the ad into three layers that never mix:</strong> a <em>style-agnostic</em> layer (script, VO, word timings, beat sheet,
+   "shot intents"), a <em>style</em> layer (a versioned <strong>style bible</strong> = data + reference images + per-model prompt fragments +
+   Remotion theme tokens + music/SFX recipe + QC thresholds), and a <em>render</em> layer (router → generators → judges →
+   Remotion). The same approved script then renders in any style by swapping one <code>style@version</code> pin. [proposal]</li>
+<li dir="auto"><strong>Shot intents, not shot prompts.</strong> The script produces semantic shots ("hook-macro: phone flooded with messages",
+   "talking-head: installer answers", "data: 300 DT → 0"). A <strong>style adapter</strong> decides <em>how</em> each intent is made in each
+   style (AI video, 2.5D still, or pure code). In 2D-flat or collage, most intents become code; in photoreal, most become
+   Omni/Veo. [proposal]</li>
+<li dir="auto"><strong>Style-locking is strongest at the still-image stage.</strong> Lock the look in one owner-approved <strong>style frame</strong> per
+   style, then make one first frame per shot from it (image-to-video inherits the look). Nano Banana 2 has <strong>no
+   dedicated style-reference slot</strong> (objects ≤10, characters ≤4); <strong>Nano Banana Pro has up to 3 style references</strong>
+   [official]. Use Pro for the style frame and for hard styles; NB2 for volume. Veo 3.1 accepts only <em>asset</em>
+   references (≤3, 8 s clips); <em>style</em> references exist only on <code>veo-2.0-generate-exp</code> [official]. Omni takes style via
+   <code>in the style of &lt;IMAGE_REF_0&gt;</code> and can <strong>restyle</strong> an existing clip while keeping its motion [official].</li>
+<li dir="auto"><strong>Routing rule of thumb:</strong> Omni 1.1 Flash (4 s, 720p, $0.10/s) is the default AI-motion engine; Veo 3.1 Fast
+   ($0.10/s at 720p) when you need subject references + native English/French dialogue or 8 s single takes; Veo 3.1
+   Standard ($0.40/s) only for hero photoreal shots; Veo 3.1 Lite ($0.05/s) for cheap atmospheric B-roll; <strong>code
+   (Remotion) for every text, number, UI, map, logo, chart and for whole "graphic" styles</strong>. Derja lip-sync is not
+   evaluated by Google on either model ("other languages not evaluated") [official]: use our TTS + a post lip-sync model,
+   or avoid on-camera speech.</li>
+<li dir="auto"><strong>"10/10" must be operational:</strong> all hard gates pass (deterministic checks: text correct, safe zones, loudness,
+   colour range, no inserted cuts, no text in AI shots, luma, first frame lit) <strong>and</strong> the ad wins or ties a blind
+   <strong>pairwise</strong> comparison against the style's "golden" ad, <strong>and</strong> a binary checklist judged by a VLM has no "no".
+   VLMs rank far better than they score: pairwise judging reached 0.86 Spearman with human leaderboards vs 0.36 for
+   pointwise scores (GenArena) [paper]; "VLM judges can rank but cannot score" [paper]. So: <strong>checklists for gates,
+   pairwise for selection, never 1-10 scales for decisions.</strong></li>
+<li dir="auto"><strong>Best-of-N is cheap insurance, judging is cheaper still.</strong> One 4 s Omni take costs $0.40; judging it with Gemini
+   3.1 Pro at 8 fps/high resolution is about $0.02. With a 60 % pass rate, 3 takes give a 94 % chance of at least one
+   pass. Gains from more samples converge (Video-T1) [paper]; spend the extra N on the hook (5-10 takes) not on filler.</li>
+<li dir="auto"><strong>Styles are the cheapest real diversity for Meta.</strong> Meta's official guidance says diversify visuals/formats,
+   messaging, storytelling and personas; Andromeda improved ads quality by 8 % and needs "more volume and diversity of
+   creative" [official]. Ads that look alike are (per practitioners) grouped and compete as one; a style change is a
+   genuinely different visual. Build <strong>concept = angle × style</strong>, variants = hooks/CTAs. [official + practitioner]</li>
+<li dir="auto"><strong>Owner time ≈ 15 min per ad</strong> is realistic with 4 gates: script OK, style pick (from style cards, amortized),
+   picks strip (optional), final phone watch. Everything else is automatic, logged, cached and cost-capped. [proposal]</li>
+</ol>
+<hr />
+<h2 id="1-style-system-design">1. Style system design</h2>
+<h3 id="11-what-the-three-layers-contain-proposal">1.1 What the three layers contain [proposal]</h3>
+<pre><code>LAYER A  (style-agnostic, approved once per ad)
+  brief.md → script.md (Derja, linted, owner OK) → VO takes → align.json (word times)
+  → beats.json (beat sheet: 8-10 beats, each with message + on-screen facts + CTA)
+  → intents.json (25-35 shot intents: semantic type, subject, action, facts shown, duration window, importance)
+
+LAYER B  (style, reusable across ads; versioned)
+  library/styles/&lt;style_id&gt;/
+     style.yaml            the style bible (data, section 1.2)
+     theme.ts / theme.json Remotion tokens (colours, fonts, springs, transitions, grain, LUT, caption preset)
+     frames/style_frame.png, palette_card.png, texture_swatch.png, golden/*.png (owner-approved stills)
+     golden_ad.mp4         the best finished ad in this style (pairwise anchor for QC)
+     prompts/nb2.j2, omni.j2, veo.j2, lyria.j2, tts_direction.txt
+     adapters.yaml         intent type → recipe (engine, template, refs, N takes, trim rules)
+     qc.yaml               thresholds (style similarity floor, luma range, cut rate, judge checklist additions)
+  library/characters/&lt;char_id&gt;/spec.yaml (style-neutral: age, build, wardrobe, colours, features)
+                              /&lt;style_id&gt;/sheet.png (turnaround in that style; generated once, approved once)
+  library/worlds/&lt;world_id&gt;/spec.yaml + /&lt;style_id&gt;/plates/*.png (rooftop Tunis, blue door, living room…)
+
+LAYER C  (render, per ad × style)
+  router → keyframes (NB2/Pro) → motion (Omni / Veo / 2.5D / code) → judges → picks.json
+  → timeline (VO anchors fixed, beat grid of THIS style's music) → Remotion(theme) → master → QC → publish
+</code></pre>
+<p dir="auto">Why this split matters:
+- The <strong>VO and word timings are shared</strong> by every style, so re-styling never re-records the voice. Music changes per
+  style, so the beat grid (and therefore exact cut points) is recomputed per style; this is a cheap local step
+  (<code>pipeline/timeline.py</code>).
+- <strong>Characters and worlds are defined twice:</strong> once as neutral text specs (so a clay installer and a photoreal
+  installer are "the same person"), once per style as an approved sheet. Identity references cannot cross styles: a
+  clay sheet used as a reference for a photoreal shot drags the output toward clay.
+- Intents make <strong>routing a table lookup</strong> rather than a prompt-writing session each time.</p>
+<h3 id="12-the-style-bible-as-data-schema-proposal-fields-justified-by-the-sources-in-13-15">1.2 The style bible as data (schema) [proposal, fields justified by the sources in §1.3-1.5]</h3>
+<pre><code class="language-yaml">id: clay3d            # stable slug; used in ad names and manifests
+version: 1.3.0        # semver: major = look change (re-approve golden), minor = prompt tweak, patch = typo
+family: 3d            # photoreal | cinematic | ugc | 3d | 2d | anime | collage | kinetic-type
+status: approved      # draft | approved | retired
+cost_class: ai-heavy  # ai-heavy | mixed | code-only  (drives budget estimates)
+
+look:                 # words for AI prompts: NEVER hex codes in video prompts (Omni prints them) [ours]
+  medium: &quot;hand-made plasticine claymation, visible thumbprints, matte surfaces&quot;
+  palette_words: &quot;chalk-white (pure white, never green or yellow), terracotta, Tunisian blue, warm sand&quot;
+  palette_hex: {bg: &quot;#F4EFE6&quot;, accent: &quot;#1E6FD9&quot;, warm: &quot;#C8643B&quot;}   # for Remotion + ΔE checks only
+  lighting: &quot;one soft key light from 10 o'clock, gentle fill, soft contact shadows, no rim glow&quot;
+  lens_camera: &quot;35mm equivalent, eye-level, shallow but not creamy depth of field, locked-off or slow dolly&quot;
+  texture: &quot;fine clay grain, slight fingerprints, no plastic sheen&quot;
+  line: null          # 2D styles: &quot;uniform 6 px ink outline, flat fills, no gradients&quot;
+  composition: &quot;subject off-centre on thirds, 25% negative space top for captions band&quot;
+  semantic_negatives: # described positively (Google advice) + our measured failures
+    - &quot;surfaces are matte; the air is clear, with no bokeh balls, sparkles, lens flares or glow&quot;
+    - &quot;the image contains no letters, numbers, logos or words anywhere&quot;
+    - &quot;never copy any word from a reference image&quot;
+  dont: [&quot;centred hero with glow&quot;, &quot;rainbow gradients&quot;, &quot;hyper-detailed skin pores&quot;]
+
+motion:
+  ai_motion_words: &quot;stop-motion feel, snappy holds, objects squash on impact, already moving at frame one&quot;
+  camera_words: &quot;locked-off, then a short push-in&quot;
+  forbidden_motion: &quot;no floaty drift, no slow settle at the end&quot;
+  code_feel: snappy   # maps to Remotion spring presets in theme.ts
+  target_cut_s: [1.2, 2.0]
+  transitions_allowed: [hard-cut, whip, match-cut]
+  frame_step: 1       # 2 = animate on twos (stop-motion / collage feel) for code layers
+
+type_and_captions:
+  caption_preset: owner-outline   # owner rule: thick black outline captions (global unless the owner changes it)
+  display_font_ar: &quot;Cairo ExtraBold&quot;
+  latin_font: &quot;Inter Black&quot;
+  type_motion: &quot;pop-in 6 frames, overshoot 8%&quot;
+
+audio:
+  lyria_prompt: &quot;playful pizzicato and marimba, bouncy, 116-122 BPM, clear downbeats, no vocals&quot;
+  sfx_palette: [squish, pop, clay-thud, soft-whoosh]
+  vo_direction: &quot;warm, energetic, smiling&quot;     # Gemini TTS style prompt; same words, different delivery
+grade: {lut: clay_warm.cube, grain: 0.02, vignette: 0.1}
+
+references:           # every reference has ONE job (practitioner rule; Google role tags)
+  - {file: frames/style_frame.png, role: style,  note: &quot;match rendering, palette, light; ignore content&quot;}
+  - {file: frames/texture_swatch.png, role: style, note: &quot;surface texture only&quot;}
+routing_overrides:    # optional: per intent type
+  talking-head: {engine: omni, lipsync: none, framing: &quot;over-shoulder or hands, mouth off-camera&quot;}
+qc:
+  style_sim_min_z: -1.0     # CSD similarity vs golden set, as z-score of in-style distribution (§3.5)
+  luma_yavg: [90, 190]
+  judge_extra_checks: [&quot;no surface looks glossy or plastic&quot;, &quot;no photographic skin texture&quot;]
+golden_ad: golden_ad.mp4
+changelog: [&quot;1.3.0 2026-09-27 chalk-white wording, removed 'soft glow'&quot;]
+</code></pre>
+<p dir="auto">Design notes:
+- <strong>Words for models, hex for code.</strong> Omni wrote "#EF4444" on screen when given hex codes [ours]; Remotion and colour
+  checks need exact hex. Keep both in the bible.
+- <strong>Semantic negatives.</strong> Google: "describe what you wish to exclude" as a positive scene description, e.g. "a
+  desolate landscape with no buildings or roads" rather than "no man-made structures" [official, Veo guide]; the Gemini
+  image guide calls them "semantic negative prompts" [official].
+- <strong>Version everything.</strong> A style is a product: changing the lighting sentence is a new version, and an ad manifest
+  pins <code>clay3d@1.3.0</code>. That is what makes a winning ad reproducible months later.
+- <strong>cost_class</strong> lets the planner mix styles for Meta diversity without blowing the budget (a <code>kinetic-type</code> or
+  <code>2d</code> style can be ~$0-3 of AI per ad; see §2.6).</p>
+<h3 id="13-style-locking-in-nano-banana-2-pro-keyframes-sheets-plates">1.3 Style-locking in Nano Banana 2 / Pro (keyframes, sheets, plates)</h3>
+<p dir="auto">Facts [official]:
+- NB2 (<code>gemini-3.1-flash-image</code>, GA): up to 14 inputs; <strong>up to 10 high-fidelity object images and up to 4 character
+  images</strong>; <em>no style-reference category</em>. NB Pro (<code>gemini-3-pro-image</code>): up to 6 objects, 5 characters, <strong>3 style
+  references</strong>. NB2 Lite: 1K only. Price per 2K image: NB2 $0.101, Pro $0.134. Thinking level minimal/high.
+  (Tables and URLs in <code>research/06-nano-banana-2.md</code> §1.)
+- Google's templates: "Describe the scene, don't just list keywords"; style transfer template "Transform the provided
+  photograph of [subject] into the artistic style of [style]"; multi-image template "Take the [element 1] and place it
+  with [element 2]"; inpainting "Change only the [element]… Keep everything else unchanged"; control the camera with
+  photographic language (85 mm, macro, Dutch angle) [official].</p>
+<p dir="auto">Practitioner consensus: start with 2-4 references and give each a role; "the reference image carries identity while the
+prompt carries everything else"; do not assume the model matches the reference's style by default, restate it
+[practitioner]. Measured by us: 3-4 parallel calls with 4 refs is the safe rate; always set an HTTP timeout; it copies
+words from references unless told not to; "one 2K first frame per shot" beat contact-sheet panels (16/16 usable) [ours].</p>
+<p dir="auto">Recommended lock recipe per style [proposal]:
+1. <strong>Style frame (once per style, owner-approved):</strong> NB <strong>Pro</strong> at 2K, with 1-3 <em>style</em> refs (mood images the owner
+   supplied or earlier golden frames) + the style bible's <code>look</code> paragraph. Output: one hero still that defines
+   medium, palette, light, texture. Also a <strong>palette card</strong> and a <strong>texture swatch</strong> cut from it.
+2. <strong>Character sheets per style:</strong> NB2 (or Pro) with the style frame as a reference ("match the rendering of image 1
+   exactly; image 1's content is irrelevant") + character spec text → turnaround (front, 3/4, profile, hands).
+3. <strong>Per-shot first frames:</strong> NB2 2K, references = [style frame, character sheet(s), plate or prop], prompt =
+   <em>verbatim</em> style block + shot intent rendered as a scene description + semantic negatives. Same template for every
+   shot of every ad in that style.
+4. <strong>Style QC before any video money:</strong> CSD style similarity vs the golden set (§3.5) + a VLM checklist (no text,
+   right palette, right light) + owner sees one contact sheet. Re-generate outliers only.
+5. <strong>Seeds:</strong> the Gemini config accepts a seed, but image/video generation is not guaranteed deterministic (Veo docs
+   say seed "slightly improves" determinism) [official]. <strong>Reproducibility = keep the outputs (content-addressed
+   cache), not re-running a seed.</strong></p>
+<h3 id="14-style-locking-in-omni-and-veo-motion">1.4 Style-locking in Omni and Veo (motion)</h3>
+<p dir="auto">Omni 1.1 Flash [official, details in research 01/05]: 3-10 s, 24 fps, 9:16, 720p default (1080p/4K are <em>upscaled</em>),
+reference tags <code>&lt;FIRST_FRAME&gt;</code>, <code>&lt;LAST_FRAME&gt;</code>, <code>&lt;IMAGE_REF_n&gt;</code>, <code>&lt;VIDEO_REF_n&gt;</code> (≤3 video refs ≤3 s, audio ignored),
+style through the prompt ("in the style of <IMAGE_REF_0> a woman <IMAGE_REF_1> is walking"), restyle of an existing
+clip (≤10 s input) while keeping motion ("crayon → graphite → glass 3D → risograph" example), extension to 40 s.
+"English fully supported; other languages not evaluated"; no system instructions, temperature or stop sequences.
+Omni production id on Vertex for us: <code>gemini-omni-1.1-flash-preview</code> on <code>global</code> only [ours]; the Gemini-API id
+<code>gemini-omni-1.1-flash</code> is GA since 2026-08-27 [practitioner report of the release].</p>
+<p dir="auto">Veo 3.1 [official]: 4/6/8 s; 720p default, 1080p, 4K; <strong>8 s mandatory</strong> for 1080p, 4K, reference images and
+first/last frame; up to 3 <strong>asset</strong> reference images (person, character or product); style reference only on
+<code>veo-2.0-generate-exp</code>; extend +7 s up to 20 times (148 s total, 720p only; not on Lite); native audio with dialogue in
+quotes, <code>SFX:</code> and <code>Ambient noise:</code> lines; timestamp prompting <code>[00:00-00:02] …</code> for multi-shot; seed only "slightly
+improves" determinism; 16:9 and 9:16; videos kept 2 days on the server; SynthID. Lite has no reference images and no
+extension [practitioner, consistent with docs].</p>
+<p dir="auto">Lock recipe [proposal]:
+- <strong>Image-to-video is the style lock.</strong> A first frame made in step 1.3.3 carries the style; the video prompt carries
+  <em>motion only</em> ("motion-only prompt", our rule 4) plus a <strong>fixed 1-sentence style phrase</strong> repeated verbatim in every
+  shot of the style (practitioner rule: "one fixed style phrase for every scene").
+- <strong>Add the style frame as <code>&lt;IMAGE_REF_0&gt;</code></strong> with the role spelled out ("use only for rendering style, palette and
+  light; do not copy its content"), and the character sheet as <code>&lt;IMAGE_REF_1&gt;</code>. Use exclusion language for every
+  reference (practitioner).
+- <strong>Camera language from a fixed vocabulary</strong> in the bible (Google lists: dolly, tracking, crane, aerial, slow pan,
+  POV; wide, close-up, extreme close-up, low angle, two-shot; shallow DoF, wide-angle, macro; Omni adds push in, punch
+  in, dolly zoom, locked off, "oner", smartphone zoom, webcam style) [official]. Styles restrict it: UGC = handheld
+  smartphone, slight shake; cinematic = dolly/crane, anamorphic feel; collage = locked-off.
+- <strong>Restyle for multi-style hero shots:</strong> make the choreography once (in the cheapest style or a grey-box Remotion
+  animatic), then Omni-restyle into each style. Same motion and timing across styles, so the same cut list works.
+  Costs one extra generation per style; quality of restyle on our content is untested [proposal, to test].
+- <strong>Colour lock in post:</strong> one grade (LUT) and grain per style in Remotion/ffmpeg over all AI shots; this hides small
+  per-clip drift (research 07).</p>
+<h3 id="15-style-locking-in-remotion-code-layers">1.5 Style-locking in Remotion (code layers)</h3>
+<p dir="auto">Remotion props flow: <code>defaultProps</code> → <code>inputProps</code> override at render → <code>calculateMetadata()</code> can compute duration
+and other metadata asynchronously (e.g. from <code>timeline.json</code>); props can be validated by a schema (zod) and edited in
+Studio [official]. So [proposal]:
+- <code>theme.json</code> per style validated by a zod schema: colour tokens (bg, fg, accent, caption fill/outline), fonts per
+  script (Arabic display/body, Latin), type scale, stroke widths, corner radii, shadow model (none / hard offset /
+  soft), spring presets (<code>snappy</code>, <code>bouncy</code>, <code>heavy</code>: damping/stiffness/mass), easing curves, allowed transitions,
+  <code>frameStep</code> (animate on twos for stop-motion/collage), grain and LUT, caption preset.
+- Scenes read only tokens, never literal colours or fonts. Rendering the same ad in a new style is
+  <code>npx remotion render … --props=ads/&lt;slug&gt;/render_&lt;style&gt;.json</code>.
+- Code-only styles (kinetic type, 2D flat, infographic, collage from NB2 cut-outs) then cost almost nothing to add.
+- Owner's caption rule (thick black outline) stays global; the theme may only change the font within the rule.</p>
+<h3 id="16-starter-style-catalogue-what-each-needs-proposal">1.6 Starter style catalogue (what each needs) [proposal]</h3>
+<table>
+<thead>
+<tr>
+<th>Style</th>
+<th>Main engine</th>
+<th>AI $/45 s ad (est.)</th>
+<th>Key risks</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>3D clay</strong> (current)</td>
+<td>NB2 frames → Omni i2v</td>
+<td>~$15-18</td>
+<td>glossy plastic look, glow creep</td>
+<td>Already proven [ours]</td>
+</tr>
+<tr>
+<td><strong>Photoreal cinematic</strong></td>
+<td>NB Pro style frame, NB2 frames → Omni; Veo Std for 1-2 heroes</td>
+<td>~$18-30</td>
+<td>hands, faces, uncanny motion, Tunisian locations wrong</td>
+<td>Needs strongest artifact QC</td>
+</tr>
+<tr>
+<td><strong>AI UGC (phone selfie)</strong></td>
+<td>NB2 "phone photo" frames → Omni/Veo; lip-sync post step</td>
+<td>~$15-25 + lip-sync</td>
+<td>Derja lip-sync, "plastic" skin, over-clean light</td>
+<td>Honest framing only: no fake testimonials (§4.5)</td>
+</tr>
+<tr>
+<td><strong>2D flat vector</strong></td>
+<td>NB2 flat assets (alpha via diff-matte) + Remotion rigs</td>
+<td>~$2-5</td>
+<td>AI frames drift to 3D shading</td>
+<td>Mostly code; very cheap diversity</td>
+</tr>
+<tr>
+<td><strong>Anime / cel</strong></td>
+<td>NB Pro style frame, NB2 frames → Omni</td>
+<td>~$15</td>
+<td>drift to 3D, face inconsistency</td>
+<td>Anime forgives motion errors</td>
+</tr>
+<tr>
+<td><strong>Paper collage / cut-out</strong></td>
+<td>NB2 cut-out elements + Remotion on twos, paper texture</td>
+<td>~$2-6</td>
+<td>AI video can't do stepped timing well</td>
+<td>Code is better than AI here</td>
+</tr>
+<tr>
+<td><strong>Kinetic typography</strong></td>
+<td>Remotion only (+ Lyria)</td>
+<td>~$0.1</td>
+<td>readability of Arabic</td>
+<td>Zero AI video; strongest control</td>
+</tr>
+<tr>
+<td><strong>Cinematic 2.5D</strong></td>
+<td>NB2 plates + Depth Anything parallax</td>
+<td>~$2-4</td>
+<td>stretched edges</td>
+<td>Research 08 §3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-model-routing-per-shot-type">2. Model routing per shot type</h2>
+<h3 id="21-capability-and-price-sheet-2026-09">2.1 Capability and price sheet (2026-09)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Omni 1.1 Flash</th>
+<th>Veo 3.1 Standard</th>
+<th>Veo 3.1 Fast</th>
+<th>Veo 3.1 Lite</th>
+<th>Code (Remotion)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clip length</td>
+<td>3-10 s; extend to 40 s</td>
+<td>4/6/8 s; extend to 148 s (720p)</td>
+<td>same as Std</td>
+<td>4/6/8 s, no extend</td>
+<td>any</td>
+</tr>
+<tr>
+<td>Resolution</td>
+<td>360p, <strong>720p</strong> native; 1080p/4K upscaled</td>
+<td>720p, 1080p, 4K</td>
+<td>720p-4K</td>
+<td>720p (1080p priced)</td>
+<td>1080×1920 exact</td>
+</tr>
+<tr>
+<td>Price /s</td>
+<td>360p ~$0.034 · <strong>720p $0.10</strong> · 1080p ~$0.152 · 4K ~$0.304</td>
+<td><strong>$0.40</strong> (720p/1080p) · $0.60 (4K)</td>
+<td><strong>$0.10</strong> (720p) … $0.30 (4K)</td>
+<td><strong>$0.05</strong> (720p) · $0.08 (1080p)</td>
+<td>$0 (CPU)</td>
+</tr>
+<tr>
+<td>Image refs</td>
+<td>many (docs inconsistent: 5-10); style via prompt</td>
+<td>≤3 <strong>asset</strong> refs, 8 s only</td>
+<td>≤3 asset</td>
+<td>none</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Video refs</td>
+<td>≤3 × ≤3 s (motion/likeness)</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>First/last frame</td>
+<td>yes (we use first only)</td>
+<td>yes (8 s)</td>
+<td>yes</td>
+<td>yes</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Restyle/edit clip</td>
+<td><strong>yes</strong> (≤10 s input)</td>
+<td>edit exists on Vertex</td>
+<td></td>
+<td></td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Native audio</td>
+<td>yes, always (music creeps in)</td>
+<td>yes, dialogue + SFX + ambience</td>
+<td>yes</td>
+<td>yes</td>
+<td>our SFX kit</td>
+</tr>
+<tr>
+<td>Dialogue/lip-sync</td>
+<td>English only evaluated</td>
+<td>best of the family; non-English "not documented"</td>
+<td></td>
+<td></td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>Arabic text in frame</td>
+<td>no (invents garbled Arabic) [ours]</td>
+<td>poor (subtitle problem)</td>
+<td></td>
+<td></td>
+<td><strong>exact</strong></td>
+</tr>
+<tr>
+<td>Batch discount</td>
+<td>none</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Sources: Gemini API pricing page (Veo tiers, Omni $17.50/M video tokens = 5,792 tok/s at 720p ≈ $0.10/s) [official];</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Omni per-resolution figures from an analyst breakdown [practitioner]; Omni specs from the API doc [official]; Veo specs</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>from the Veo doc [official]; reference types from the Vertex references doc (search excerpt) [official].</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Not available: no "Veo 4" exists as of September 2026; Google shipped Omni instead [practitioner, several trackers].</p>
+<h3 id="22-routing-table-by-shot-intent-proposal">2.2 Routing table by shot intent [proposal]</h3>
+<table>
+<thead>
+<tr>
+<th>Shot intent</th>
+<th>Default route</th>
+<th>Fallback / upgrade</th>
+<th>Takes N</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hook (0-2 s) visual</strong></td>
+<td>Omni i2v 4 s from NB2 2K frame, trim to 0.8-1.5 s</td>
+<td>Veo 3.1 Fast 4 s i2v</td>
+<td><strong>5-8</strong></td>
+<td>Highest leverage; selection matters most</td>
+</tr>
+<tr>
+<td>Product/object hero, physics</td>
+<td>Omni i2v 4 s</td>
+<td>Veo Std 8 s 1080p for the 1 hero</td>
+<td>3</td>
+<td>Omni good at physical motion; Veo Std for flagship</td>
+</tr>
+<tr>
+<td>Character action, no speech</td>
+<td>Omni i2v + <code>&lt;IMAGE_REF&gt;</code> sheet</td>
+<td>Veo Fast 8 s with ≤3 asset refs</td>
+<td>3</td>
+<td>Reference-driven identity</td>
+</tr>
+<tr>
+<td><strong>Talking head in Derja</strong></td>
+<td>Our TTS VO + Omni/Veo performance with mouth hidden or off-camera (hands, over-shoulder, phone POV)</td>
+<td>Omni/Veo take "speaking silently" → <strong>post lip-sync</strong> to our VO (lipsync-2-pro or LatentSync)</td>
+<td>3 + lip-sync</td>
+<td>Neither model is evaluated for Arabic; our VO is the approved voice</td>
+</tr>
+<tr>
+<td>Talking head FR/EN line</td>
+<td>Veo 3.1 Std/Fast with dialogue in quotes</td>
+<td></td>
+<td>3</td>
+<td>Best native lip-sync (~80 % single speaker, practitioner)</td>
+</tr>
+<tr>
+<td>Continuous move &gt; 10 s</td>
+<td>Omni extend (≤40 s)</td>
+<td>Veo extend (720p)</td>
+<td>2 per link</td>
+<td>Extension keeps momentum; avoid F/L chaining (research 05)</td>
+</tr>
+<tr>
+<td>Same shot in several styles</td>
+<td>Omni <strong>restyle</strong> of one master take</td>
+<td>per-style i2v</td>
+<td>1-2/style</td>
+<td>Keeps timing identical across styles</td>
+</tr>
+<tr>
+<td>Atmosphere B-roll (sky, street, texture)</td>
+<td>Veo 3.1 Lite 720p 4 s ($0.20)</td>
+<td>Omni 720p</td>
+<td>2</td>
+<td>Cheapest acceptable motion</td>
+</tr>
+<tr>
+<td>Camera move over a still</td>
+<td><strong>2.5D parallax</strong> (Depth Anything V2 + Remotion)</td>
+<td>Omni</td>
+<td>0</td>
+<td>Crisp, free, no wobble (research 08)</td>
+</tr>
+<tr>
+<td>Text, numbers, UI, chat bubbles, counters, maps, charts, logo, end card, captions</td>
+<td><strong>Remotion</strong></td>
+<td>never AI</td>
+<td>0</td>
+<td>Exact; AI prints hex codes and fake Arabic [ours]</td>
+</tr>
+<tr>
+<td>Graphic styles (2D, collage, kinetic)</td>
+<td><strong>Remotion</strong> + NB2 assets</td>
+<td>Omni for 1-2 organic moments</td>
+<td>0-2</td>
+<td>Stepped timing and exact shapes are code strengths</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Router logic (pseudo) [proposal]:</p>
+<pre><code>engine = style.adapters[intent.type].engine            # style decides first
+if intent.has_text_or_numbers:           engine = &quot;remotion&quot;   # hard rule
+if intent.speech_lang == &quot;ar-TN&quot;:        engine += &quot;+lipsync&quot; or reframe to hide mouth
+if intent.needs_subject_refs and engine == &quot;veo&quot;: duration = 8     # Veo refs force 8 s
+if intent.importance == &quot;hook&quot;:          N = style.qc.hook_takes (5-8) else N = 3
+if budget.remaining &lt; estimate(engine,N): downgrade (Veo Std→Fast→Omni→2.5D) and log it
+</code></pre>
+<h3 id="23-upscaling-and-frame-rate">2.3 Upscaling and frame rate</h3>
+<ul>
+<li dir="auto">Omni 1080p/4K are upscales billed at 1.5×/3× [official/practitioner]. For a 1080×1920 feed ad, 720p→1080p is a
+  1.5× scale; Meta recompresses anyway. Use Omni 1080p only on hero shots with fine detail [proposal].</li>
+<li dir="auto">Local options: Real-ESRGAN (<code>realesr-animevideov3</code> for flat/2D) (research 04); <strong>SeedVR2</strong> (Apache-2.0, one-step
+  video restoration, ICLR 2026) needs an H100 for 720p×100 frames and its README warns it "tends to overly generate
+  details" on lightly degraded inputs such as <strong>720p AIGC videos</strong> [official repo]. Topaz (commercial) was used by
+  Secret Level on Coca-Cola (research 07).</li>
+<li dir="auto">Frame rate: Omni is 24 fps, our composition 30 fps. Do not interpolate AI shots (warps); use RIFE only for
+  deliberate slow-motion ramps. Consider a 24 fps master for AI-heavy styles to avoid pulldown judder [proposal; test].</li>
+</ul>
+<h3 id="24-budget-per-style-variant-45-s-ad-28-shots-12-ai-proposal-prices-21">2.4 Budget per style variant (45 s ad, ~28 shots, ~12 AI) [proposal, prices §2.1]</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Calc</th>
+<th>$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NB Pro style frame (once per style, amortized)</td>
+<td>3 × $0.134</td>
+<td>0.40</td>
+</tr>
+<tr>
+<td>NB2 keyframes</td>
+<td>14 × $0.101 (+30 % re-gens)</td>
+<td>1.8</td>
+</tr>
+<tr>
+<td>Omni takes</td>
+<td>11 shots × 3 × 4 s × $0.10 + hook 1 × 8 × 4 s × $0.10</td>
+<td>16.4</td>
+</tr>
+<tr>
+<td>Judges (Gemini 3.1 Pro/3.x Flash)</td>
+<td>~45 clips + ~20 stills + final</td>
+<td>~1.5</td>
+</tr>
+<tr>
+<td>Lyria bed, TTS</td>
+<td></td>
+<td>&lt; 0.2</td>
+</tr>
+<tr>
+<td><strong>Total AI-heavy style</strong></td>
+<td></td>
+<td><strong>≈ $20</strong></td>
+</tr>
+<tr>
+<td>Code-heavy style (2D/collage/kinetic)</td>
+<td>NB2 assets + 0-2 Omni shots</td>
+<td><strong>≈ $1-5</strong></td>
+</tr>
+<tr>
+<td>Extra hook variant (same body)</td>
+<td>1 shot × 6 takes × 4 s × $0.10 + Remotion</td>
+<td>≈ $2.5</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Our real solar v2 cost ≈ $15 [ours], consistent with this.</p>
+<hr />
+<h2 id="3-quality-at-1010-automatically">3. Quality at 10/10, automatically</h2>
+<h3 id="31-what-the-research-says-about-automatic-judges">3.1 What the research says about automatic judges</h3>
+<ul>
+<li dir="auto"><strong>Pairwise beats pointwise.</strong> GenArena: pointwise VLM scoring has "stochastic inconsistency" and only 0.36
+  correlation with the LMArena leaderboard; pairwise raises accuracy by over 20 % and reaches 0.86 Spearman; with
+  pairwise, open models beat top proprietary judges used pointwise [paper].</li>
+<li dir="auto"><strong>"VLM judges can rank but cannot score."</strong> Rankings can be right while absolute scores are unreliable; reliability
+  depends more on task definition and annotation quality than on the judge; use pairwise when uncertainty is wide;
+  one strong judge beats multi-judge fusion there [paper].</li>
+<li dir="auto"><strong>Rubric + pairwise for video.</strong> RAVEN-Eval uses task-specific rubrics and pairwise LMM preference over 4,500 videos
+  from 20 models, 13 judges tested, with anchor-based insertion of new models to save cost [paper].</li>
+<li dir="auto"><strong>LLM-judge biases</strong> (position, verbosity, self-enhancement) are mitigated by swapping order, few-shot examples,
+  chain-of-thought and reference-guided judging; strong judges reach &gt;80 % agreement with humans, the same as
+  human-human [paper, MT-Bench].</li>
+<li dir="auto"><strong>Learned video reward models:</strong> VideoScore2 (Qwen2.5-VL-7B, scores visual quality, text alignment and
+  physical/common-sense consistency with rationales, used for best-of-N) [paper]; VisionReward (29 weighted dims) and
+  VideoScore used as verifiers in Video-T1, where more samples "consistently" improved quality up to a convergence
+  limit, and a mixture of verifiers helped [paper]. Image preference: HPSv3 (Qwen2-VL, MIT, 76.9 % preference
+  accuracy vs 65 % for HPSv2/PickScore) [official repo]; aesthetics: LAION Aesthetic Predictor v2.5 (SigLIP, 1-10,
+  "5.5+" = great, covers illustrations; AGPL-3.0) [official repo]; Q-Align (LMM with text-defined levels) [paper].</li>
+<li dir="auto"><strong>Artifact detection with few labels:</strong> ArtifactLens detects distorted hands, warped objects, anatomy and
+  interaction errors with "only a few hundred labeled examples per artifact category" using a VLM with in-context
+  examples [paper]. Hands are much better in 2025-26 generators but still fail [practitioner].</li>
+<li dir="auto"><strong>Style similarity:</strong> CSD (Contrastive Style Descriptors) embeds style separately from content [paper]; raw CSD
+  cosine fails (hubness), so calibrate against reference sets and set thresholds per context [paper].</li>
+<li dir="auto"><strong>Our own measurement:</strong> Gemini's "accent score" is useless (always 5/5); its transcript is reliable for wrong or
+  missing words; its picture opinions are advisory [ours].</li>
+</ul>
+<h3 id="32-gemini-as-judge-frame-sampling-and-cost-official">3.2 Gemini as judge: frame sampling and cost [official]</h3>
+<ul>
+<li dir="auto">Default video sampling is <strong>1 fps</strong>, which "may miss" fast action; set a custom <code>fps</code> in the video metadata; clip
+  with <code>start_offset</code>/<code>end_offset</code>; up to <strong>10 videos per request</strong> (Gemini 2.5+), which enables pairwise in one call;
+  timestamps in MM:SS; put the text prompt after the media.</li>
+<li dir="auto">Gemini 3 tokens: images <code>low</code> 280, <code>medium</code> 560, <code>high</code> 1,120, <code>ultra_high</code> 2,240; <strong>video frames 70 tokens at
+  low/medium, 280 at high</strong> ("high" needed for OCR/small details); per-part resolution is Gemini-3-only.</li>
+<li dir="auto">Cost example: judging two 4 s takes at 8 fps, high: 2 × 32 frames × 280 = ~18k tokens ≈ <strong>$0.04</strong> on Gemini 3.1 Pro
+  ($2/M input) or ≈ $0.014 on 3.x Flash ($0.75/M through 2026-12-31). Generating those two takes cost $0.80.
+  Judging is ~5 % of generation cost.</li>
+</ul>
+<h3 id="33-the-rubric-hard-gates-deterministic-checklist-vlm-pairwise-vlm-proposal">3.3 The rubric: hard gates (deterministic) + checklist (VLM) + pairwise (VLM) [proposal]</h3>
+<p dir="auto">"10/10" = <strong>every hard gate passes, every checklist item is "yes", and the ad wins or ties the style's golden ad in
+a blind pairwise judgment (both orders).</strong> Owner's phone watch is the final gate.</p>
+<p dir="auto"><strong>A. Hard gates (code, no model opinion)</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Dimension</th>
+<th>Check</th>
+<th>Tool</th>
+<th>Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Hook</td>
+<td>frame 0 lit and readable; first visual change ≤ 0.5 s; VO or hook text starts ≤ 0.3 s</td>
+<td>signalstats YAVG on frame 0; scene/motion diff; align.json</td>
+<td>YAVG(frame0) ≥ 90; change ≤ 15 frames</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Text correctness</td>
+<td>every on-screen string equals the approved string, char by char; RTL order by pixel position</td>
+<td>Remotion props diff + OCR on stills (Gemini high-res OCR)</td>
+<td>0 differences [ours]</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>Readability</td>
+<td>text height and dwell</td>
+<td>Remotion layout metrics</td>
+<td>Arabic cap ≥ 56 px at 1080 w; dwell ≥ 0.4 s + 0.25 s/word; contrast ≥ 4.5:1</td>
+</tr>
+<tr>
+<td>A4</td>
+<td>Safe zones</td>
+<td>nothing essential in Reels UI overlays</td>
+<td>bounding boxes from Remotion</td>
+<td>top 14 % and bottom 35 % clear (our rule: top 270 / bottom 670 px) [practitioner]</td>
+</tr>
+<tr>
+<td>A5</td>
+<td>No text in AI shots</td>
+<td>zero glyphs in any AI clip</td>
+<td>OCR (Gemini or PaddleOCR, Arabic+Latin) on 2 fps frames</td>
+<td>0 detections [ours]</td>
+</tr>
+<tr>
+<td>A6</td>
+<td>No inserted cuts in the used segment</td>
+<td>shot boundary</td>
+<td>PySceneDetect / <code>pipeline/alarm/cuts.py</code></td>
+<td>0 in kept range [ours]</td>
+</tr>
+<tr>
+<td>A7</td>
+<td>No frozen/black frames, no flicker</td>
+<td></td>
+<td>ffmpeg <code>freezedetect</code>, <code>blackdetect</code>, luma delta per frame</td>
+<td>none;</td>
+</tr>
+<tr>
+<td>A8</td>
+<td>Edit rhythm</td>
+<td>cuts on beats/words; mean shot length</td>
+<td>timeline.json</td>
+<td>100 % cuts within ±1 frame of beat or word; mean 1.2-2.0 s</td>
+</tr>
+<tr>
+<td>A9</td>
+<td>Seam energy</td>
+<td>no clip ends on a "settling" still</td>
+<td>optical-flow magnitude in the last 6 frames before each AI cut</td>
+<td>≥ 40 % of the clip's median flow [proposal]</td>
+</tr>
+<tr>
+<td>A10</td>
+<td>Audio loudness</td>
+<td></td>
+<td>ffmpeg <code>ebur128</code></td>
+<td>−14 ±1 LUFS integrated, ≤ −1.5 dBTP [ours]</td>
+</tr>
+<tr>
+<td>A11</td>
+<td>VO intelligibility</td>
+<td>transcript vs script</td>
+<td>Gemini transcript (WER) + keywords</td>
+<td>WER ≤ 5 %, all keywords present [ours]</td>
+</tr>
+<tr>
+<td>A12</td>
+<td>Mix</td>
+<td>VO over music</td>
+<td>loudness per stem</td>
+<td>music −12 to −18 LU under VO while speaking</td>
+</tr>
+<tr>
+<td>A13</td>
+<td>Technical</td>
+<td>container/colour</td>
+<td>ffprobe</td>
+<td>1080×1920, 30 (or 24) fps, H.264 High, yuv420p, <code>color_range=tv</code>, BT.709, AAC 48 kHz [ours]</td>
+</tr>
+<tr>
+<td>A14</td>
+<td>Brightness</td>
+<td>whole film</td>
+<td>signalstats</td>
+<td>mean YAVG 90-190 [ours]</td>
+</tr>
+<tr>
+<td>A15</td>
+<td>Brand + CTA</td>
+<td>logo on end card ≥ 1.5 s; CTA said and shown in the last 5 s; brand named by 3 s (if the concept allows)</td>
+<td>timeline + props</td>
+<td>present</td>
+</tr>
+<tr>
+<td>A16</td>
+<td>Style drift (stills)</td>
+<td>CSD similarity to golden set</td>
+<td>CSD embedding, z-score vs in-style distribution</td>
+<td>z ≥ <code>qc.style_sim_min_z</code> (calibrate)</td>
+</tr>
+<tr>
+<td>A17</td>
+<td>Compliance</td>
+<td>claims match brief facts; no fake testimonial/review; AI-disclosure need recorded</td>
+<td>brief facts list, human</td>
+<td>pass</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto"><strong>B. VLM checklist (binary items; Gemini 3.1 Pro; each "no" needs a timestamp)</strong>
+Per AI shot: identity matches sheet · hands (5 fingers, no fusion) · faces stable (no melting, eyes aligned) · objects
+keep shape (no morphing) · physics plausible · no glyph-like marks · on-style (bible's <code>look</code> + <code>judge_extra_checks</code>) ·
+intent fulfilled (the action in the intent happens in the kept segment) · no "AI tells" from research 07 (glow,
+bokeh, sparkles, waxy skin).
+Per ad: hook creates a question or surprise in 2 s · message understood with sound off · every beat's fact visible ·
+product/offer clear · CTA explicit · pacing never drags (flag any 0.7 s+ of dead air) · music mood fits the style ·
+SFX on visible impacts · nothing looks unintentionally AI.</p>
+<p dir="auto"><strong>C. Pairwise (selection and the final bar)</strong>
+- Take selection: round-robin among N takes of a shot, both orders; winner = most wins; ties → deterministic
+  tiebreaker (higher motion energy at the trim point, then fewer checklist warnings).
+- Ad-level bar: new ad vs <code>golden_ad.mp4</code> of the same style, both orders, rubric in the prompt. "Win or tie in both
+  orders" = pass. A new winner can become the new golden ad after owner OK (a ratchet).</p>
+<h3 id="34-making-the-judge-reliable-proposal-grounded-in-31">3.4 Making the judge reliable [proposal, grounded in §3.1]</h3>
+<ol>
+<li dir="auto"><strong>Deterministic checks first</strong>, VLM second: cheaper and never hallucinate. Reject before paying the judge.</li>
+<li dir="auto"><strong>Binary questions with evidence</strong>, structured JSON output (<code>{item, pass, timestamp, evidence}</code>); reject any "fail"
+   without a timestamp and any "pass" on an item the judge could not see (e.g. hands not in frame = n/a).</li>
+<li dir="auto"><strong>Pairwise, both orders</strong>, temperature 0-low; disagreement between orders = tie → escalate (third call at higher fps
+   or to the owner's picks strip).</li>
+<li dir="auto"><strong>Few-shot from our own defect library</strong>: 1-2 labeled frames per failure (inserted cut, hex code text, garbled
+   Arabic, green "lime-white", glossy clay…). ArtifactLens shows a few hundred labels per category are enough for a
+   strong VLM detector; we can start with 10-20 per category.</li>
+<li dir="auto"><strong>Sampling that fits the failure:</strong> 8-10 fps and <code>high</code> media resolution for 4 s takes (morphs and hands happen
+   between 1 fps samples); 1-2 fps <code>low</code> for whole-ad pacing reviews.</li>
+<li dir="auto"><strong>Calibrate against the owner.</strong> Label ~150 past takes (keep/reject + reason; we already have v1/v2/alarm takes and
+   <code>picks.json</code>). Automate a gate only if judge-owner agreement is high (Cohen's kappa ≥ 0.7); otherwise keep it
+   advisory. Re-check each quarter and whenever a model id changes.</li>
+<li dir="auto"><strong>Self-preference:</strong> Gemini judging Gemini output. Pairwise among same-model takes cancels most of it; for the final
+   ad, add a cross-vendor second opinion on stills (e.g. Claude) as advisory.</li>
+<li dir="auto"><strong>Track judge vs market:</strong> correlate judge scores with hook rate/CPL (§4.4). If the judge prefers ads the market
+   rejects, change the rubric, not the market.</li>
+</ol>
+<h3 id="35-style-consistency-metrics-proposal">3.5 Style-consistency metrics [proposal]</h3>
+<ul>
+<li dir="auto"><strong>Per style, a golden set</strong> of 20-50 approved frames. Compute CSD embeddings; store the in-style similarity
+  distribution (mean/std of golden-to-golden cosine) and an out-of-style distribution (golden vs other styles).
+  Gate new frames on the <strong>z-score</strong>, not raw cosine (the CSD failure paper) [paper].</li>
+<li dir="auto"><strong>Palette ΔE:</strong> k-means (k=5) dominant colours vs <code>palette_hex</code>; flag if the top-3 colours are &gt; ΔE 15 from any
+  palette colour (for photoreal, check only white balance/saturation band).</li>
+<li dir="auto"><strong>Identity:</strong> for stylized characters, the VLM checklist against the sheet (face embedding models are photo-trained;
+  InsightFace models are non-commercial licensed, so avoid them for a paying agency).</li>
+<li dir="auto"><strong>Aesthetic floor (advisory):</strong> LAION v2.5 ≥ 5.5 or HPSv3 relative ranking within a batch. Licenses: v2.5 is AGPL
+  (fine as an internal tool, not distributed); HPSv3 MIT.</li>
+</ul>
+<h3 id="36-best-of-n-strategy-and-costs-proposal">3.6 Best-of-N strategy and costs [proposal]</h3>
+<ul>
+<li dir="auto">P(at least one pass in N) = 1 − (1−p)^N. With p = 0.6: N=2 → 84 %, N=3 → 94 %, N=5 → 99 %. Expected cost per usable
+  4 s Omni shot ≈ $0.40 / p = $0.67.</li>
+<li dir="auto"><strong>Sequential sampling:</strong> generate 2 in parallel, run gates + judge; generate the 3rd only if none passes or the pair
+  is a near-tie. Hook: 5-8 in parallel from 2 different first frames (framing diversity beats seed diversity).</li>
+<li dir="auto"><strong>Diagnose then repair:</strong> a failed take's checklist output drives a targeted prompt edit (e.g. "hands out of frame",
+  "static camera", "stop before the cut") instead of blind re-rolls. After 2 failed repairs, change the intent route
+  (e.g. to 2.5D or code) (practitioner rule from research 05: stop after 2 failed joins).</li>
+<li dir="auto">Video-T1: returns from larger N converge; gains per model 1.6-5.9 % on benchmarks; tree search saves ~69 % compute
+  but needs model internals, so for API models use linear best-of-N with early rejection [paper].</li>
+</ul>
+<hr />
+<h2 id="4-creative-testing-and-learning-loops">4. Creative testing and learning loops</h2>
+<h3 id="41-what-meta-says-official">4.1 What Meta says (official)</h3>
+<ul>
+<li dir="auto">Andromeda (Dec 2024) is the retrieval engine for Advantage+; +6 % recall and <strong>+8 % ads quality</strong> on selected
+  segments; built for "exponential growth in volume of eligible ads" as GenAI tools let 1M+ advertisers create 15M+ ads
+  a month [official, Meta engineering].</li>
+<li dir="auto">"The Creative Advantage" (Meta for Business): Andromeda needs <strong>"more volume and diversity of creative"</strong>; diversify
+  themes and messages, visuals, audio, copy; an example advertiser went from 3-4 new creatives a week to ~50 [official].</li>
+<li dir="auto">"Demystifying creative diversification": diversification = "distinct campaign assets tailored to different personas
+  or use cases", as opposed to iteration (small A/B tweaks). Dimensions: visuals and formats, messaging, storytelling,
+  audience personas. Use Creative Insights to spot similarity and fatigue. Meta image-generation features: +11 % CTR,
+  +7.6 % CVR [official].</li>
+</ul>
+<h3 id="42-what-practitioners-add-treat-numbers-with-care">4.2 What practitioners add (treat numbers with care)</h3>
+<ul>
+<li dir="auto">Similar ads are grouped (the "Entity ID" idea) and compete as one in retrieval; different visual style, format,
+  angle and talent make distinct entities; small text changes on the same visual do not [practitioner, no primary Meta
+  doc found].</li>
+<li dir="auto">"Creative Similarity Score" thresholds (below 40 %, suppression above 60 %) circulate on many blogs <strong>with no
+  traceable Meta source</strong> [unverified]; do not build on them.</li>
+<li dir="auto">Structures: 8-12 distinct concepts per campaign, 2-3 variants each; one ad set with many diverse creatives beat five
+  small ad sets by 17 % on conversions (Logical Position, via Segwise); 50 % new concepts / 30 % variants / 20 % proven;
+  2-3 week fatigue cycle; watch CTR −10 % WoW, CPA +15 % WoW, frequency &gt; 3 [practitioner].</li>
+<li dir="auto">Angle hierarchy: angle decides the argument, hook is the entry, claim pays it off, format shapes attention, CTA
+  closes; a library should cover problem-agitation, social proof, transformation, comparison, demonstration
+  [practitioner].</li>
+<li dir="auto">Reels: hook in the first 3 s, sound-on native, 9:16, keep critical content out of the top 14 % and bottom 35 %
+  [practitioner summaries of Meta specs].</li>
+</ul>
+<h3 id="43-the-variant-matrix-for-lead-up-proposal">4.3 The variant matrix for Lead Up [proposal]</h3>
+<ul>
+<li dir="auto"><strong>Concept = angle × style.</strong> Angles for solar installers (example): money burned on Boost; speed-to-lead (call in 5
+  min); risk reversal (0 DT until you sell); proof (calendar filling); comparison (agency vs doing it yourself).</li>
+<li dir="auto"><strong>Variants inside a concept = hook × CTA</strong> (swap only the first 1.5-3 s and the last 3 s; the body is reused, so
+  cost is ~$2.5 per hook variant).</li>
+<li dir="auto">Launch pack per client (small Tunisian budgets): <strong>3 angles × 2 styles = 6 concepts</strong>, + 2 extra hooks on the best
+  2 = 10 ads, all in one ad set. Styles alternate across angles so no two concepts share both angle and style.
+  Code-only styles make the second style nearly free.</li>
+<li dir="auto">Do not run full factorials: Tunisian SMB budgets cannot reach significance on dozens of cells. Let delivery pick,
+  and read results by <em>feature</em> across ads (§4.4), not by cell.</li>
+</ul>
+<h3 id="44-naming-tracking-and-the-learning-loop-proposal">4.4 Naming, tracking and the learning loop [proposal]</h3>
+<p dir="auto">Ad name (parsable, like Motion's <code>DATE_FORMAT_HOOK_ANGLE</code> parsing):</p>
+<pre><code>LU_{client}_{offer}_{concept}_{angle}_{style}@{ver}_{hook}_{cta}_{len}s_{yyyymmdd}
+LU_SOLARTN_PAYONSALE_C03_riskrev_clay3d@1.3_H2-priceflood_WA-SOLAR_45s_20260927
+</code></pre>
+<p dir="auto">The same fields live in <code>ads/&lt;slug&gt;/manifest.json</code> (plus model ids, prompt template versions, costs, QC results), so
+ad name ↔ manifest is a join key. Motion-style AI tagging (visual format, messaging angle, hook, talent, product,
+…) can be replicated by running a VLM tagger over every exported ad and storing tags next to the manifest
+[practitioner: Motion tags 8 dimensions].</p>
+<p dir="auto">Loop:
+1. <strong>Pull</strong> per-ad daily metrics (Marketing API insights): impressions, 3 s views (hook rate = 3 s views /
+   impressions), ThruPlays (hold rate), CTR, cost per lead / per WhatsApp conversation, and the <strong>qualified-lead
+   outcome</strong> from Lead Up's CRM (the real target).
+2. <strong>Join</strong> on ad name → manifest features: style, angle, hook type, first-frame brightness, face in first second,
+   cut rate, text density, music BPM, QC scores.
+3. <strong>Model</strong> small data honestly: hierarchical/Bayesian shrinkage (Beta-Binomial on hook rate, Gamma on CPL) per
+   feature; report "probability style X beats Y on hook rate" instead of p-values.
+4. <strong>Write back</strong> to the engine: style win rates per vertical in <code>library/styles/*/stats.json</code>; winning frames join
+   the golden set; winning hooks become templates; losing patterns join the defect/"don't" lists; planner allocates
+   next batch ~50 % new concepts / 30 % variants of winners / 20 % proven (practitioner split).
+5. <strong>Check the judge</strong> (§3.4.8) against market results each cycle.</p>
+<h3 id="45-guardrails-for-ai-ugc-and-claims">4.5 Guardrails for AI UGC and claims</h3>
+<p dir="auto">Meta and most markets treat fabricated testimonials as deceptive; the brief's facts list is the only source of claims.
+AI UGC should be framed as a presenter or a dramatization, not a fake customer review. Record the AI-disclosure
+decision per ad. SynthID is embedded in Google outputs [official].</p>
+<hr />
+<h2 id="5-workflow-orchestration">5. Workflow orchestration</h2>
+<h3 id="51-gates-owner-time-budget-15-min-per-ad-proposal-matches-repo-rules-1-2">5.1 Gates (owner time budget ≈ 15 min per ad) [proposal, matches repo rules 1-2]</h3>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Who</th>
+<th>What the owner sees</th>
+<th>Spend unlocked</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G0 Script</td>
+<td>owner</td>
+<td>script + lint report</td>
+<td>VO (cents)</td>
+</tr>
+<tr>
+<td>G1 Styles</td>
+<td>owner</td>
+<td>1-card-per-style preview (style frame, palette, 3 s motion sample, cost estimate)</td>
+<td>per-style keyframes</td>
+</tr>
+<tr>
+<td>G1b New style (rare)</td>
+<td>owner</td>
+<td>style frame + 6 golden stills + 10 s test</td>
+<td>adds a style to the library (amortized)</td>
+</tr>
+<tr>
+<td>G2 Picks (optional)</td>
+<td>auto, owner may glance</td>
+<td>contact strip of chosen takes with judge notes</td>
+<td>none (already spent)</td>
+</tr>
+<tr>
+<td>G3 Final</td>
+<td>owner</td>
+<td>phone watch, sound on/off, QC report</td>
+<td>publish</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Everything between gates is automatic. Each gate shows cost so far and projected cost (rule "each paid gate needs a
+go").</p>
+<h3 id="52-pipeline-as-idempotent-steps-proposal">5.2 Pipeline as idempotent steps [proposal]</h3>
+<pre><code>ads/&lt;slug&gt;/manifest.json   pins: script hash, style@ver, prompt templates@ver, model ids, budget cap
+steps (each: inputs → outputs, skip if output hash matches):
+  vo → align → beats → intents → [per style] music → timeline → keyframes → keyframe_qc
+     → takes → take_qc (gates + checklist + pairwise) → picks → remotion_render → master → final_qc → publish
+</code></pre>
+<ul>
+<li dir="auto"><strong>Content-addressed cache:</strong> key = sha256(model id, location, prompt text, sorted reference hashes, params). Same key
+  → reuse output, no call. Generators are non-deterministic, so the cache <em>is</em> the reproducibility.</li>
+<li dir="auto"><strong>Run ledger</strong> <code>runs.jsonl</code>: timestamp, step, model id/version, request (prompt, ref hashes, params, seed), response
+  id, output hash, latency, cost, judge verdicts. The same idea as Promise's Muse, which "records prompts, settings and
+  approvals" for production provenance [practitioner, press].</li>
+<li dir="auto"><strong>Prompt templates in git</strong> (Jinja/TS), semver'd, rendered from bible + intent; optional Langfuse-style labels
+  (<code>production</code>/<code>staging</code>), trace linking and experiments on a dataset [official Langfuse] if volume grows.</li>
+<li dir="auto"><strong>Budget guard:</strong> pricing table in config; the orchestrator refuses a call when projected spend &gt; ad cap; per-gate
+  cost report. Quotas: NB2 3-4 parallel, Omni 3 parallel, HTTP timeouts and retries [ours].</li>
+<li dir="auto"><strong>Asset library</strong> with tags + SigLIP/CSD embeddings: approved takes are reusable B-roll across ads of the same style
+  (a rooftop take from ad 1 can serve ad 5).</li>
+<li dir="auto"><strong>Model drift watch:</strong> when a model id changes (e.g. Omni preview id deprecated 2026-09-30 [practitioner]), re-run a
+  fixed 10-shot regression suite per style and compare to golden by pairwise judge before switching.</li>
+</ul>
+<h3 id="53-how-the-market-tools-map-to-this">5.3 How the market tools map to this</h3>
+<ul>
+<li dir="auto">Pencil: multi-model orchestration, brand kit guardrails, approval workflows, pre-spend performance prediction,
+  results flowing back into generation [practitioner/vendor]. Our equivalent: style bibles + gates + learning loop.</li>
+<li dir="auto">Foreplay: swipe file, 100M-ad discovery, competitor tracking, briefs, Lens creative reporting [vendor]. Useful as the
+  <em>input</em> (hooks and formats to imitate) for the angle/hook library.</li>
+<li dir="auto">Motion: AI tagging across 8 creative dimensions to replace naming conventions [vendor]. Our manifest + VLM tagger.</li>
+<li dir="auto">Icon: human UGC at $1,000 for 6 ads with 18 formats and creative directors [vendor] — a price benchmark: our code-
+  and-AI engine costs $1-20 of compute per ad.</li>
+<li dir="auto">AI UGC tools (Arcads, Creatify): avatar libraries and fast script-to-video; ~1 in 4 renders with lip-sync drift
+  reported for Creatify [practitioner]; Veo inside Google Ads Asset Studio (≈10 s product motion) [practitioner].</li>
+</ul>
+<hr />
+<h2 id="6-recommended-build-order-proposal">6. Recommended build order [proposal]</h2>
+<ol>
+<li dir="auto"><strong>Refactor v2 into layers</strong> (1-2 days): <code>intents.json</code> from the current shot list; <code>library/styles/clay3d/</code> from the
+   existing kit; <code>theme.json</code> read by the Remotion scenes; manifest + run ledger + cache in <code>pipeline/</code>.</li>
+<li dir="auto"><strong>Deterministic QC</strong> (1 day): gates A1-A14 as one script producing <code>qc_report.json</code> + a contact sheet.</li>
+<li dir="auto"><strong>Judge v1</strong> (1-2 days): take-level pairwise + checklist with Gemini 3.1 Pro; label 150 past takes; measure
+   agreement; keep advisory until kappa is good.</li>
+<li dir="auto"><strong>Second and third styles</strong> chosen for cost and diversity: one code-heavy (2D flat or kinetic type), one AI-heavy
+   (photoreal cinematic or anime). Each: style frame (NB Pro) → golden stills → 10 s test → owner G1b.</li>
+<li dir="auto"><strong>Re-render the approved solar script in 3 styles</strong> — the proof that the engine works — then the first real
+   Meta test pack (6-10 ads) with the naming scheme and daily metrics pull.</li>
+<li dir="auto"><strong>Derja talking-head test</strong> (small, paid gate): Omni/Veo silent performance + lip-sync to our VO; decide whether AI
+   UGC is viable in Derja.</li>
+</ol>
+<hr />
+<h2 id="7-open-questions-and-unknowns">7. Open questions and unknowns</h2>
+<ul>
+<li dir="auto">Omni reference image limit on Vertex (docs say 5 to 10, inconsistently); test 3-5.</li>
+<li dir="auto">Omni restyle quality on our content, and whether restyle keeps faces in stylized looks.</li>
+<li dir="auto">Derja lip-sync quality of lipsync-2-pro / LatentSync on our VO; price and data terms of the hosted option.</li>
+<li dir="auto">Veo 3.1 GA model ids on Vertex (<code>-001</code>) vs <code>-preview</code>; check Model Garden before coding.</li>
+<li dir="auto">CSD license and CPU speed on this machine; a SigLIP embedding may be enough as a first proxy.</li>
+<li dir="auto">Whether Meta's similarity grouping responds to style changes alone (no primary doc; test with our own delivery data).</li>
+</ul>
+<hr />
+<h2 id="sources">Sources</h2>
+<p dir="auto">Google (official)
+- Gemini API pricing (Veo 3.1 tiers, Omni token rate, NB2, Lyria, Gemini 3.x): <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/pricing</a>
+- Veo 3.1 in the Gemini API (durations, 8 s rule, refs, extend 148 s, seed, latency, retention): <a href="https://ai.google.dev/gemini-api/docs/veo" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/veo</a>
+- Ultimate prompting guide for Veo 3.1 (formula, camera vocab, audio syntax, negatives, ingredients, timestamps): <a href="https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-veo-3-1" target="_blank" rel="noopener">https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-veo-3-1</a>
+- Introducing Veo 3.1 (developers blog): <a href="https://developers.googleblog.com/introducing-veo-3-1-and-new-creative-capabilities-in-the-gemini-api/" target="_blank" rel="noopener">https://developers.googleblog.com/introducing-veo-3-1-and-new-creative-capabilities-in-the-gemini-api/</a>
+- Vertex: generate videos from references (asset vs style refs): <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/use-reference-images-to-guide-video-generation" target="_blank" rel="noopener">https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/use-reference-images-to-guide-video-generation</a>
+- Vertex: Veo 3.1 model page: <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/veo/3-1-generate" target="_blank" rel="noopener">https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/veo/3-1-generate</a>
+- Vertex: extend Veo videos: <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/extend-a-veo-video" target="_blank" rel="noopener">https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/extend-a-veo-video</a>
+- Gemini Omni API doc (specs, languages, refs, restyle, extension): <a href="https://ai.google.dev/gemini-api/docs/omni" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/omni</a>
+- Gemini Omni prompt guide (DeepMind): <a href="https://deepmind.google/models/gemini-omni/prompt-guide/" target="_blank" rel="noopener">https://deepmind.google/models/gemini-omni/prompt-guide/</a>
+- Gemini Omni 1.1 Flash on Agent Platform: <a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/omni-1-1-flash" target="_blank" rel="noopener">https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/omni-1-1-flash</a>
+- Gemini Omni Flash model card: <a href="https://deepmind.google/models/model-cards/gemini-omni-flash/" target="_blank" rel="noopener">https://deepmind.google/models/model-cards/gemini-omni-flash/</a>
+- Nano Banana image generation doc (reference limits, thinking, grounding): <a href="https://ai.google.dev/gemini-api/docs/image-generation" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/image-generation</a>
+- Nano Banana 2 model page: <a href="https://deepmind.google/models/gemini-image/flash/" target="_blank" rel="noopener">https://deepmind.google/models/gemini-image/flash/</a>
+- How to prompt Gemini 2.5 Flash Image (templates, semantic negatives): <a href="https://developers.googleblog.com/en/how-to-prompt-gemini-2-5-flash-image-generation-for-the-best-results/" target="_blank" rel="noopener">https://developers.googleblog.com/en/how-to-prompt-gemini-2-5-flash-image-generation-for-the-best-results/</a>
+- Gemini video understanding (1 fps default, custom fps, clipping, 10 videos/request): <a href="https://ai.google.dev/gemini-api/docs/video-understanding" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/video-understanding</a>
+- Gemini media resolution (tokens per image/frame): <a href="https://ai.google.dev/gemini-api/docs/media-resolution" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/media-resolution</a></p>
+<p dir="auto">Meta (official)
+- Meta Andromeda (engineering blog): <a href="https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/" target="_blank" rel="noopener">https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/</a>
+- The Creative Advantage: diversification with Andromeda: <a href="https://www.facebook.com/business/news/the-creative-advantage-unlocking-the-power-of-diversification-with-meta-andromeda" target="_blank" rel="noopener">https://www.facebook.com/business/news/the-creative-advantage-unlocking-the-power-of-diversification-with-meta-andromeda</a>
+- Demystifying creative diversification: <a href="https://www.facebook.com/business/news/demystifying-creative-diversification" target="_blank" rel="noopener">https://www.facebook.com/business/news/demystifying-creative-diversification</a>
+- Advantage+ creative: <a href="https://www.facebook.com/business/ads/meta-advantage-plus/creative" target="_blank" rel="noopener">https://www.facebook.com/business/ads/meta-advantage-plus/creative</a></p>
+<p dir="auto">Papers and model repos
+- GenArena (pairwise vs pointwise VLM judging): <a href="https://arxiv.org/abs/2602.06013" target="_blank" rel="noopener">https://arxiv.org/abs/2602.06013</a>
+- VLM Judges Can Rank but Cannot Score: <a href="https://arxiv.org/html/2604.25235v1" target="_blank" rel="noopener">https://arxiv.org/html/2604.25235v1</a>
+- RAVEN-Eval (rubric-guided pairwise video evaluation): <a href="https://arxiv.org/abs/2608.09111" target="_blank" rel="noopener">https://arxiv.org/abs/2608.09111</a>
+- Judging LLM-as-a-judge (MT-Bench; biases and mitigations): <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener">https://arxiv.org/abs/2306.05685</a>
+- VideoScore2: <a href="https://huggingface.co/papers/2509.22799" target="_blank" rel="noopener">https://huggingface.co/papers/2509.22799</a>
+- Video-T1 test-time scaling: <a href="https://arxiv.org/abs/2503.18942" target="_blank" rel="noopener">https://arxiv.org/abs/2503.18942</a> and <a href="https://arxiv.org/html/2503.18942v1" target="_blank" rel="noopener">https://arxiv.org/html/2503.18942v1</a>
+- Diagnosis-guided candidate recycling (related TTS work): <a href="https://arxiv.org/pdf/2608.29322" target="_blank" rel="noopener">https://arxiv.org/pdf/2608.29322</a>
+- ArtifactLens (few-label artifact detection): <a href="https://arxiv.org/abs/2602.09475" target="_blank" rel="noopener">https://arxiv.org/abs/2602.09475</a>
+- CSD, Measuring Style Similarity in Diffusion Models: <a href="https://arxiv.org/abs/2404.01292" target="_blank" rel="noopener">https://arxiv.org/abs/2404.01292</a>
+- When style similarity scores fail (CSD calibration): <a href="https://arxiv.org/pdf/2605.09030" target="_blank" rel="noopener">https://arxiv.org/pdf/2605.09030</a>
+- HPSv3: <a href="https://github.com/MizzenAI/HPSv3" target="_blank" rel="noopener">https://github.com/MizzenAI/HPSv3</a>
+- Aesthetic Predictor v2.5 (SigLIP): <a href="https://github.com/discus0434/aesthetic-predictor-v2-5" target="_blank" rel="noopener">https://github.com/discus0434/aesthetic-predictor-v2-5</a>
+- Q-Align: <a href="https://proceedings.mlr.press/v235/wu24ah.html" target="_blank" rel="noopener">https://proceedings.mlr.press/v235/wu24ah.html</a>
+- SeedVR2 (video restoration/upscaling): <a href="https://github.com/ByteDance-Seed/SeedVR" target="_blank" rel="noopener">https://github.com/ByteDance-Seed/SeedVR</a></p>
+<p dir="auto">Practitioner, vendor and press
+- Omni pricing breakdown per resolution: <a href="https://www.eesel.ai/blog/gemini-omni-1-1-flash-pricing" target="_blank" rel="noopener">https://www.eesel.ai/blog/gemini-omni-1-1-flash-pricing</a>
+- Omni reference-driven video (tags, limits): <a href="https://runware.ai/docs/models/google-gemini-omni-flash/guides/reference-driven-video" target="_blank" rel="noopener">https://runware.ai/docs/models/google-gemini-omni-flash/guides/reference-driven-video</a>
+- Omni review (duration, audio sync): <a href="https://www.buildfastwithai.com/blogs/gemini-omni-flash-review-google-ai-video-model-2026" target="_blank" rel="noopener">https://www.buildfastwithai.com/blogs/gemini-omni-flash-review-google-ai-video-model-2026</a>
+- Veo 4 status (not released): <a href="https://wavespeed.ai/blog/posts/what-is-veo-4/" target="_blank" rel="noopener">https://wavespeed.ai/blog/posts/what-is-veo-4/</a>
+- Veo 3.1 Lite vs Fast vs Standard: <a href="https://www.buildfastwithai.com/blogs/google-veo-3-1-ai-video-generator" target="_blank" rel="noopener">https://www.buildfastwithai.com/blogs/google-veo-3-1-ai-video-generator</a>
+- Veo dialogue/lip-sync in other languages: <a href="https://prompt-architects.com/blog/101-veo-dialogue-prompts" target="_blank" rel="noopener">https://prompt-architects.com/blog/101-veo-dialogue-prompts</a> and <a href="https://github.com/ulmeanuadrian/kie-mcp/issues/1" target="_blank" rel="noopener">https://github.com/ulmeanuadrian/kie-mcp/issues/1</a>
+- Lip-sync models: <a href="https://sync.so/lipsync-2-pro" target="_blank" rel="noopener">https://sync.so/lipsync-2-pro</a> , <a href="https://lipsync.com/blog/open-source-lip-sync" target="_blank" rel="noopener">https://lipsync.com/blog/open-source-lip-sync</a>
+- NB2 practical guide (roles for references): <a href="https://masonry.so/blog/nano-banana-2-guide" target="_blank" rel="noopener">https://masonry.so/blog/nano-banana-2-guide</a>
+- NB2 consistency (no style slot in NB2, Pro has 3): <a href="https://www.glbgpt.com/hub/nano-banana-2-subject-consistency/" target="_blank" rel="noopener">https://www.glbgpt.com/hub/nano-banana-2-subject-consistency/</a>
+- Andromeda playbook (concepts, cadence, similarity claims): <a href="https://segwise.ai/blog/meta-andromeda-update-creative-strategy-2026" target="_blank" rel="noopener">https://segwise.ai/blog/meta-andromeda-update-creative-strategy-2026</a>
+- Entity ID explainer: <a href="https://www.artifexdigital.co/blog/understanding-metas-entity-id-why-your-28-ads-might-actually-be-3" target="_blank" rel="noopener">https://www.artifexdigital.co/blog/understanding-metas-entity-id-why-your-28-ads-might-actually-be-3</a>
+- Creative testing frameworks: <a href="https://paidmediaworld.com/meta-creative-testing-framework/" target="_blank" rel="noopener">https://paidmediaworld.com/meta-creative-testing-framework/</a> , <a href="https://adlibrary.com/posts/creative-angle" target="_blank" rel="noopener">https://adlibrary.com/posts/creative-angle</a>
+- Reels safe zones and hook guidance: <a href="https://adadvisor.ai/blog/facebook-reels-ads" target="_blank" rel="noopener">https://adadvisor.ai/blog/facebook-reels-ads</a> , <a href="https://withblip.com/blog/how-to-use-meta-ad-safe-zones-without-cutting-off-your-creative/" target="_blank" rel="noopener">https://withblip.com/blog/how-to-use-meta-ad-safe-zones-without-cutting-off-your-creative/</a>
+- Motion AI tagging: <a href="https://www.foxwelldigital.com/blog/ai-tagging-the-end-of-naming-convention-chaos-and-the-start-of-smarter-creative-analysis" target="_blank" rel="noopener">https://www.foxwelldigital.com/blog/ai-tagging-the-end-of-naming-convention-chaos-and-the-start-of-smarter-creative-analysis</a> , <a href="https://www.motionapp.com/releases/introducing-ai-tagging" target="_blank" rel="noopener">https://www.motionapp.com/releases/introducing-ai-tagging</a>
+- Foreplay: <a href="https://www.foreplay.co" target="_blank" rel="noopener">https://www.foreplay.co</a>
+- Pencil platform: <a href="https://trypencil.com/the-platform" target="_blank" rel="noopener">https://trypencil.com/the-platform</a>
+- Icon: <a href="https://icon.com" target="_blank" rel="noopener">https://icon.com</a>
+- AI UGC tools 2026: <a href="https://morphic.com/resources/tools/best-ai-ugc-ad-tools" target="_blank" rel="noopener">https://morphic.com/resources/tools/best-ai-ugc-ad-tools</a> , <a href="https://novoads.ai/en/blog/arcads-vs-creatify" target="_blank" rel="noopener">https://novoads.ai/en/blog/arcads-vs-creatify</a>
+- Promise studio (Muse records prompts, settings, approvals): <a href="https://www.forbes.com/sites/maureenkerr/2026/07/24/dave-clarks-ai-studio-promise-aims-for-films-hollywood-can-release/" target="_blank" rel="noopener">https://www.forbes.com/sites/maureenkerr/2026/07/24/dave-clarks-ai-studio-promise-aims-for-films-hollywood-can-release/</a>
+- Asteria Continuum Suite: <a href="https://deadline.com/2026/03/asteria-launches-continuum-suite-ai-operating-system-film-tv-production-1236749265/" target="_blank" rel="noopener">https://deadline.com/2026/03/asteria-launches-continuum-suite-ai-operating-system-film-tv-production-1236749265/</a>
+- Remotion parameterized rendering: <a href="https://www.remotion.dev/docs/parameterized-rendering" target="_blank" rel="noopener">https://www.remotion.dev/docs/parameterized-rendering</a>
+- Langfuse prompt management: <a href="https://langfuse.com/docs/prompts/get-started" target="_blank" rel="noopener">https://langfuse.com/docs/prompts/get-started</a></p>
+<p dir="auto">Internal
+- <code>ai-docs/01-architecture.md</code>, <code>ai-docs/03-lessons-learned.md</code>, <code>ai-docs/04-qc-checklists.md</code>, <code>research/01</code>, <code>05</code>-<code>09</code>.</p></main></body></html>

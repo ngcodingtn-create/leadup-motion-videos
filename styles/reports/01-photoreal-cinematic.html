@@ -1,0 +1,904 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photoreal, hyperreal &amp; cinematic · Lead Up research</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#0B1426;color:#E8EDF7;font:16px/1.65 Montserrat,system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:28px 16px 80px}
+a{color:#FFB800;word-break:break-word}h1{font-size:30px;line-height:1.2}h2{margin-top:44px;color:#fff;border-top:1px solid rgba(255,255,255,.12);padding-top:24px}
+h3{margin-top:28px;color:#FFD466}code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;font-size:.9em}pre{background:#101C36;padding:14px;border-radius:12px;overflow-x:auto;font-size:13px}
+table{border-collapse:collapse;display:block;overflow-x:auto;font-size:13.5px;margin:14px 0}th,td{border:1px solid rgba(255,255,255,.14);padding:7px 9px;vertical-align:top}th{background:#15234A}
+blockquote{border-left:3px solid #FFB800;margin:0;padding:4px 14px;color:#AFC0E0}.top{position:sticky;top:0;background:rgba(11,20,38,.94);backdrop-filter:blur(8px);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px}
+[dir=auto]{unicode-bidi:plaintext}</style></head>
+<body><div class="top"><a href="../#reports">← Style engine</a> · Research report · Photoreal, hyperreal &amp; cinematic</div><main><h1 id="styles-01-photoreal-hyperreal-and-cinematic-ad-styles-vertex-only-engine">Styles 01 · Photoreal, hyperreal and cinematic ad styles (Vertex-only engine)</h1>
+<p dir="auto">Research date: 2026-09-27. Scope: live-action-look ad styles made with AI for 9:16, 30-60 s Meta/TikTok ads in Tunisian
+Derja (solar PV, alarms/cameras, later other SMEs). Pipeline constraint: <strong>Google Vertex only</strong> (Nano Banana 2 =
+<code>gemini-3.1-flash-image</code>, Gemini Omni <code>gemini-omni-1.1-flash-preview</code>, Veo 3.0/3.1 incl. fast/lite, Lyria 002).
+Companion docs: <code>../07-anti-ai-look.md</code> (generic finishing chain, sound), <code>../06-nano-banana-2.md</code> (NB2 references),
+<code>../01-omni-prompting.md</code> (Omni anatomy). This doc does not repeat those; it adds the photoreal-specific layer.</p>
+<p dir="auto">Tags: <strong>[official]</strong> = Google/Meta/TikTok docs; <strong>[practitioner]</strong> = guides, reviews, case studies; <strong>[ours]</strong> = our
+synthesis or estimate, not verified by a source. House rules still apply (Omni 720p, no last frame on Omni, all text in
+Remotion, script approved before any paid generation).</p>
+<hr />
+<h2 id="0-tldr">0. TL;DR</h2>
+<ol>
+<li dir="auto"><strong>Route by realism risk, not by habit.</strong> Veo 3.1 Standard is still the photoreal reference for faces, skin, light and
+   product fidelity; Omni Flash is cheaper per iteration and strong on object physics, but its faces drift on head turns,
+   motion can feel floaty and can drop to a choppy 8-12 fps look, and lip sync degrades after ~6-7 s
+   [practitioner: aireiter, invideo Omni review, buildfastwithai]. Rule [ours]: <strong>faces/hero product = Veo 3.1 (Fast for
+   takes, Standard for finals); B-roll without faces, drones, hands-free inserts = Omni 720p.</strong></li>
+<li dir="auto"><strong>Realism is decided in the first frame.</strong> Every photoreal shot starts as a Nano Banana 2 still (or Nano Banana Pro
+   for close-up faces, if enabled on the project) with camera body, lens, light direction and imperfections named, then
+   animated with a short motion-only prompt. Image-to-video beats text-to-video for realism [practitioner: Sunra,
+   Runway, Hailuo].</li>
+<li dir="auto"><strong>For lead-gen, "native realism" converts better than "cinematic polish".</strong> Native, handheld, phone-look Reels beat
+   polished commercial creative by 25-40% on engagement (vendor benchmark); for solar, phone-filmed testimonials and
+   owner-on-camera cut CPL 25-40%, bill-shock hooks with real bills beat abstract savings 3-5x, before/after install
+   videos give ~2x leads vs static [practitioner: digitalapplied, webtonic, leadsync]. Cinematic is for brand films,
+   retargeting and premium SMEs; the lead ad is usually "shot on iPhone" + documentary + real bill.</li>
+<li dir="auto"><strong>Being perceived as AI costs money; the label does not.</strong> NIQ neuro-testing: AI ads read more "annoying, boring,
+   confusing" with weaker memory activation; when users perceive AI, premium perception -17%, purchase intent -14%. But
+   a 900-person MediaScience/Ehrenberg-Bass study (June 2026) found AI disclosure labels barely move recall, recognition
+   or sentiment. So: <strong>always disclose, and spend the effort on not looking AI.</strong></li>
+<li dir="auto"><strong>Compliance traps specific to us:</strong> (a) Veo <code>personGeneration</code> in MENA/EU is <code>allow_adult</code> only, and TikTok removes
+   synthetic likenesses of minors: <strong>no realistic children</strong>, ever; (b) an AI person presented as a real customer
+   ("Sami from Sfax saved 70%") is a fake testimonial on Meta/TikTok/FTC standards, even if labelled; use a spokesperson
+   or dramatization framing, and real customers for testimonials; (c) Meta may show the AI label next to "Sponsored" for
+   photoreal AI people, TikTok requires the AIGC toggle for realistic people/scenes.</li>
+<li dir="auto"><strong>Tunisian authenticity is a prompt + reference problem.</strong> Models default to Orientalist "exotic East" imagery
+   (4.02 cultural symbols vs 0.20 political/modern per image for Eastern countries in a 2025 study). Counter it with
+   "contemporary 2026 Tunisia", concrete everyday details (beige/white rendered villa, fer forgé grilles, flat roof with
+   solar water heater and rebar, white louage with red stripe), and <strong>real location photos from the installer as NB2
+   references</strong>.</li>
+</ol>
+<hr />
+<h2 id="1-what-we-can-use-on-vertex-facts-that-shape-every-style">1. What we can use on Vertex (facts that shape every style)</h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>What matters for photoreal</th>
+<th>Price (Gemini API list, Sep 2026)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nano Banana 2</strong> <code>gemini-3.1-flash-image</code></td>
+<td>Up to 14 reference images; 512px-4K; 9:16; semantic edits (same image, change one thing), conversational refinement [official]</td>
+<td>$0.067 (1K) / $0.101 (2K) / $0.151 (4K) per image; batch ~half [official]</td>
+</tr>
+<tr>
+<td><strong>Nano Banana Pro</strong> <code>gemini-3-pro-image</code></td>
+<td>Better pores, iris detail, shadow fall-off on faces than NB2 (NB2 "slightly softer/smoother skin" in close-ups) [practitioner]; Google recommends Pro for Veo "ingredients" images [official blog]</td>
+<td>$0.134 (1K/2K) / $0.24 (4K) [official]</td>
+</tr>
+<tr>
+<td><strong>Veo 3.1</strong> Standard / Fast / Lite</td>
+<td>24 fps; 4/6/8 s; 720p, 1080p, 4K (1080p/4K and reference-image or first+last mode require <strong>8 s</strong>; Lite no 4K); up to 3 <code>asset</code> reference images; first+last frame; extension +7 s (720p); <code>seed</code> (improves, not deterministic); negative prompt; <code>personGeneration</code> image modes = <code>allow_adult</code>; MENA/EU limited to <code>allow_adult</code>; SynthID [official]</td>
+<td>Standard $0.40/s (720p/1080p), $0.60/s 4K; Fast $0.10 / $0.12 / $0.30; Lite $0.05 / $0.08 [official]</td>
+</tr>
+<tr>
+<td><strong>Gemini Omni 1.1 Flash</strong></td>
+<td>3-10 s, extend to 40 s; 720p native (1080p/4K = upscales per third-party billing tests); first/last frame, subject references, up to 3 s video refs; conversational edits; no seed; ~24 fps; SynthID [official + practitioner]</td>
+<td>~$0.10/s 720p, $0.15 1080p, $0.30 4K ($0.03 360p, but house rule: never 360p) [official + practitioner]</td>
+</tr>
+<tr>
+<td><strong>Veo 3.0</strong></td>
+<td>Older; keep only as fallback.</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Quality consensus (2026 reviews): Veo 3.1 "photoreal king" for faces, skin with pores, lighting that respects the scene,
+and the most predictable product consistency across generations; Seedance 2.0/Kling 3 lead on fast action physics and
+cloth/liquid (not available to us); Omni Flash "correctness over polish", strong object physics, weaker human motion
+and faces [practitioner: MindStudio, magicshot, wavespeed, aireiter, invideo].</p>
+<p dir="auto"><strong>Implication [ours]:</strong> the photoreal engine needs a second video route (Veo 3.1) next to Omni. Keep Omni for what it
+is good at; do not force faces through it.</p>
+<hr />
+<h2 id="2-the-photoreal-master-workflow-what-top-ai-studios-do-adapted-to-us">2. The photoreal master workflow (what top AI studios do, adapted to us)</h2>
+<h3 id="21-pipeline">2.1 Pipeline</h3>
+<ol>
+<li dir="auto"><strong>Script + shot list</strong> (approved). Each shot gets: sub-style, lens, light, one action, duration kept (1-3 s).</li>
+<li dir="auto"><strong>Casting (once per campaign).</strong> NB2/Pro portrait → 8-view character sheet (front, back, 2 profiles + 4 face
+   close-ups) on neutral background at 2K-4K; generate 4-5 options, lock one; one documented production averaged 5
+   generations (~$10) per character [practitioner: invideo, apipass]. New costume = new sheet, never edit the old one.
+   Remove held props from the sheet (props drift between angles).</li>
+<li dir="auto"><strong>Location plates.</strong> Real photos of the client's real site (roof, shop, villa) shot on the owner's phone, used as
+   NB2 references; or NB2-generated plates locked like characters ("Gatsby mansion lobby created once, then referenced
+   throughout" in Higgsfield's $350k-look perfume spot) [practitioner].</li>
+<li dir="auto"><strong>First frames.</strong> NB2 composites: character sheet + location plate + product → one 9:16 2K still per shot, lens and
+   light named. Generate 3-4, pick 1. This is where realism is won.</li>
+<li dir="auto"><strong>Motion.</strong> Omni 720p (no faces, simple moves) or Veo 3.1 Fast i2v (faces, hero product), then re-render only the
+   winners on Veo 3.1 Standard 1080p if needed. 3 takes, keep 1-3 s.</li>
+<li dir="auto"><strong>Conform + upscale.</strong> One fps, one resolution. Topaz Starlight Precise 2.5 (built to reduce "plastic" artifacts
+   on AI footage without inventing content) for faces/products; Astra 2 only for wide, detail-poor shots
+   (creative diffusion, invents detail) [practitioner: invideo Topaz]. Or Veo native 1080p/4K.</li>
+<li dir="auto"><strong>Grade + texture</strong> (section 4), <strong>sound</strong> (see 07 §3), Remotion text/UI, ffmpeg master.</li>
+</ol>
+<h3 id="22-consistency-levers-strongest-first-practitioner-ours">2.2 Consistency levers (strongest first) [practitioner + ours]</h3>
+<ul>
+<li dir="auto">Same NB2 first frame lineage (composite the character into each scene before animating) &gt; reference images alone.</li>
+<li dir="auto">Veo: 3 asset refs max, so spend them on <strong>character + product + location</strong>, not 3 angles of a face. Frames and
+  references are mutually exclusive in some APIs: when you pass a first frame, references may be ignored; bake identity
+  into the first frame [practitioner: Vercel/liteLLM docs].</li>
+<li dir="auto">Re-describe character, wardrobe, setting and light verbatim in every prompt (PJ Accetturo: "re-describe settings,
+  characters and tone in each prompt") [practitioner].</li>
+<li dir="auto">One light direction and colour temperature for the whole ad; lighting mismatch between cuts is a top AI tell
+  ("inconsistent background physics between cuts") [practitioner: OpusClip].</li>
+<li dir="auto">Veo <code>seed</code> for re-rolls of a good take (not deterministic). Omni has no seed: use its conversational edit on the
+  winning clip instead of regenerating.</li>
+<li dir="auto">2-3 characters max per scene; consistency falls apart at 4+ [practitioner: apipass].</li>
+</ul>
+<h3 id="23-hit-rates-time-cost">2.3 Hit rates, time, cost</h3>
+<ul>
+<li dir="auto">PJ Accetturo's Kalshi NBA Finals spot (Veo 3, text-to-video, 2025): 300-400 generations for 15 usable clips (~5%),
+  one person, 2-3 days, ~$2,000 AI cost, "95% cheaper" than a shoot [practitioner]. Liquid Death spec: ~$800, 2 weeks.</li>
+<li dir="auto">Image-first i2v raises the keep rate a lot; our planning estimate is 1 keeper per 3 takes on Omni/Veo Fast with
+  approved first frames [ours, to be measured].</li>
+</ul>
+<p dir="auto"><strong>Cost per 30 s photoreal ad [ours, list prices, 14 shots, 3 takes each, 4 first-frame candidates each]:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Images</th>
+<th>Video</th>
+<th>Total AI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. Omni-only (720p 4 s takes)</td>
+<td>56 × $0.101 + 2 cast sheets ≈ $7</td>
+<td>42 × 4 s × $0.10 ≈ $17</td>
+<td><strong>≈ $25</strong></td>
+</tr>
+<tr>
+<td>B. Hybrid: Omni B-roll + 5 face/hero shots on Veo 3.1 Fast 8 s, 2 finals on Veo Standard 1080p</td>
+<td>≈ $7</td>
+<td>Omni 27 takes ≈ $11 + Veo Fast 15 × $0.80 = $12 + Veo Std 2 × $3.20 ≈ $6.4</td>
+<td><strong>≈ $37</strong></td>
+</tr>
+<tr>
+<td>C. All Veo 3.1 Standard 1080p 8 s</td>
+<td>≈ $7</td>
+<td>42 × $3.20 ≈ $134</td>
+<td><strong>≈ $140</strong></td>
+</tr>
+<tr>
+<td>Topaz (optional)</td>
+<td>subscription / credits (Starlight Precise ~26 frames/credit at 1080p)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Time [ours]: 1 working day of generation + 0.5 day finishing for route B once the style kit exists; the first ad in a
+new style costs 2-3 days (casting, location plates, grade LUT).</p>
+<hr />
+<h2 id="3-sub-styles">3. Sub-styles</h2>
+<p dir="auto">Format for each: look · why it converts · best model (market) → how we get it on Vertex · prompts · realism killers ·
+post · Tunisian fit. Prompts are English (models are English-first; Omni/Veo "other languages untested") [official].
+Motion prompts are motion-only for Omni (house rule); for Veo add "no music, no dialogue" because we replace audio.</p>
+<h3 id="31-hyperreal-product-b-roll-macro-commercial-tabletop">3.1 Hyperreal product / B-roll macro ("commercial tabletop")</h3>
+<p dir="auto"><strong>Look.</strong> Probe-lens and 100 mm macro, extreme close-up that reveals the product slowly; hard single key or big
+diffused panel, rim light, black or stone/travertine sweep; liquids with caustics, condensation, fresnel on glass,
+anisotropic highlights on brushed metal; motorised slider/dolly or turntable; 24 fps or "high-speed" look; grade clean,
+neutral-warm, deep blacks.</p>
+<p dir="auto"><strong>Why it converts.</strong> Texture-first macro is the thumb-stop for product categories; Veo 3.1 is strongest on
+texture-rich items, liquids/refraction, metal and minimal packaging [practitioner: picassoia]. For us: solar cell
+texture, inverter LEDs, MC4 connectors clicking, rain beading on a panel, a camera lens iris, an alarm keypad.</p>
+<p dir="auto"><strong>Model.</strong> Market: Veo 3.1 (product consistency), Seedance 2.0 (liquid physics). Ours: <strong>NB2 first frame → Veo 3.1
+Fast i2v, final on Veo Standard 1080p</strong> for liquids/glass; Omni fine for rigid objects and turntables.</p>
+<p dir="auto"><strong>Image prompt (NB2, 9:16, 2K).</strong></p>
+<blockquote>
+<p dir="auto">Extreme macro product photograph of a monocrystalline solar panel corner, black cells with fine silver busbars,
+anodised aluminium frame, fresh rain droplets beading on the anti-reflective glass. Shot on a 100mm macro lens at
+f/5.6, key light a large diffused softbox from top-left, thin warm rim light from behind, black seamless background.
+Commercial tabletop photography, true material texture, subtle dust specks on the frame, no text, no logos.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt (Veo/Omni).</strong></p>
+<blockquote>
+<p dir="auto">Single continuous shot. Slow motorised slider move left to right, 2 cm of travel. One droplet slides down the glass
+and merges with another, surface tension visible. Panel shape, frame and cell grid stay identical, no deformation,
+no flicker. Locked focus plane.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers → fixes.</strong> Melting/deforming product (add a consistency guard sentence like the one above
+[practitioner: awesome-ad-video-prompts]); "extreme shine" plastic metal (ask for "soft glow alongside specular",
+describe the light source before the highlight, "reflecting a studio environment") [practitioner: Hailuo]; flickering
+highlights (one key light only); gibberish logos/labels (text-free generation, logo composited in Remotion); too-clean
+surfaces (add dust, fingerprints, micro-scratches).</p>
+<p dir="auto"><strong>Post.</strong> No heavy grain on macro (1-2%), slight highlight halation only for luxury variants, true blacks, 2-3% vignette.
+A 110-130% punch-in on a 1080p plate gives a second shot for free.</p>
+<p dir="auto"><strong>Tunisia.</strong> Tunisian sun is the product: real Mediterranean hard light, fine orange Saharan dust on the glass
+(chergui/sirocco days), olive leaf fallen on the panel for Sfax, sea-salt haze for Sousse/Monastir/Djerba.</p>
+<h3 id="32-cinematic-brand-film-narrative-short">3.2 Cinematic brand film / narrative short</h3>
+<p dir="auto"><strong>Look.</strong> Anamorphic character (oval bokeh, horizontal flares, slight edge distortion), 35-50 mm for people, 85 mm for
+intimacy, 16-24 mm for space; motivated light (practicals, window, golden/blue hour); film stock emulation (Kodak
+Vision3 500T for night/tungsten with halation, 250D daylight, Portra-like warm skin), 24 fps with 180° shutter blur,
+restrained grade (not teal-orange cliché). Story in 3-5 beats: problem → turn → relief.</p>
+<p dir="auto"><strong>Why it converts.</strong> Builds brand/trust for higher-ticket installs and is the premium differentiator for Lead Up's
+agency pitch; weaker than native formats for direct response. Hybrid work (AI + human craft finishing) avoids the
+backlash that purely generated spots triggered (Coca-Cola, Progressive negative sentiment; Kalshi and Liquid Death
+worked because they leaned into the concept) [practitioner: shhots].</p>
+<p dir="auto"><strong>Model.</strong> Market: Veo 3.1 for cinematic finish ("24fps native, 4K, broadcast-ready") [practitioner: wavespeed].
+Ours: <strong>Veo 3.1 with NB2/Pro first frames + character refs</strong>; Omni for inserts without faces. Veo timestamp prompting
+([00:00-00:02] …) works for multi-beat 8 s takes; we still cut to 1-3 s.</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Cinematic film still, contemporary Tunisia 2026. A Tunisian man in his late 40s, short salt-and-pepper beard, navy
+work polo, stands on the flat rooftop terrace of his two-storey beige villa in the Sfax suburbs at golden hour,
+looking at newly installed solar panels. Low sun from camera-right, long shadows, warm bounce from the whitewashed
+parapet. Shot on ARRI Alexa 35 with a 40mm anamorphic lens, shallow depth of field, oval bokeh on distant olive
+trees, Kodak Vision3 250D film look, fine grain, natural skin texture with pores, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Single continuous shot. Slow push-in from medium to medium close-up over 4 seconds. He exhales and gives a small
+satisfied nod, eyes staying on the panels; head does not turn. Light breeze moves his polo collar. Handheld-free,
+smooth dolly, no cuts. No music, no dialogue.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Uncanny faces on head turns (keep faces 3/4, minimal head rotation, &lt;3 s on face) [practitioner:
+Runway, invideo]; "pleasant cloudy afternoon" flat lighting (name one hard source + direction) [practitioner: OpusClip];
+over-saturated synthetic palette (pull saturation 10-15%); letterboxing 2.39:1 inside 9:16 wastes the screen; get the
+anamorphic feel from bokeh/flare/grade instead [ours].</p>
+<p dir="auto"><strong>Post.</strong> Film Look chain (§4) with halation 10-20% on highlights, grain 2-3%, gate weave ≤1 px, 24 fps master.</p>
+<p dir="auto"><strong>Tunisia.</strong> Golden hour over Sfax olive groves, blue hour over Tunis rooftops with the Lac skyline, Sidi Bou Said only
+if the brand is there (it is a postcard cliché).</p>
+<h3 id="33-documentary-real-life-handheld-realism">3.3 Documentary / "real life" handheld realism</h3>
+<p dir="auto"><strong>Look.</strong> Shoulder-mount or handheld 16 mm/verité: micro-shake, soft focus breathing, occasional missed focus, natural
+available light, honest desaturated grade, long-ish holds, observational (no eye contact), candid moments, real
+ambience. Workers doing real tasks.</p>
+<p dir="auto"><strong>Why it converts.</strong> 2026 trend toward authentic-feeling content; native handheld beats studio production in Reels
+benchmark sets [practitioner: digitalapplied, Higgsfield doc guide]. For installers it doubles as proof: "this is how
+we install".</p>
+<p dir="auto"><strong>Model.</strong> Omni handles "handheld smartphone-style shot" and "natural smartphone zoom" vocabulary well [practitioner:
+Runware Omni guide]; Veo 3.1 Fast for faces. Our split: <strong>Omni for hands/process shots, Veo Fast for faces.</strong></p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Candid documentary photograph, 16mm film look. Two Tunisian installers in grey work trousers, safety harnesses and
+worn gloves bolt an aluminium rail onto a flat concrete roof in Ariana, midday, harsh overhead Mediterranean sun,
+deep hard shadows, a cylindrical solar water heater and satellite dish in the background, rebar sticking up from an
+unfinished upper floor next door. Slightly off-centre composition, natural skin texture, sweat on the neck,
+unposed, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Handheld shoulder camera, documentary style, natural micro-shake, no stabilisation. The nearer installer tightens
+the bolt with a ratchet, two short turns; the camera drifts slightly left and refocuses. Background stays still.
+Single continuous shot.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Motion "too smooth, no micro-jitter" (ask handheld + add post shake) [practitioner: OpusClip];
+hand-tool interaction morphs (tight framing on the tool, gloves hide fingers, cut at 1.5 s) [practitioner: genra];
+background extras walking on one leg (no crowds).</p>
+<p dir="auto"><strong>Post.</strong> Soft Light grain 3-5%, slight chromatic aberration (1 px), saturation -15%, real field recordings.</p>
+<p dir="auto"><strong>Tunisia.</strong> Grey work trousers and cheap hi-vis, not Western-branded PPE; Isuzu/Peugeot pick-up (blue or white) with
+ladder; concrete rooftops with rebar and parapets; ambient sound of distant traffic horns, a mosque call far away used
+sparingly.</p>
+<h3 id="34-luxury-premium-spot">3.4 Luxury / premium spot</h3>
+<p dir="auto"><strong>Look.</strong> Restraint: slow moves (dolly-in, low-angle track, slow pan across so highlights travel), single sculpted key,
+dark marble or matte black sets, specular roll-off, shallow DOF, 15 s default length for luxury [practitioner:
+Hailuo, perfume prompt corpus]; grade with rich blacks, clean whites, gentle halation; slow-motion mist/fabric.</p>
+<p dir="auto"><strong>Why it converts.</strong> For premium SMEs (villa solar with storage, smart-home alarms, jewellers, clinics, real estate
+in Gammarth/La Marsa) it signals price tier; "perceived as AI" hurts premium perception most (-17%), so luxury needs
+the highest finish [practitioner: digitalapplied].</p>
+<p dir="auto"><strong>Model.</strong> Veo 3.1 Standard 1080p/4K (cinematic lighting defaults better than Omni) [practitioner: aireiter].</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Luxury product photograph. A slim black hybrid inverter with a single glowing white status LED mounted on a dark
+travertine wall in a modern Gammarth villa garage, key light a narrow strip softbox from top-left grazing the brushed
+aluminium edge, anisotropic highlights, deep shadow falloff, polished concrete floor reflecting a soft glow. 90mm
+lens, f/4, medium-format photograph, restrained, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Slow cinematic dolly-in and slight low-angle rise over 5 seconds. The highlight travels smoothly along the brushed
+edge; the LED breathes once. Everything else perfectly still, no flicker, no deformation.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Blown highlights hiding the product ("large diffused light panel" instead of spotlight);
+metal-as-plastic ("high dynamic range", "reflecting a studio environment"); flicker (one light, i2v anchor)
+[practitioner: Hailuo]. Stacking effects (particles + fog + flares) reads cheap.</p>
+<p dir="auto"><strong>Post.</strong> 4K Veo final or Starlight upscale; halation 10%, grain 1-2%, no chromatic aberration.</p>
+<p dir="auto"><strong>Tunisia.</strong> Modern villas in Gammarth, La Soukra, Hammamet; Tunisian marble/travertine and olive-wood; avoid
+Gulf-style gold opulence.</p>
+<h3 id="35-drone-and-establishing-aerials">3.5 Drone and establishing aerials</h3>
+<p dir="auto"><strong>Look.</strong> Top-down, orbit, reveal-over-parapet, slow flyover, FPV cinewhoop dive; atmospheric depth haze, light
+scatter, tiny judder on fast moves, dust/spray near surfaces, wind in vegetation; one continuous move with clear
+waypoints ("through, down, up") [practitioner: aiolaola, hitpaw].</p>
+<p dir="auto"><strong>Why it converts.</strong> Instant establishing ("this is your neighbourhood") and the rooftop-array money shot; drone
+footage of real installs is standard in solar creative.</p>
+<p dir="auto"><strong>Model.</strong> Veo 3 / Sora give the best photoreal terrain and haze; Kling/Seedance best for fast FPV [practitioner].
+Ours: <strong>Veo 3.1 Fast i2v</strong> from an NB2 aerial first frame; Omni fine for slow top-downs.</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Aerial drone photograph, straight top-down at 60 metres, a dense residential block in Sfax: flat concrete rooftops
+with parapets, cylindrical solar water heaters, satellite dishes, laundry lines, one roof fully covered by neatly
+aligned grey-black solar panels facing south. Late afternoon sun from the west, long hard shadows, light dust haze.
+DJI Mavic 3 photo, realistic, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Drone slowly rises and rotates 20 degrees clockwise over 5 seconds, keeping the solar roof centred. Slight wind
+judder, natural haze, no cuts, roofs and panels keep their exact geometry.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> "Game-engine flythrough, rubber-sheet landscape", perfectly clean terrain, oversaturation, cuts
+inside an FPV move [practitioner: aiolaola]; repeating texture tiling on large roofs/fields [practitioner: OpusClip];
+geography nonsense (a medina skyline next to sea cliffs). Famous landmarks drift (avoid close landmark aerials)
+[practitioner: Sunra].</p>
+<p dir="auto"><strong>Post.</strong> Keep haze, slight contrast lift, don't sharpen; add rotor-less wind bed. Tunisian drone law restricts real
+drone use; AI aerials are a real advantage but must not depict identifiable real private properties as "our client"
+unless they are [ours].</p>
+<p dir="auto"><strong>Tunisia.</strong> Real rooftops are dense, flat, mixed finished/unfinished, full of water heaters and dishes; not white
+Santorini cubes. Djerba: menzel domes and palms; Sousse/Monastir: coastline; Tunis: Lac, El Menzah blocks.</p>
+<h3 id="36-slow-motion-and-high-speed-action">3.6 Slow motion and high-speed action</h3>
+<p dir="auto"><strong>Look.</strong> Phantom-style 1000 fps: water droplets, dust puffs, sparks, fabric ripples, strained muscles; real-time
+setup → slow payoff → release; every micro-detail readable (breath vapour, sweat drop).</p>
+<p dir="auto"><strong>Why it converts.</strong> Pattern interrupt in the first 2 s; makes an ordinary moment (rain hitting a panel, a door
+slamming as an alarm fires, a light switching on after a blackout) cinematic.</p>
+<p dir="auto"><strong>Model.</strong> Veo 3 gives the cleanest high-detail slow-mo; Kling/Seedance for action physics [practitioner]. Ours:
+<strong>Veo 3.1 Fast/Standard with "shot on a Phantom high-speed camera at ~1000 fps"</strong>; Omni for simple object slow-mo.
+Extra slow-down in post: Topaz Apollo at 2x/4x/8x only [official Topaz doc]; never interpolate the whole ad
+[07 §2.6].</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">High-speed photograph, a heavy rain drop hitting the glass of a solar panel on a Tunisian rooftop, crown-shaped
+splash frozen mid-air, backlit by low sun from behind, dark stormy sky, macro 100mm, f/8, crisp droplets,
+no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Extreme slow motion as if shot on a Phantom high-speed camera at 1000 fps. The drop hits, the crown splash rises and
+collapses, smaller droplets scatter and roll down the glass. Locked-off camera. No stutter, no morphing.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> "Slow-mo, cinematic" alone → stuttery smooth-but-fake motion; name the camera and frame rate; use
+negatives "motion interpolation artifacts, stutter, plastic CG" in Veo's negative prompt; avoid triumphant hero poses
+[practitioner: aiolaola].</p>
+<p dir="auto"><strong>Post.</strong> Speed ramps (real-time → slow → real-time) done in Remotion/ffmpeg <code>setpts</code> on 24 fps material look fake
+below 50%; generate the slow-mo natively, then Apollo 2x if needed [ours + Topaz].</p>
+<p dir="auto"><strong>Tunisia.</strong> Autumn storms on Tunis rooftops, summer sirocco dust blowing across a Sfax roof, the lights of a villa
+switching back on after a "coupure". Keep food shots out unless the client sells food.</p>
+<h3 id="37-photoreal-lifestyle-families-homes-shops">3.7 Photoreal lifestyle (families, homes, shops)</h3>
+<p dir="auto"><strong>Look.</strong> Natural window light, 35 mm at eye level, medium shots, lived-in interiors with one imperfect detail,
+candid expressions, practical lamps at night, warm but not orange grade.</p>
+<p dir="auto"><strong>Why it converts.</strong> Aspiration + identification ("people like me in homes like mine"). Most risky style for AI tells
+(faces, hands, multi-person).</p>
+<p dir="auto"><strong>Model.</strong> Veo 3.1 (faces with "particular care, reducing uncanny valley") [practitioner: MindStudio]. Ours: <strong>NB2/Pro
+first frame with character sheet → Veo 3.1 Fast; Omni only for no-face beats (hands on a switch, back of heads,
+over-shoulder).</strong></p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Candid lifestyle photograph, contemporary Tunisia 2026. A Tunisian couple in their 30s in the living room of their
+apartment in El Menzah on a hot August evening: she has dark curly hair tied back and a light cotton dress, he wears
+a grey T-shirt; air conditioner running on the wall, sofa with a crocheted throw, ceramic tiles on the floor, tea
+glasses on a low table. Warm practical lamp light from camera-left, blue dusk through the window. Shot on Sony A7 IV,
+35mm f/2, natural skin texture, slight under-eye shadows, unposed, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Static tripod shot. She relaxes back into the sofa and lets out a breath; he glances at the air conditioner and
+smiles slightly. Small natural movements only, no head turns, no hand gestures. Single continuous shot. No dialogue.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Children (not allowed: MENA <code>allow_adult</code>, TikTok minors rule) → imply family with toys, school
+bag, a drawing on the fridge; multi-person coordinated action (handshakes, passing objects) → one action per shot
+[practitioner: Runway]; hands → hide or keep simple; mirror/reflection breakdowns (avoid mirrors and glass tables)
+[practitioner: OpusClip]; stock-photo polish (perfect teeth, catalogue interiors) → "lived-in", "one imperfect detail".</p>
+<p dir="auto"><strong>Post.</strong> Warm shadows / neutral highlights, grain 2%, softening 0.5 px on skin/hair edges.</p>
+<p dir="auto"><strong>Tunisia.</strong> See §6. Tunisian interiors: ceramic floor tiles, heavy curtains, salon sofas, framed Quran verse or family
+photos (don't render text; blur), AC split units everywhere in summer, a "coupure" (power cut) scene lit by phone
+torches is a strong pain-point opener for solar + battery.</p>
+<h3 id="38-beforeafter-and-transformation-realism">3.8 Before/after and transformation realism</h3>
+<p dir="auto"><strong>Look.</strong> Identical framing, lens and light in both states; only the subject changes (bare roof → PV array; dark
+villa → lit villa; unguarded shop → camera + keypad); reveal by wipe, match cut, time-lapse or camera move.</p>
+<p dir="auto"><strong>Why it converts.</strong> Before/after install videos ~2x leads vs static for solar; bill before/after is the #1 hook
+(use the <strong>real</strong> bill, composited) [practitioner: webtonic, leadsync].</p>
+<p dir="auto"><strong>Model.</strong> Market: first+last-frame interpolation (Veo 3.1, Kling). Ours:
+- <strong>Default (house-rule compliant):</strong> NB2 generates "before", then an NB2 <strong>semantic edit of the same image</strong> makes
+  "after" (same geometry guaranteed) → Remotion wipe/slider/match cut. Cheapest and most controllable.
+- <strong>Motion transformation:</strong> Veo 3.1 first+last frame (8 s) with both NB2 stills ("the same roof… the same camera
+  position"). Omni supports last frame too, but our house rule is "no last frame on Omni"; propose a rule change only
+  for this style after a test.</p>
+<p dir="auto"><strong>Image prompt (before) + edit prompt (after).</strong></p>
+<blockquote>
+<p dir="auto">Before: Photograph from a neighbour's rooftop, 24mm, of a bare flat concrete roof of a two-storey white-rendered
+house in Sousse, parapet, solar water heater, midday sun, hard shadows, no text.
+After (NB2 edit on that image): Keep everything identical (camera, light, shadows, water heater, parapet). Add 12
+grey-black monocrystalline panels on aluminium tilt frames facing south in two neat rows, with cable trays to the
+stairwell. Photoreal.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt (Veo first+last).</strong></p>
+<blockquote>
+<p dir="auto">The same roof, same fixed camera position. Time-lapse over one working day: installers' shadows flicker across as
+rails and then panels appear row by row; sun moves slightly. Locked-off camera, no cuts.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Geometry drift between states (use edits, not two generations); "morph" transitions that melt
+the house (cut or wipe instead); fake bills (never AI-generate a STEG bill: scan the client's real one).</p>
+<p dir="auto"><strong>Post.</strong> Match exposure and grade both halves exactly; add one "real" signal (a phone photo of the actual install).</p>
+<p dir="auto"><strong>Tunisia.</strong> STEG meter niche on the facade, the STEG bill layout (composited), Prosol Elec context (30% rebate,
+~90,000 homes equipped) as copy, not image [official: pv-magazine/ANME].</p>
+<h3 id="39-realistic-screens-and-phones-in-hands">3.9 Realistic screens and phones in hands</h3>
+<p dir="auto"><strong>Look.</strong> Phone held in a real hand in a real place, screen showing the app/camera feed/bill; slight hand tremor,
+reflections on the glass, correct perspective.</p>
+<p dir="auto"><strong>Why it converts.</strong> Alarm/camera installers sell "see your home from your phone"; solar sells "monitor your
+production in the app". Screen content must be real and legible.</p>
+<p dir="auto"><strong>Model / method.</strong> AI never renders the UI (gibberish text, drift). <strong>NB2 still with a blank, evenly lit (or green)
+screen → Omni/Veo i2v with minimal motion → Remotion composites the real UI with a 4-corner pin.</strong> Keep the phone
+nearly static relative to the frame (tripod, phone resting in hands on a table) so the corner pin can be keyframed with
+a few points; or animate the whole plate in Remotion (slow zoom) instead of in the model [ours; screen-replacement
+practice from stock/mockup tools].</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Over-the-shoulder photograph, a Tunisian woman in her 40s sitting in a car in a Sousse street at dusk holds a
+smartphone in her right hand, screen plain uniform green, fingers not covering the screen, dashboard and blurred
+streetlights ahead, iPhone 15 Pro main camera look, natural skin texture, no text, no logos.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Static shot. Her thumb stays still at the edge of the phone; she breathes, slight natural hand tremor, streetlights
+flicker softly in the background bokeh. The phone does not rotate or move out of frame.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Six fingers or fingers through the phone (frame one hand, phone edge-on); moving screen that can't
+be tracked; green spill on skin (use a dark-grey screen and screen-blend the UI instead of keying) [ours].</p>
+<p dir="auto"><strong>Post.</strong> Add screen glare/reflection layer in Remotion at 5-10% and a subtle moiré-free brightness; match the UI
+white point to the scene grade.</p>
+<p dir="auto"><strong>Tunisia.</strong> Arabic/French UI mixed; the UI is code, so RTL is controlled by us.</p>
+<h3 id="310-shot-on-iphone-native-looking-realism-ugc-native">3.10 "Shot on iPhone" native-looking realism (UGC-native)</h3>
+<p dir="auto"><strong>Look.</strong> Vertical, front or main camera, 24-26 mm equivalent, deep focus, Smart HDR look (lifted shadows, slightly
+crunchy highlights), auto-exposure shifts, handheld micro-shake, off-centre framing, real rooms, mixed light (window +
+LED ceiling), phone-mic room tone, 30 fps.</p>
+<p dir="auto"><strong>Why it converts.</strong> The dominant winning format: native creator-style Reels +25-40% engagement vs polished; Meta
+2024 data cited at 4.2x engagement / 2.8x conversion for UGC-style vs brand creative (vendor-reported); for solar,
+owner-on-camera and phone testimonials cut CPL 25-40% [practitioner]. AI UGC "realism comes from prompting, not the
+model": say "shot on iPhone 15", "not a professional photo", "natural imperfections"; avoid studio light, perfect
+composition, beauty-filter look [practitioner: markbuzz, AdLibrary, atlascloud].</p>
+<p dir="auto"><strong>Model.</strong> Market: Seedance 2.0 dominates AI UGC; Veo 3.1 handles talking-head UGC with native dialogue. Ours:
+<strong>Omni 720p is fine for this style</strong> (resolution and slight softness read as phone), Veo Fast for faces talking.
+Lip sync to our Gemini TTS Derja voice is a separate problem: prefer voice-over over B-roll, or talking shots &lt;3 s,
+because Omni lip sync drifts after 6-7 s and nothing on Vertex lip-syncs to external Derja audio reliably [ours +
+practitioner].</p>
+<p dir="auto"><strong>Image prompt.</strong></p>
+<blockquote>
+<p dir="auto">Ultra realistic iPhone 15 front-camera selfie frame, vertical. A Tunisian man in his early 30s, short fade haircut,
+trimmed beard, black zip hoodie, on the flat roof of his family house in Ben Arous at 5 pm, solar panels behind him,
+slightly off-centre, arm's-length angle from a little below, auto-exposed sky slightly blown, real skin texture with
+visible pores and a little shine, candid mid-sentence expression, not a professional photo, no text.</p>
+</blockquote>
+<p dir="auto"><strong>Motion prompt.</strong></p>
+<blockquote>
+<p dir="auto">Handheld selfie, chest-up, natural micro-shakes from holding the phone at arm's length. He talks animatedly, small
+head movements, glances once at the panels behind him and back to the lens. Auto-exposure adjusts slightly as the
+phone tilts. Single continuous shot.</p>
+</blockquote>
+<p dir="auto"><strong>Realism killers.</strong> Over-politeness and "ad voice" in the script (write for Derja speech with fillers, micro
+hesitations) [practitioner: atlascloud]; beauty-filter skin; perfect lighting; captions generated by the model (house
+rule: text in Remotion); the fake-testimonial trap (§5).</p>
+<p dir="auto"><strong>Post.</strong> No film grain; instead light sensor noise (luma noise 3-4), slight oversharpening is authentic to phones,
+chromatic aberration 1 px, subtle shake from ffmpeg crop expressions, 30 fps master, phone-mic EQ on voice.</p>
+<p dir="auto"><strong>Tunisia.</strong> The strongest authenticity move: have the <strong>real installer film 5-10 s of himself</strong> on his phone and use
+AI only for B-roll around him. AI "owner" should be a spokesperson character, not an impersonation.</p>
+<h3 id="311-other-photoreal-sub-styles-that-perform">3.11 Other photoreal sub-styles that perform</h3>
+<p dir="auto"><strong>a) CCTV / security-cam POV (alarms &amp; cameras).</strong> Wide fisheye 2.8 mm look, high angle, IR night mode (monochrome,
+blown IR highlights), timestamp overlay (Remotion), low frame rate feel. The product <em>is</em> the camera, so the footage
+is the demo. Prompt: "Security camera footage from a 2.8mm wide-angle CCTV camera mounted under the eave of a Tunisian
+villa at night, infrared black-and-white, slight fisheye distortion, a gate and parked Peugeot 208 in the courtyard".
+Motion: "Static camera. A cat walks along the wall; motion is slightly choppy like 15 fps surveillance video". Post:
+drop to 12-15 fps (<code>fps=15</code>), IR bloom, compression blockiness, scan-line/lens distortion (Higgsfield added CCTV
+authenticity in Resolve this way) [practitioner]. <strong>Never stage a crime by a realistic person breaking in presented as
+real footage</strong> (fabricated event): use a dramatization label or show the alarm/deterrence, not the burglary [ours].</p>
+<p dir="auto"><strong>b) Tradesperson POV / process ASMR.</strong> Chest-mount GoPro POV of gloved hands crimping MC4 connectors, drilling,
+clicking a panel clamp; tactile sounds. Hands are the risk: gloves, tools filling the frame, 1-1.5 s cuts. Omni is good
+here (object physics) [practitioner: invideo Omni review].</p>
+<p dir="auto"><strong>c) Time-lapse / hyperlapse.</strong> Sun arc over a rooftop array, shadow sweep, day-to-night villa lighting up from its
+own battery. Prompt "locked-off time-lapse over one day", or build it from NB2 edits (same image, 4 times of day) +
+Remotion crossfades: fully controllable and cheap [ours].</p>
+<p dir="auto"><strong>d) Vox-pop / street-interview look.</strong> Handheld interviewer mic in frame, passers-by in Avenue Habib Bourguiba.
+Performs as native content but is the <strong>highest compliance risk</strong> (fake real people giving opinions). Use only with
+real people, or clearly scripted "characters" with disclosure; never fake opinions about savings [ours + policy].</p>
+<p dir="auto"><strong>e) Pain-point realism.</strong> Sweating in a heatwave with the AC off, a "coupure" in a dark apartment lit by phones, a
+shop owner fanning himself. Problem shots don't need the product and are safer for AI (no brand fidelity needed).</p>
+<hr />
+<h2 id="4-finishing-to-1010-photoreal-specific-layer-on-top-of-07-25">4. Finishing to 10/10 (photoreal-specific layer on top of 07 §2.5)</h2>
+<h3 id="41-per-style-finishing-matrix-practitioner-values-ours">4.1 Per-style finishing matrix [practitioner values + ours]</h3>
+<table>
+<thead>
+<tr>
+<th>Style</th>
+<th>Master fps</th>
+<th>Grain</th>
+<th>Halation</th>
+<th>Soften</th>
+<th>CA</th>
+<th>Shake</th>
+<th>Sat.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product macro</td>
+<td>24</td>
+<td>1-2%</td>
+<td>0-5%</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-5%</td>
+</tr>
+<tr>
+<td>Cinematic brand</td>
+<td>24</td>
+<td>2-3%</td>
+<td>10-20%</td>
+<td>0.5 px</td>
+<td>0</td>
+<td>gate weave ≤1 px</td>
+<td>-10%</td>
+</tr>
+<tr>
+<td>Documentary</td>
+<td>24</td>
+<td>3-5% (Soft Light)</td>
+<td>0-5%</td>
+<td>0.5 px</td>
+<td>1 px</td>
+<td>light</td>
+<td>-15%</td>
+</tr>
+<tr>
+<td>Luxury</td>
+<td>24</td>
+<td>1-2%</td>
+<td>10%</td>
+<td>0.3 px</td>
+<td>0</td>
+<td>0</td>
+<td>-5%</td>
+</tr>
+<tr>
+<td>Drone</td>
+<td>24/30</td>
+<td>1%</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>tiny judder</td>
+<td>-10%</td>
+</tr>
+<tr>
+<td>Slow-mo</td>
+<td>24</td>
+<td>1-2%</td>
+<td>5%</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-5%</td>
+</tr>
+<tr>
+<td>Lifestyle</td>
+<td>24</td>
+<td>2%</td>
+<td>5%</td>
+<td>0.5 px</td>
+<td>0</td>
+<td>0</td>
+<td>-10%</td>
+</tr>
+<tr>
+<td>iPhone-native</td>
+<td>30</td>
+<td>sensor noise</td>
+<td>0</td>
+<td>0 (phones oversharpen)</td>
+<td>1 px</td>
+<td>handheld</td>
+<td>0</td>
+</tr>
+<tr>
+<td>CCTV</td>
+<td>15</td>
+<td>noise + blocks</td>
+<td>IR bloom</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>mono</td>
+</tr>
+</tbody>
+</table>
+<p dir="auto">Rules: pick one master fps per ad; grain goes <strong>after</strong> upscale and before encoding; platforms re-encode, so grain that
+is visible on the desktop disappears or turns to blocks on Reels, keep it subtle and export at a high bitrate [ours].
+Sound is the biggest realism lever (07 §3). AI clips' native audio is scratch only.</p>
+<h3 id="42-ffmpeg-building-blocks-test-values-tune-per-ad-ours-filters-per-ffmpeg-docs-zayneio">4.2 ffmpeg building blocks (test values, tune per ad) [ours, filters per ffmpeg docs / zayne.io]</h3>
+<pre><code class="language-text"># Colour: LUT at partial strength + saturation trim
+lut3d=file=looks/vision3_250d.cube, eq=saturation=0.88:contrast=1.03
+# Split-tone: warm shadows, cooler highlights
+colorbalance=rs=0.03:bs=-0.03:rh=-0.01:bh=0.02
+# Halation (film): highlight pass, blurred, tinted red-orange, screened back
+split[a][b];[b]curves=all='0/0 0.75/0 1/1',gblur=sigma=14,colorchannelmixer=rr=1:gg=0.35:bb=0.1[h];[a][h]blend=all_mode=screen:all_opacity=0.15
+# Anamorphic streak (luxury/night): horizontal-only blur on highlights, tinted blue
+[b]curves=all='0/0 0.85/0 1/1',gblur=sigma=40:sigmaV=0.1,colorchannelmixer=rr=0.3:gg=0.5:bb=1
+# Grain: luma only, temporal (≈ 6-10 at 1080p cinematic; lower at 720p)
+noise=c0s=8:c0f=t+u
+# De-crisp AI edges
+gblur=sigma=0.5            # or unsharp=5:5:-0.3
+# Chromatic aberration (UGC/doc only)
+rgbashift=rh=1:bh=-1
+# Vignette
+vignette=PI/5
+# Gate weave / handheld micro-shake (crop with moving offset, then scale back)
+crop=iw-12:ih-12:6+2*sin(n/7):6+2*cos(n/11),scale=1080:1920
+# Surveillance cadence
+fps=15
+# Deliverable (house rule)
+format=yuv420p, -colorspace bt709 -color_primaries bt709 -color_trc bt709
+</code></pre>
+<p dir="auto">Note: <code>lenscorrection</code> can add slight barrel distortion for wide/GoPro/CCTV looks (k1/k2 around ±0.02; check the sign
+visually). Real LUTs (Vision3 emulations) beat hand curves for the cinematic grade.</p>
+<h3 id="43-upscale-and-interpolation">4.3 Upscale and interpolation</h3>
+<ul>
+<li dir="auto">Veo: native 1080p/4K only on 8 s generations. Omni: 1080p/4K are upscales (billing tests), so Topaz Starlight
+  Precise 2.5 on the kept 1-3 s is usually better value than paying Omni 4K [practitioner].</li>
+<li dir="auto">Starlight Precise 2.5 for realism (faces, fabrics, logos) vs Astra 2 (creative, invents detail: never on faces or
+  products) [practitioner: invideo Topaz].</li>
+<li dir="auto">Apollo for 2x/4x/8x slow-mo; Chronos for non-integer retimes; never interpolate a whole ad (rubbery, ghosting)
+  [official Topaz + 07].</li>
+<li dir="auto">Export intermediates in ProRes 422 before grading to avoid stacking compression [practitioner: Chase Jarvis].</li>
+</ul>
+<hr />
+<h2 id="5-platform-rules-for-realistic-ai-people-meta-tiktok-law">5. Platform rules for realistic AI people (Meta, TikTok, law)</h2>
+<p dir="auto"><strong>Meta (Facebook/Instagram).</strong>
+- "AI info" label is applied automatically for Meta's own gen-AI tools and, since the June 2026 update, for
+  third-party tools via industry signals such as C2PA; advertisers can self-disclose at ad level. For photorealistic
+  AI people the label can move next to "Sponsored" in the feed [practitioner: coinis, auditsocials].
+- Undisclosed AI content was reported at ~14% of ad rejections in 2026; escalation: ad killed + strike → 24 h hold →
+  suspension risk [practitioner: coinis, vendor-reported].
+- Spokesperson vs fake customer: an AI avatar delivering a scripted brand message is fine; "Sarah, a verified buyer"
+  is deceptive advertising regardless of disclosure [practitioner: cinerads]. Unsupported performance claims
+  (e.g. "zero bill") are rejected regardless of creator type.
+- Official pages: Meta Business Help Center AI disclosure, Transparency Center "Labeling AI content".</p>
+<p dir="auto"><strong>TikTok.</strong>
+- AIGC label mandatory for realistic-appearing people or scenes; ads use the "This ad contains AI-generated content"
+  toggle (cannot be changed after submission; duplicating a campaign resets it); C2PA auto-labelling; escalation from
+  label → removal → account strikes [practitioner: cinerads, auditsocials, storrito].
+- Removed outright even if labelled: synthetic likenesses of anyone under 18, realistic depictions of non-public adults
+  without consent, fabricated authoritative sources/crisis events, false public-figure endorsements.</p>
+<p dir="auto"><strong>Google side.</strong> Every Veo/Omni output carries an invisible SynthID watermark [official]. Whether Vertex video outputs
+also carry C2PA metadata was not confirmed in this research; assume platforms can detect AI and <strong>self-disclose</strong>.</p>
+<p dir="auto"><strong>Law.</strong> FTC fake-review/testimonial rule (Oct 2024) and AI-disclosure guidance; New York "synthetic performer"
+disclosure law (June 2026); EU AI Act Art. 50 labelling from 2 Aug 2026 (applies if we ever target EU diaspora)
+[practitioner: cinerads]. No Tunisian AI-ad law found; platform rules are the binding constraint.</p>
+<p dir="auto"><strong>Does the label hurt?</strong> MediaScience/MediaPet/Ehrenberg-Bass (June 2026, n=900): unaided recall 54-61% and
+recognition 87-92% across labelled/unlabelled groups, i.e. negligible impact; "consumers are accepting of AI if they
+know… provided the ad is good" [practitioner: Marketing Dive]. What hurts is <em>perceived</em> AI-ness and low craft (NIQ).</p>
+<p dir="auto"><strong>Our compliance checklist [ours].</strong>
+1. Tick the AI disclosure on every photoreal ad (Meta + TikTok).
+2. No realistic minors. Families = adults (couples, grandparents, adult siblings); kids implied by objects.
+3. No AI person named or captioned as a real customer; testimonials only from real, consenting customers filmed on
+   phones. AI people = "characters" or the brand spokesperson. Add "تمثيل / représentation" small on-screen where a
+   scene dramatizes a situation (our choice; not a platform requirement).
+4. No likeness of real public figures or identifiable real private people; no real private houses shown as clients'
+   unless they are.
+5. No fabricated events that could read as news (burglary "caught on camera", STEG announcements).
+6. Savings numbers must be the installer's substantiated numbers.</p>
+<hr />
+<h2 id="6-tunisian-authenticity-kit-all-styles">6. Tunisian authenticity kit (all styles)</h2>
+<p dir="auto"><strong>Why it matters.</strong> T2I models show "Visual Orientalism": Eastern countries rendered through traditional/exotic
+symbols (4.02 cultural vs 0.20 political/modern symbols per image) and non-Anglo countries exoticised; adding
+"contemporary"/"modern" temporal markers partially counters it [arXiv 2511.22931]. Out of the box, "Tunisian house"
+gives Sidi Bou Said blue doors, "Tunisian man" gives a chechia and jebba.</p>
+<p dir="auto"><strong>Prompt anchors that work (use concrete nouns, not "Tunisian style") [ours, grounded in sources where noted].</strong>
+- Always: "contemporary Tunisia 2026", city + neighbourhood (Ennasr, El Menzah, Ariana, Ben Arous, La Marsa, Sfax
+  El Ain road, Sousse Khezama, Djerba Houmt Souk).
+- <strong>Houses:</strong> two-storey rendered concrete villa, beige/white/pale-yellow render, fer forgé window grilles, aluminium
+  shutters, flat roof terrace with parapet, cylindrical solar water heater (PROSOL has equipped ~900,000 m² since
+  2005), satellite dishes, rebar left for a future floor, laundry lines. Djerba: whitewashed menzel with domes, palms.
+  Medina: narrow lanes, studded doors, only when the client is in the medina.
+- <strong>Solar specifics:</strong> grey-black mono panels on aluminium tilt frames on flat roofs facing south; wall-mounted
+  inverter; STEG meter niche on the facade. Prosol Elec: 30% rebate, free STEG inverter, credit up to TND 3,000/kW,
+  ~300 MW in ~90,000 homes [official via pv-magazine/ANME].
+- <strong>Streets and vehicles:</strong> white louages with a <strong>red</strong> stripe (inter-governorate), blue (within a governorate),
+  yellow (rural) [Wikipedia]; yellow Tunis taxis; Peugeot/Renault/Kia compacts, Isuzu pick-ups; TGM and green light
+  metro in Tunis.
+- <strong>People:</strong> Mediterranean North African range of skin tones (fair-olive to brown), dark hair; men mostly
+  jeans/chinos, polos, hoodies, short fades and trimmed beards; women both uncovered hair and hijab, modern clothing;
+  traditional dress (jebba, chechia, sefsari) mainly for older people, weddings and religious occasions
+  [practitioner: tunisiaonline, Wikipedia Safseri]. Workers: grey work trousers, cheap hi-vis, caps.
+- <strong>Light:</strong> hard high Mediterranean sun, deep shadows, bright bounce off white walls; summer haze; golden hour warm
+  but not orange.
+- <strong>Avoid (clichés and wrong countries):</strong> Gulf thobes/ghutra, Moroccan djellabas with pointed hood, babouches,
+  zellige everywhere, tagines, lanterns, camels/desert (unless the story is in the south), belly dance, the Hollywood
+  "yellow/sepia filter" on MENA scenes, Sidi Bou Said blue-and-white as a generic "Tunisia".
+- <strong>Text in scene:</strong> Arabic/French signage, licence plates, shop fronts, bills → gibberish. Keep them out of focus or
+  out of frame and composite real text in Remotion (house rule).
+- <strong>Best lever:</strong> real reference photos (client's roof, street, van, uniform, the owner's face with consent) fed to
+  NB2 as references. Up to 14 refs per image.</p>
+<hr />
+<h2 id="7-model-routing-cheat-sheet-vertex-only-ours">7. Model routing cheat sheet (Vertex only) [ours]</h2>
+<table>
+<thead>
+<tr>
+<th>Sub-style</th>
+<th>Market leader 2026</th>
+<th>Our route</th>
+<th>Keep length</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product macro</td>
+<td>Veo 3.1 / Seedance</td>
+<td>NB2 2K → Veo Fast i2v → Veo Std 1080p final (liquids); Omni (rigid)</td>
+<td>1.5-3 s</td>
+</tr>
+<tr>
+<td>Cinematic brand</td>
+<td>Veo 3.1</td>
+<td>NB2/Pro + refs → Veo 3.1; Omni inserts</td>
+<td>2-3 s</td>
+</tr>
+<tr>
+<td>Documentary</td>
+<td>Veo / Kling</td>
+<td>Omni (hands/process), Veo Fast (faces)</td>
+<td>1.5-3 s</td>
+</tr>
+<tr>
+<td>Luxury</td>
+<td>Veo 3.1</td>
+<td>Veo Std 1080p/4K</td>
+<td>2-3 s</td>
+</tr>
+<tr>
+<td>Drone</td>
+<td>Veo / Sora (terrain), Kling (FPV)</td>
+<td>NB2 aerial → Veo Fast; Omni slow top-down</td>
+<td>2-4 s</td>
+</tr>
+<tr>
+<td>Slow-mo</td>
+<td>Veo 3 (clean), Kling</td>
+<td>Veo "Phantom 1000 fps" + Apollo 2x</td>
+<td>2-3 s</td>
+</tr>
+<tr>
+<td>Lifestyle</td>
+<td>Veo 3.1</td>
+<td>NB2/Pro + sheet → Veo Fast; Omni no-face</td>
+<td>1.5-2.5 s</td>
+</tr>
+<tr>
+<td>Before/after</td>
+<td>Veo/Kling first-last</td>
+<td>NB2 edit pair → Remotion wipe; Veo first+last</td>
+<td>2-4 s</td>
+</tr>
+<tr>
+<td>Phone in hand</td>
+<td>any + compositing</td>
+<td>NB2 blank screen → Omni minimal motion → Remotion corner pin</td>
+<td>2-3 s</td>
+</tr>
+<tr>
+<td>iPhone-native</td>
+<td>Seedance / Veo</td>
+<td>Omni 720p; Veo Fast for talking faces</td>
+<td>1-3 s</td>
+</tr>
+<tr>
+<td>CCTV POV</td>
+<td>any</td>
+<td>Omni + ffmpeg 15 fps + IR look</td>
+<td>2-4 s</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-prompt-skeletons">8. Prompt skeletons</h2>
+<p dir="auto"><strong>NB2 first frame (photoreal).</strong>
+<code>[Shot type + camera body + lens + aperture]. [Subject with age, look, wardrobe, one imperfection]. [Action frozen
+mid-moment]. [Specific Tunisian place + time + season]. [Light: source, direction, quality, bounce]. [Film stock or
+phone look, grain]. [Realism cues: natural skin texture, pores, unposed, lived-in detail]. No text, no logos.</code>
+Words to avoid: perfect skin, flawless, airbrushed, beautiful, masterpiece, 8K, Octane, trending [practitioner: Luno].
+One film stock per prompt.</p>
+<p dir="auto"><strong>Motion (Omni: motion only; Veo: add "no music, no dialogue").</strong>
+<code>[Continuity: single continuous shot]. [Camera move + speed + duration]. [ONE subject action, small, with weight].
+[Secondary micro-motion: breeze, dust, breath]. [Guards: identity/shape stays identical, no morphing, no flicker, no
+head turn].</code>
+Lead with the camera phrase (Omni reads the opening as the primary direction) [practitioner: Runware]. Prefer slow,
+measured moves; one main action; test 3-5 s first [practitioner: Runway].</p>
+<hr />
+<h2 id="9-recommendations-for-lead-up">9. Recommendations for Lead Up</h2>
+<ol>
+<li dir="auto">Add a <strong>Veo 3.1 route</strong> to the engine next to Omni (Vertex <code>veo-3.1-fast-generate-001</code> for takes,
+   <code>veo-3.1-generate-001</code> for finals, 9:16, <code>personGeneration=allow_adult</code>, seed stored per take).</li>
+<li dir="auto">Build a <strong>photoreal style kit per client</strong>: cast sheets (2-3 characters), 3-5 location plates from real photos,
+   one LUT, the finishing preset from §4.1, and a disclosure checklist.</li>
+<li dir="auto">Default photoreal lead ad = <strong>iPhone-native + documentary + real bill/real install clip</strong>, with 1-2 cinematic shots
+   (drone reveal, macro panel) as production value. Cinematic-only films for brand/retargeting.</li>
+<li dir="auto">Pilot test (after script approval): one 30 s solar ad in route B (§2.3), measure keep rate per model and time, then
+   decide whether Omni faces are acceptable at 1.5 s cuts.</li>
+<li dir="auto">Open questions to verify with a small test: Nano Banana Pro availability on our Vertex project; C2PA presence in
+   Vertex video outputs; whether Veo i2v with a first frame honours asset references on Vertex; Omni last-frame use for
+   before/after (needs owner sign-off to relax the house rule).</li>
+</ol>
+<hr />
+<h2 id="sources">Sources</h2>
+<p dir="auto">Official / primary
+- <a href="https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-veo-3-1" target="_blank" rel="noopener">https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-veo-3-1</a>
+- <a href="https://ai.google.dev/gemini-api/docs/veo" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/veo</a>
+- <a href="https://ai.google.dev/gemini-api/docs/omni" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/omni</a>
+- <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener">https://ai.google.dev/gemini-api/docs/pricing</a>
+- <a href="https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-nano-banana" target="_blank" rel="noopener">https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-nano-banana</a>
+- <a href="https://blog.google/innovation-and-ai/technology/ai/veo-3-1-ingredients-to-video/" target="_blank" rel="noopener">https://blog.google/innovation-and-ai/technology/ai/veo-3-1-ingredients-to-video/</a>
+- <a href="https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-omni-1-1-flash/" target="_blank" rel="noopener">https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-omni-1-1-flash/</a>
+- <a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/generate-videos-from-an-image" target="_blank" rel="noopener">https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/video/generate-videos-from-an-image</a>
+- <a href="https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/video-gen-prompt-guide" target="_blank" rel="noopener">https://docs.cloud.google.com/vertex-ai/generative-ai/docs/video/video-gen-prompt-guide</a>
+- <a href="https://docs.topazlabs.com/video-ai/how-to-guide/using-apollo-to-create-a-smooth-slo-mo-output" target="_blank" rel="noopener">https://docs.topazlabs.com/video-ai/how-to-guide/using-apollo-to-create-a-smooth-slo-mo-output</a>
+- <a href="https://ffmpeg.org/ffmpeg-filters.html" target="_blank" rel="noopener">https://ffmpeg.org/ffmpeg-filters.html</a>
+- <a href="https://www.facebook.com/business/help/1010479435004531" target="_blank" rel="noopener">https://www.facebook.com/business/help/1010479435004531</a>
+- <a href="https://transparency.meta.com/governance/tracking-impact/labeling-ai-content/" target="_blank" rel="noopener">https://transparency.meta.com/governance/tracking-impact/labeling-ai-content/</a>
+- <a href="https://www.tiktok.com/creator-academy/en/article/ai-generated-content-label" target="_blank" rel="noopener">https://www.tiktok.com/creator-academy/en/article/ai-generated-content-label</a></p>
+<p dir="auto">Model comparisons, pricing, reviews
+- <a href="https://aireiter.com/blog/gemini-omni-flash-vs-veo-3-1" target="_blank" rel="noopener">https://aireiter.com/blog/gemini-omni-flash-vs-veo-3-1</a>
+- <a href="https://wavespeed.ai/blog/posts/omni-flash-vs-veo-sora-seedance/" target="_blank" rel="noopener">https://wavespeed.ai/blog/posts/omni-flash-vs-veo-sora-seedance/</a>
+- <a href="https://www.mindstudio.ai/blog/seedance-2-vs-veo-3-1-comparison" target="_blank" rel="noopener">https://www.mindstudio.ai/blog/seedance-2-vs-veo-3-1-comparison</a>
+- <a href="https://magicshot.ai/blog/kling-vs-veo-vs-seedance-comparison" target="_blank" rel="noopener">https://magicshot.ai/blog/kling-vs-veo-vs-seedance-comparison</a>
+- <a href="https://invideo.io/blog/gemini-omni-flash-review/" target="_blank" rel="noopener">https://invideo.io/blog/gemini-omni-flash-review/</a>
+- <a href="https://www.buildfastwithai.com/blogs/gemini-omni-flash-review-google-ai-video-model-2026" target="_blank" rel="noopener">https://www.buildfastwithai.com/blogs/gemini-omni-flash-review-google-ai-video-model-2026</a>
+- <a href="https://www.digitalapplied.com/blog/gemini-omni-multimodal-video-creation-guide" target="_blank" rel="noopener">https://www.digitalapplied.com/blog/gemini-omni-multimodal-video-creation-guide</a>
+- <a href="https://www.atlascloud.ai/blog/tips/gemini-omni-flash-1.1-pricing" target="_blank" rel="noopener">https://www.atlascloud.ai/blog/tips/gemini-omni-flash-1.1-pricing</a>
+- <a href="https://www.eesel.ai/blog/gemini-omni-1-1-flash-pricing" target="_blank" rel="noopener">https://www.eesel.ai/blog/gemini-omni-1-1-flash-pricing</a>
+- <a href="https://costgoat.com/pricing/google-veo" target="_blank" rel="noopener">https://costgoat.com/pricing/google-veo</a>
+- <a href="https://www.cined.com/google-veo-3-1-ingredients-to-video-update-adds-native-vertical-format-4k-upscaling-and-enhanced-character-consistency/" target="_blank" rel="noopener">https://www.cined.com/google-veo-3-1-ingredients-to-video-update-adds-native-vertical-format-4k-upscaling-and-enhanced-character-consistency/</a>
+- <a href="https://www.banani.co/blog/nano-banana-pro-vs-nano-banana-2" target="_blank" rel="noopener">https://www.banani.co/blog/nano-banana-pro-vs-nano-banana-2</a>
+- <a href="https://vercel.com/ai-gateway/models/veo-3.1-fast-generate-001" target="_blank" rel="noopener">https://vercel.com/ai-gateway/models/veo-3.1-fast-generate-001</a>
+- <a href="https://docs.litellm.ai/docs/providers/vertex_ai/videos" target="_blank" rel="noopener">https://docs.litellm.ai/docs/providers/vertex_ai/videos</a></p>
+<p dir="auto">Prompting and craft (practitioner)
+- <a href="https://runware.ai/docs/models/google-gemini-omni-flash/guides/cinematic-prompting" target="_blank" rel="noopener">https://runware.ai/docs/models/google-gemini-omni-flash/guides/cinematic-prompting</a>
+- <a href="https://www.atlabs.ai/blog/ultimate-gemini-omni-flash-prompting-guide-2026" target="_blank" rel="noopener">https://www.atlabs.ai/blog/ultimate-gemini-omni-flash-prompting-guide-2026</a>
+- <a href="https://runway.com/resources/tips-make-realistic-ai-videos" target="_blank" rel="noopener">https://runway.com/resources/tips-make-realistic-ai-videos</a>
+- <a href="https://lumalabs.ai/news/cinematic-ai-video-prompts" target="_blank" rel="noopener">https://lumalabs.ai/news/cinematic-ai-video-prompts</a>
+- <a href="https://www.lunostudio.ai/academy/nano-banana-photorealism" target="_blank" rel="noopener">https://www.lunostudio.ai/academy/nano-banana-photorealism</a>
+- <a href="https://hailuoai.video/pages/knowledge/specular-highlights-luxury-ai-video-guide" target="_blank" rel="noopener">https://hailuoai.video/pages/knowledge/specular-highlights-luxury-ai-video-guide</a>
+- <a href="https://blog.picassoia.com/veo-3-1-for-product-launch-videos" target="_blank" rel="noopener">https://blog.picassoia.com/veo-3-1-for-product-launch-videos</a>
+- <a href="https://github.com/LichAmnesia/awesome-ad-video-prompts" target="_blank" rel="noopener">https://github.com/LichAmnesia/awesome-ad-video-prompts</a>
+- <a href="https://prompts.aiolaola.com/p/drone-fpv" target="_blank" rel="noopener">https://prompts.aiolaola.com/p/drone-fpv</a>
+- <a href="https://prompts.aiolaola.com/p/sports-slowmo" target="_blank" rel="noopener">https://prompts.aiolaola.com/p/sports-slowmo</a>
+- <a href="https://edimakor.hitpaw.com/video-editing-tips/drone-shot-ai-prompt.html" target="_blank" rel="noopener">https://edimakor.hitpaw.com/video-editing-tips/drone-shot-ai-prompt.html</a>
+- <a href="https://morphic.com/ai-glossary/handheld-shot" target="_blank" rel="noopener">https://morphic.com/ai-glossary/handheld-shot</a>
+- <a href="https://higgsfield.ai/blog/ai-documentary-videos-2026" target="_blank" rel="noopener">https://higgsfield.ai/blog/ai-documentary-videos-2026</a>
+- <a href="https://higgsfield.ai/blog/ai-commercial-youtube-guide" target="_blank" rel="noopener">https://higgsfield.ai/blog/ai-commercial-youtube-guide</a>
+- <a href="https://www.atlascloud.ai/blog/tips/how-to-make-ai-ugc-ads" target="_blank" rel="noopener">https://www.atlascloud.ai/blog/tips/how-to-make-ai-ugc-ads</a>
+- <a href="https://markbuzz.in/how-to-create-hyper-realistic-ai-ugc-images-that-actually-look-real-complete-prompt-guide-for-2026/" target="_blank" rel="noopener">https://markbuzz.in/how-to-create-hyper-realistic-ai-ugc-images-that-actually-look-real-complete-prompt-guide-for-2026/</a>
+- <a href="https://adlibrary.com/guides/ai-prompting-guide-ugc-content-creators" target="_blank" rel="noopener">https://adlibrary.com/guides/ai-prompting-guide-ugc-content-creators</a>
+- <a href="https://invideo.io/faq/why-do-ai-generated-videos-look-plasticky-and-fake-and/" target="_blank" rel="noopener">https://invideo.io/faq/why-do-ai-generated-videos-look-plasticky-and-fake-and/</a>
+- <a href="https://invideo.io/faq/does-adding-film-grain-and-blur-to-ai-generated-video/" target="_blank" rel="noopener">https://invideo.io/faq/does-adding-film-grain-and-blur-to-ai-generated-video/</a>
+- <a href="https://invideo.io/faq/how-do-you-use-a-character-reference-sheet-to-keep-ai/" target="_blank" rel="noopener">https://invideo.io/faq/how-do-you-use-a-character-reference-sheet-to-keep-ai/</a>
+- <a href="https://invideo.io/blog/topaz-video-enhancement-models/" target="_blank" rel="noopener">https://invideo.io/blog/topaz-video-enhancement-models/</a>
+- <a href="https://apipass.dev/blogs/master-character-consistency-nano-banana-2-api" target="_blank" rel="noopener">https://apipass.dev/blogs/master-character-consistency-nano-banana-2-api</a>
+- <a href="https://sunra.ai/blog/make-ai-video-look-less-ai" target="_blank" rel="noopener">https://sunra.ai/blog/make-ai-video-look-less-ai</a>
+- <a href="https://www.opus.pro/blog/ai-slop-aesthetic-12-tells" target="_blank" rel="noopener">https://www.opus.pro/blog/ai-slop-aesthetic-12-tells</a>
+- <a href="https://genra.ai/blog/why-ai-videos-look-fake-how-to-fix" target="_blank" rel="noopener">https://genra.ai/blog/why-ai-videos-look-fake-how-to-fix</a>
+- <a href="https://zayne.io/articles/vintage-camera-filters-with-ffmpeg" target="_blank" rel="noopener">https://zayne.io/articles/vintage-camera-filters-with-ffmpeg</a>
+- <a href="https://chasejarvis.com/blog/veo-3-faqs/" target="_blank" rel="noopener">https://chasejarvis.com/blog/veo-3-faqs/</a>
+- <a href="https://www.vidhex.ai/blog/make-ai-skin-look-real/" target="_blank" rel="noopener">https://www.vidhex.ai/blog/make-ai-skin-look-real/</a>
+- <a href="https://dreamina.capcut.com/ai-video/how-to-use-start-and-end-frame-generators" target="_blank" rel="noopener">https://dreamina.capcut.com/ai-video/how-to-use-start-and-end-frame-generators</a></p>
+<p dir="auto">Case studies
+- <a href="https://threadreaderapp.com/thread/1932893260399456513.html" target="_blank" rel="noopener">https://threadreaderapp.com/thread/1932893260399456513.html</a> (PJ Accetturo, Kalshi)
+- <a href="https://www.marktechpost.com/2025/06/14/ai-generated-ad-created-with-googles-veo3-airs-during-nba-finals-slashing-production-costs-by-95/" target="_blank" rel="noopener">https://www.marktechpost.com/2025/06/14/ai-generated-ad-created-with-googles-veo3-airs-during-nba-finals-slashing-production-costs-by-95/</a>
+- <a href="https://shhots.ai/blog/best-ai-commercials/" target="_blank" rel="noopener">https://shhots.ai/blog/best-ai-commercials/</a></p>
+<p dir="auto">Ad performance and platform policy
+- <a href="https://www.digitalapplied.com/blog/instagram-reels-ads-2026-creative-strategy-guide" target="_blank" rel="noopener">https://www.digitalapplied.com/blog/instagram-reels-ads-2026-creative-strategy-guide</a>
+- <a href="https://www.digitalapplied.com/blog/ai-ad-creative-benchmark-2026-ctr-roas-data" target="_blank" rel="noopener">https://www.digitalapplied.com/blog/ai-ad-creative-benchmark-2026-ctr-roas-data</a>
+- <a href="https://www.webtonic.io/blog/solar-energy-ad-creative-statistics" target="_blank" rel="noopener">https://www.webtonic.io/blog/solar-energy-ad-creative-statistics</a>
+- <a href="https://leadsync.me/blog/solar-facebook-ads/" target="_blank" rel="noopener">https://leadsync.me/blog/solar-facebook-ads/</a>
+- <a href="https://www.marketingdive.com/news/ai-disclosure-labels-dont-hurt-ad-performance-heres-what-the-numbers-say/822711/" target="_blank" rel="noopener">https://www.marketingdive.com/news/ai-disclosure-labels-dont-hurt-ad-performance-heres-what-the-numbers-say/822711/</a>
+- <a href="https://nielseniq.com/global/en/news-center/2024/niq-research-uncovers-hidden-consumer-attitudes-toward-ai-generated-ads/" target="_blank" rel="noopener">https://nielseniq.com/global/en/news-center/2024/niq-research-uncovers-hidden-consumer-attitudes-toward-ai-generated-ads/</a>
+- <a href="https://coinis.com/blog/meta-ai-content-labeling-facebook-instagram-ads-2026" target="_blank" rel="noopener">https://coinis.com/blog/meta-ai-content-labeling-facebook-instagram-ads-2026</a>
+- <a href="https://www.cinerads.com/blog/ai-ugc-facebook-ad-policy" target="_blank" rel="noopener">https://www.cinerads.com/blog/ai-ugc-facebook-ad-policy</a>
+- <a href="https://www.cinerads.com/blog/tiktok-ai-content-policy" target="_blank" rel="noopener">https://www.cinerads.com/blog/tiktok-ai-content-policy</a>
+- <a href="https://www.cinerads.com/blog/ai-ad-disclosure-requirements" target="_blank" rel="noopener">https://www.cinerads.com/blog/ai-ad-disclosure-requirements</a>
+- <a href="https://www.auditsocials.com/blog/tiktok-ai-content-disclosure-rules-2026" target="_blank" rel="noopener">https://www.auditsocials.com/blog/tiktok-ai-content-disclosure-rules-2026</a></p>
+<p dir="auto">Tunisia and representation
+- <a href="https://www.pv-magazine.com/2024/09/03/tunisia-allocates-121-million-for-residential-solar-rebates/" target="_blank" rel="noopener">https://www.pv-magazine.com/2024/09/03/tunisia-allocates-121-million-for-residential-solar-rebates/</a>
+- <a href="https://anme.anme.com.tn/en/content/residential-solar-energy" target="_blank" rel="noopener">https://anme.anme.com.tn/en/content/residential-solar-energy</a>
+- <a href="https://sdgs.un.org/partnerships/prosol-solar-programme" target="_blank" rel="noopener">https://sdgs.un.org/partnerships/prosol-solar-programme</a>
+- <a href="https://en.wikipedia.org/wiki/Louage" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Louage</a>
+- <a href="https://en.wikipedia.org/wiki/Safseri" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Safseri</a>
+- <a href="https://www.tunisiaonline.com/traditional-tunisian-clothing/" target="_blank" rel="noopener">https://www.tunisiaonline.com/traditional-tunisian-clothing/</a>
+- <a href="https://arxiv.org/html/2511.22931" target="_blank" rel="noopener">https://arxiv.org/html/2511.22931</a> (Visual Orientalism in AI image models)</p></main></body></html>
